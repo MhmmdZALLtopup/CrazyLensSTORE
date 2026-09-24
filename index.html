@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRAZY LENS - Official Preset & LUTs Store</title>
+    <link rel="icon" type="image/png" href="https://files.catbox.moe/ezfd8q.png">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        shopee: {
+                            orange: '#FF5722',
+                            red: '#EE4D2D',
+                            darkred: '#D0011B',
+                            gold: '#FFC107',
+                            lightbg: '#F5F5F5'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f6f6f8;
+        }
+
+        /* Before/After Comparison Container */
+        .ba-slider-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 1rem;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .ba-slider-container img {
+            pointer-events: none; /* Mencegah gambar ikut ketarik pas di-drag */
+        }
+        .ba-image-before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%; /* Nilai awal 50% */
+            overflow: hidden;
+            z-index: 10;
+        }
+        .ba-image-before img {
+            max-width: none;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            /* Pastikan gambar before lebarnya sama dengan container aslinya */
+            width: 100%; 
+            object-fit: cover;
+            object-position: left;
+        }
+        .ba-handle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 4px;
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            z-index: 20;
+            cursor: ew-resize;
+            transform: translateX(-50%);
+        }
+        .ba-handle-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background: #FF5722;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 12px rgba(238, 77, 45, 0.8);
+            border: 2px solid white;
+        }
+
+        /* Shimmer Loading Animation */
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton-shimmer {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* Hide scrollbars */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .glow-logo {
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+        }
+
+        .glow-orange {
+            box-shadow: 0 8px 25px -5px rgba(238, 77, 45, 0.4);
+        }
+
+        /* CRAZY LENS Order / Unavailable UI */
+        .modal-backdrop {
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(17,24,39,.58); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+        .cl-modal {
+            width: min(100%, 520px); max-height: 90vh; overflow-y: auto;
+            background: #fff; border-radius: 24px; box-shadow: 0 25px 80px rgba(0,0,0,.25);
+        }
+        .cl-input {
+            width: 100%; border: 1px solid #e5e7eb; border-radius: 14px;
+            padding: .75rem .9rem; outline: none; font-size: .875rem;
+        }
+        .cl-input:focus { border-color: #f97316; box-shadow: 0 0 0 3px rgba(249,115,22,.12); }
+        .cl-drawer {
+            position: fixed; top: 0; right: 0; height: 100%; width: min(100%, 430px);
+            background: #fff; z-index: 90; box-shadow: -20px 0 60px rgba(0,0,0,.2);
+            transform: translateX(100%); transition: transform .3s ease;
+        }
+        .cl-drawer.open { transform: translateX(0); }
+        .cl-drawer-overlay {
+            position: fixed; inset: 0; z-index: 89; background: rgba(0,0,0,.35);
+            opacity: 0; pointer-events: none; transition: opacity .25s ease;
+        }
+        .cl-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+        .cl-toast {
+            position: fixed; left: 50%; bottom: 28px; z-index: 120;
+            transform: translate(-50%, 30px); opacity: 0; pointer-events: none;
+            transition: .3s ease; background: #111827; color: #fff;
+            padding: .8rem 1rem; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,.25);
+            font-size: .8rem; font-weight: 700;
+        }
+        .cl-toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+
+        /* Product Detail + Order Tracking UI */
+        .cl-product-page { animation: clFadeIn .25s ease; }
+        @keyframes clFadeIn { from {opacity:0; transform:translateY(8px)} to {opacity:1; transform:translateY(0)} }
+        .cl-shopee-card { background:#fff; border:1px solid #f1f1f1; border-radius:18px; box-shadow:0 6px 22px rgba(0,0,0,.06); }
+        .cl-status-line { position:relative; }
+        .cl-status-line:before { content:''; position:absolute; left:18px; top:36px; bottom:-24px; width:2px; background:#e5e7eb; }
+        .cl-status-line:last-child:before { display:none; }
+        .cl-status-dot { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; }
+        .cl-status-line.done .cl-status-dot { background:#fff1eb; color:#ee4d2d; border:2px solid #ee4d2d; }
+        .cl-status-line.current .cl-status-dot { background:#ee4d2d; color:#fff; box-shadow:0 0 0 5px rgba(238,77,45,.12); }
+        .cl-status-line.pending .cl-status-dot { background:#f3f4f6; color:#9ca3af; }
+        .cl-status-line.done:before { background:#ee4d2d; }
+        .cl-product-hero-img { aspect-ratio:1/1; object-fit:cover; }
+        .cl-sticky-buy { position:sticky; bottom:0; z-index:20; background:rgba(255,255,255,.96); backdrop-filter:blur(12px); border-top:1px solid #eee; }
+        .cl-auto-card { position:relative; overflow:hidden; background:linear-gradient(135deg,#fff,#fff7f2 48%,#fff); border:1px solid #fee2d5; }
+        .cl-auto-card:after { content:''; position:absolute; width:170px; height:170px; right:-60px; top:-70px; border-radius:999px; background:rgba(249,115,22,.10); filter:blur(2px); pointer-events:none; }
+        .cl-live-dot { width:9px; height:9px; border-radius:50%; background:#22c55e; box-shadow:0 0 0 5px rgba(34,197,94,.12); animation:clLive 1.5s infinite; }
+        @keyframes clLive { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(.78);opacity:.65} }
+        .cl-progress-track { height:8px; border-radius:999px; background:#f3f4f6; overflow:hidden; }
+        .cl-progress-fill { height:100%; border-radius:999px; background:linear-gradient(90deg,#fb923c,#ef4444); transition:width .7s ease; }
+        .cl-order-card { transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+        .cl-order-card:hover { transform:translateY(-2px); box-shadow:0 14px 38px rgba(0,0,0,.09); border-color:#fed7aa; }
+        .cl-mini-chip { border:1px solid #f3f4f6; background:#fff; border-radius:14px; padding:.55rem .7rem; }
+        .cl-pulse-ring { animation:clPulse 1.8s infinite; }
+        @keyframes clPulse { 0%{box-shadow:0 0 0 0 rgba(249,115,22,.28)} 70%{box-shadow:0 0 0 11px rgba(249,115,22,0)} 100%{box-shadow:0 0 0 0 rgba(249,115,22,0)} }
+        .cl-shipped-glow { box-shadow:0 0 0 1px rgba(59,130,246,.08), 0 10px 30px rgba(59,130,246,.07); }
+        @media(max-width:640px){ .cl-modal { border-radius:20px; } .cl-product-hero-img { max-height:360px; } }
+
+        /* CRAZY LENS — QRIS / AUTH / WALLET UI */
+        .cl-soft-gradient { background: linear-gradient(135deg,#fff,#fff7f2 55%,#fff); }
+        .cl-qr-wrap { background: radial-gradient(circle at 50% 30%,#fff7ed 0,#fff 58%,#fff); border:1px solid #fed7aa; }
+        .cl-auth-step { animation: clFadeIn .22s ease; }
+        .cl-btn-loading { opacity:.7; pointer-events:none; }
+        .cl-wallet-balance { text-shadow: 0 1px 12px rgba(255,255,255,.25); }
+        .cl-payment-pulse { animation: clPaymentPulse 1.8s ease-in-out infinite; }
+        @keyframes clPaymentPulse { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(249,115,22,.18)} 50%{transform:scale(1.012);box-shadow:0 0 0 8px rgba(249,115,22,0)} }
+        .cl-otp-box { letter-spacing:.45em; text-align:center; font-weight:900; font-size:1.15rem; }
+        .cl-timeline-card { border:1px solid #f3f4f6; background:#fff; border-radius:18px; padding:12px; }
+        .cl-pill-live { display:inline-flex; align-items:center; gap:6px; border:1px solid #bbf7d0; background:#f0fdf4; color:#15803d; border-radius:999px; padding:5px 9px; font-size:9px; font-weight:900; }
+        .cl-payment-method { border:1px solid #fed7aa; background:#fff7ed; border-radius:14px; padding:10px 12px; }
+
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col pb-20 md:pb-0">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-gradient-to-r from-red-700 via-orange-600 to-red-600 text-white text-xs py-1.5 px-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <span class="flex items-center gap-1 font-medium">
+                    <i class="fa-solid fa-bolt text-yellow-300 animate-pulse"></i> 
+                    PROMO EXCLUSIVE: Diskon s/d 90% Preset Lightroom & Video LUTs Premium!
+                </span>
+                <span class="hidden md:inline-block text-orange-200">|</span>
+                <span class="hidden md:inline-block"><i class="fa-solid fa-shield-halved mr-1"></i> Garansi 100% Original & Instant Drive Link</span>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+                <button onclick="openModal('notifModal')" class="hover:text-yellow-200 transition"><i class="fa-solid fa-bell mr-1"></i> Notifikasi</button>
+                <span>|</span>
+                <button onclick="openModal('helpModal')" class="hover:text-yellow-200 transition"><i class="fa-solid fa-circle-question mr-1"></i> Bantuan 24/7</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Desktop Header -->
+    <header class="sticky top-0 z-40 bg-gradient-to-r from-orange-600 via-orange-500 to-red-500 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between gap-4">
+                
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="switchTab('home')">
+                    <div class="relative overflow-hidden rounded-2xl p-1 bg-white/10 group-hover:bg-white/20 transition duration-300 border border-white/20">
+                        <img id="mainLogoHeader" src="https://files.catbox.moe/ezfd8q.png" alt="CRAZY LENS Logo" 
+                             class="h-10 md:h-12 w-auto object-contain glow-logo group-hover:scale-110 transition duration-300"
+                             onerror="this.src='https://placehold.co/120x120/EE4D2D/ffffff?text=CRAZY+LENS'">
+                    </div>
+                    <div class="hidden sm:block">
+                        <h1 class="text-xl md:text-2xl font-black tracking-tight flex items-center gap-1.5 leading-none">
+                            CRAZY LENS <span class="bg-yellow-400 text-red-900 text-[10px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider">Star+</span>
+                        </h1>
+                        <p class="text-[11px] text-orange-100 tracking-wider font-medium mt-0.5">OFFICIAL PRESET & LUTs STORE</p>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-2xl mx-2">
+                    <div class="relative">
+                        <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Cari Preset Cinematic, Tone Warm, Wedding, Lightroom Mobile, LUTs .CUBE..." 
+                               class="w-full py-2.5 pl-4 pr-12 text-sm text-gray-900 bg-white rounded-2xl focus:outline-none focus:ring-2 focus:ring-yellow-300 shadow-inner">
+                        <button onclick="triggerSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white px-4 py-1.5 rounded-xl font-bold transition flex items-center gap-1 text-xs">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span class="hidden sm:inline">Cari</span>
+                        </button>
+                    </div>
+                    <!-- Quick Tag Chips -->
+                    <div class="hidden md:flex gap-2 mt-1.5 text-[11px] text-orange-100 overflow-x-auto no-scrollbar">
+                        <span class="hover:underline cursor-pointer" onclick="filterByTag('Cinematic')">#CinematicTone</span>
+                        <span class="hover:underline cursor-pointer" onclick="filterByTag('Moody')">#MoodyAutumn</span>
+                        <span class="hover:underline cursor-pointer" onclick="filterByTag('Wedding')">#WeddingSuite</span>
+                        <span class="hover:underline cursor-pointer" onclick="filterByTag('Cyberpunk')">#CyberpunkNeon</span>
+                        <span class="hover:underline cursor-pointer" onclick="filterByTag('Video LUTs')">#VideoLUTs4K</span>
+                    </div>
+                </div>
+
+                <!-- Wallet & Actions -->
+                <div class="flex items-center gap-3">
+                    
+                    <!-- Wallet Floating Card (Desktop) -->
+                    <div onclick="openTopup()" class="hidden lg:flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/30 rounded-2xl p-1.5 px-3 cursor-pointer transition">
+                        <div class="w-8 h-8 rounded-xl bg-yellow-400 text-orange-600 flex items-center justify-center font-bold text-sm shadow">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <div class="text-left text-xs">
+                            <div class="text-[10px] text-orange-100 flex items-center gap-1 font-medium">
+                                CrazyPay Wallet
+                                <i class="fa-solid fa-circle-plus text-yellow-300 text-[10px]"></i>
+                            </div>
+                            <div class="font-bold text-white tracking-wide" id="userWalletBalance">Rp 500.000</div>
+                        </div>
+                    </div>
+
+
+                    <!-- Login / Account -->
+                    <button id="loginButton" onclick="handleLoginButton()" class="hidden sm:flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-2xl px-3 py-2.5 transition">
+                        <span class="w-8 h-8 rounded-xl bg-white text-orange-600 flex items-center justify-center shadow">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <span class="text-left hidden xl:block">
+                            <span id="loginButtonLabel" class="block text-[10px] text-orange-100">Akun</span>
+                            <span id="loginButtonSub" class="block text-xs font-black">Masuk</span>
+                        </span>
+                    </button>
+
+                    <!-- Cart Icon Button -->
+                    <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 transition border border-white/20">
+                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                        <span id="cartBadgeCount" class="absolute -top-1.5 -right-1.5 bg-yellow-400 text-red-900 font-extrabold text-[11px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-orange-600 shadow">
+                            0
+                        </span>
+                    </button>
+
+                    <!-- Order History Button (Desktop) -->
+                    <button onclick="switchTab('orders')" class="hidden sm:flex items-center gap-1.5 bg-yellow-400 hover:bg-yellow-300 text-red-950 font-bold text-xs px-3.5 py-2.5 rounded-2xl shadow transition">
+                        <i class="fa-solid fa-box-archive"></i>
+                        <span>Pesanan Saya</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-4 py-4 space-y-6">
+
+        <!-- SPA Tab: HOME SECTION -->
+        <section id="tab-home" class="space-y-6">
+            
+            <!-- Hero Banner Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Main Slider Banner -->
+                <div class="md:col-span-2 relative rounded-3xl overflow-hidden shadow-xl bg-gradient-to-r from-gray-900 via-orange-950 to-red-950 text-white p-6 sm:p-8 flex flex-col justify-between border border-orange-500/30 min-h-[220px]">
+                    <div class="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center"></div>
+                    <div class="relative z-10 space-y-2">
+                        <span class="bg-yellow-400 text-red-950 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider inline-block">
+                            <i class="fa-solid fa-fire mr-1"></i> Mega Brand Sale 2026
+                        </span>
+                        <h2 class="text-2xl sm:text-4xl font-black leading-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-yellow-200 to-orange-300">
+                            Preset Lightroom Mobile & Desktop Pro
+                        </h2>
+                        <p class="text-xs sm:text-sm text-gray-200 max-w-lg">
+                            Ubah foto standar jadi karya sinematik ala Fotografer Profesional hanya dengan 1 Klik! File .DNG, .XMP & .CUBE LUTs Kompatibel untuk iOS, Android, Premiere & CapCut.
+                        </p>
+                    </div>
+
+                    <div class="relative z-10 flex flex-wrap items-center gap-3 mt-4">
+                        <button onclick="scrollToCatalog()" class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-extrabold text-sm px-5 py-2.5 rounded-2xl shadow-lg glow-orange transition transform hover:-translate-y-0.5">
+                            Belanja Sekarang <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                        <div class="flex items-center gap-2 bg-black/40 backdrop-blur px-3 py-1.5 rounded-2xl border border-white/10 text-xs">
+                            <i class="fa-solid fa-bolt text-yellow-400"></i>
+                            <span>Pengiriman Otomatis Instan via Drive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Promo Cards -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex-1 rounded-3xl bg-gradient-to-br from-amber-500 to-orange-600 p-4 text-white shadow-lg flex items-center justify-between border border-amber-300/30">
+                        <div>
+                            <span class="bg-red-800/60 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">Voucher Khas CRAZY</span>
+                            <h3 class="font-extrabold text-base mt-1">KODE: CRAZY90</h3>
+                            <p class="text-xs text-amber-100">Diskon 90% Tanpa Min. Belanja</p>
+                            <button onclick="copyVoucher('CRAZY90')" class="mt-2 bg-white text-orange-600 hover:bg-yellow-100 font-extrabold text-xs px-3 py-1 rounded-xl shadow">
+                                Klaim Voucher
+                            </button>
+                        </div>
+                        <i class="fa-solid fa-ticket-simple text-5xl text-amber-200/40"></i>
+                    </div>
+
+                    <div class="flex-1 rounded-3xl bg-gradient-to-br from-red-600 to-rose-700 p-4 text-white shadow-lg flex items-center justify-between border border-rose-300/30">
+                        <div>
+                            <span class="bg-yellow-400 text-red-950 text-[10px] font-bold px-2 py-0.5 rounded-md">Bonus Komplit</span>
+                            <h3 class="font-extrabold text-base mt-1">Free Tutorial & Guide</h3>
+                            <p class="text-xs text-rose-100">Panduan Lengkap Pasang Preset</p>
+                            <button onclick="openModal('guideModal')" class="mt-2 bg-yellow-400 text-red-950 hover:bg-yellow-300 font-extrabold text-xs px-3 py-1 rounded-xl shadow">
+                                Lihat Panduan
+                            </button>
+                        </div>
+                        <i class="fa-solid fa-graduation-cap text-5xl text-rose-200/40"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shopee Category Quick Icons Grid -->
+            <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+                <div class="grid grid-cols-4 sm:grid-cols-8 gap-3 text-center">
+                    <button onclick="filterCategory('all')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-border-all"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Semua Preset</span>
+                    </button>
+
+                    <button onclick="filterCategory('mobile')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">LR Mobile (.DNG)</span>
+                    </button>
+
+                    <button onclick="filterCategory('desktop')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-laptop"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">LR Desktop (.XMP)</span>
+                    </button>
+
+                    <button onclick="filterCategory('luts')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Video LUTs (.CUBE)</span>
+                    </button>
+
+                    <button onclick="filterCategory('cinematic')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-clapperboard"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Cinematic Look</span>
+                    </button>
+
+                    <button onclick="openModal('unavailableModal')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-tv"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Shopee Live</span>
+                    </button>
+
+                    <button onclick="openModal('unavailableModal')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500 to-amber-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Koin Gratis</span>
+                    </button>
+
+                    <button onclick="openTopup()" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-blue-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Top Up Saldo</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-red-600 via-orange-600 to-red-600 rounded-3xl p-4 sm:p-5 text-white shadow-xl border border-red-400/30">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-white/20">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1 text-yellow-300 font-black text-xl tracking-wider">
+                            <i class="fa-solid fa-bolt text-2xl animate-bounce"></i>
+                            <span>FLASH SALE</span>
+                        </div>
+                        <span class="bg-yellow-400 text-red-950 font-black text-[11px] px-2.5 py-0.5 rounded-full uppercase">DISKON S.D 95%</span>
+                    </div>
+
+                    <!-- Countdown Timer -->
+                    <div class="flex items-center gap-1.5 text-xs font-bold">
+                        <span class="text-orange-100">Berakhir Dalam:</span>
+                        <div id="timerHours" class="bg-black text-white px-2 py-1 rounded-lg font-mono text-sm">02</div> :
+                        <div id="timerMinutes" class="bg-black text-white px-2 py-1 rounded-lg font-mono text-sm">45</div> :
+                        <div id="timerSeconds" class="bg-black text-white px-2 py-1 rounded-lg font-mono text-sm">18</div>
+                    </div>
+                </div>
+
+                <!-- Flash Sale Cards Container -->
+                <div id="flashSaleGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <!-- Contoh Produk Flash Sale dengan Slider -->
+                    <div data-product-card data-product-id="premium-wedding-luts" data-category="luts,wedding" data-name="Premium Wedding LUTs Bundle" data-price="19000" data-old-price="200000" data-image="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=800&q=85" data-rating="4.9" data-sold="1.2rb" onclick="openProductFromCard(this,event)" class="bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex flex-col group cursor-pointer text-gray-800">
+                        <div class="ba-slider-container h-36 w-full mb-3 rounded-xl overflow-hidden relative">
+                            <!-- After Image (Sudah di-edit) -->
+                            <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover" alt="After Edit">
+                            
+                            <!-- Before Image Overlay (Asli) - Menggunakan filter bawaan sbg contoh, atau url beda -->
+                            <div class="ba-image-before">
+                                <img src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover brightness-75 contrast-75 saturate-50" alt="Before Edit">
+                            </div>
+                            <div class="ba-handle">
+                                <div class="ba-handle-button"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <span class="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded-md mb-1 inline-block">Flash Sale!</span>
+                            <h3 class="font-extrabold text-xs sm:text-sm leading-tight mb-1 group-hover:text-orange-500 transition line-clamp-2">Premium Wedding LUTs Bundle</h3>
+                        </div>
+                        <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] text-gray-400 line-through">Rp 200.000</p>
+                                <p class="text-sm font-black text-orange-600">Rp 19.000</p>
+                            </div>
+                            <button onclick="addToCart('Premium Wedding LUTs Bundle',19000,'200000','https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=400&q=80')" class="bg-gradient-to-r from-orange-500 to-red-500 text-white w-8 h-8 rounded-xl shadow-md hover:scale-105 transition flex items-center justify-center">
+                                <i class="fa-solid fa-cart-plus text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Catalog Section Header -->
+            <div id="catalogSection" class="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                    <h2 class="text-xl font-extrabold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-gem text-orange-500"></i> Katalog Preset Lightroom & Video LUTs
+                    </h2>
+                    <p class="text-xs text-gray-500">Pilih preset terbaik sesuai gaya fotografi dan videografi kamu</p>
+                </div>
+
+                <!-- Sort & Filter Dropdown -->
+                <div class="flex items-center gap-2">
+                    <label class="text-xs font-semibold text-gray-600 hidden sm:inline">Urutkan:</label>
+                    <select id="sortSelect" onchange="applySorting()" class="bg-white text-xs border border-gray-200 rounded-xl px-3 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm">
+                        <option value="popular">Paling Populer (Terlaris)</option>
+                        <option value="rating">Rating Tertinggi ⭐ 5.0</option>
+                        <option value="price-low">Harga Terendah</option>
+                        <option value="price-high">Harga Tertinggi</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Main Product Catalog Grid -->
+            <div id="productGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                
+                <!-- Contoh Produk Reguler 1 dengan Slider -->
+                <div data-product-card data-product-id="cinematic-dark-moody" data-category="mobile,desktop,cinematic" data-name="Cinematic Dark Moody Street Style" data-price="25000" data-old-price="150000" data-image="https://images.unsplash.com/photo-1529156069898-49953eb1b5b6?auto=format&fit=crop&w=800&q=85" data-rating="4.9" data-sold="2.1rb" onclick="openProductFromCard(this,event)" class="bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex flex-col group cursor-pointer text-gray-800">
+                    <div class="ba-slider-container h-40 w-full mb-3 rounded-xl overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953eb1b5b6?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover" alt="After Edit">
+                        <div class="ba-image-before">
+                            <img src="https://images.unsplash.com/photo-1529156069898-49953eb1b5b6?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover contrast-50 sepia-[.3]" alt="Before Edit">
+                        </div>
+                        <div class="ba-handle">
+                            <div class="ba-handle-button"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <span class="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-md mb-1 inline-block">.XMP & .DNG</span>
+                        <h3 class="font-extrabold text-xs sm:text-sm leading-tight mb-1 group-hover:text-orange-500 transition line-clamp-2">Cinematic Dark Moody Street Style</h3>
+                        <div class="flex items-center gap-1 text-[10px] text-yellow-500 mb-2">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                            <span class="text-gray-400 ml-1">4.9 (2.1rb Terjual)</span>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] text-gray-400 line-through">Rp 150.000</p>
+                            <p class="text-sm font-black text-orange-600">Rp 25.000</p>
+                        </div>
+                        <button onclick="addToCart('Cinematic Dark Moody Street Style',25000,'150000','https://images.unsplash.com/photo-1529156069898-49953eb1b5b6?auto=format&fit=crop&w=400&q=80')" class="bg-white border-2 border-orange-500 text-orange-500 w-8 h-8 rounded-xl shadow-sm hover:bg-orange-50 transition flex items-center justify-center">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contoh Produk Reguler 2 dengan Slider -->
+                <div data-product-card data-product-id="cyberpunk-neon" data-category="luts,cinematic" data-name="Cyberpunk Neon LUTs Premiere Pro" data-price="45000" data-old-price="250000" data-image="https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=800&q=85" data-rating="5.0" data-sold="890" onclick="openProductFromCard(this,event)" class="bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex flex-col group cursor-pointer text-gray-800">
+                    <div class="ba-slider-container h-40 w-full mb-3 rounded-xl overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover" alt="After Edit">
+                        <div class="ba-image-before">
+                            <img src="https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=400&q=80" class="w-full h-full object-cover contrast-75 brightness-75" alt="Before Edit">
+                        </div>
+                        <div class="ba-handle">
+                            <div class="ba-handle-button"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <span class="text-[10px] font-bold text-purple-600 bg-purple-100 px-2 py-0.5 rounded-md mb-1 inline-block">Video .CUBE</span>
+                        <h3 class="font-extrabold text-xs sm:text-sm leading-tight mb-1 group-hover:text-orange-500 transition line-clamp-2">Cyberpunk Neon LUTs Premiere Pro</h3>
+                        <div class="flex items-center gap-1 text-[10px] text-yellow-500 mb-2">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                            <span class="text-gray-400 ml-1">5.0 (890 Terjual)</span>
+                        </div>
+                    </div>
+                    <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[10px] text-gray-400 line-through">Rp 250.000</p>
+                            <p class="text-sm font-black text-orange-600">Rp 45.000</p>
+                        </div>
+                        <button onclick="addToCart('Cyberpunk Neon LUTs Premiere Pro',45000,'250000','https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=400&q=80')" class="bg-white border-2 border-orange-500 text-orange-500 w-8 h-8 rounded-xl shadow-sm hover:bg-orange-50 transition flex items-center justify-center">
+                            <i class="fa-solid fa-cart-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- PRODUCT DETAIL PAGE - SHOPEE STYLE -->
+        <section id="tab-product" class="hidden cl-product-page space-y-4">
+            <div class="flex items-center gap-2 text-xs text-gray-500">
+                <button onclick="switchTab('home')" class="hover:text-orange-600 font-semibold"><i class="fa-solid fa-house mr-1"></i>Beranda</button>
+                <i class="fa-solid fa-chevron-right text-[9px]"></i>
+                <span>Detail Produk</span>
+            </div>
+
+            <div class="cl-shopee-card overflow-hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                    <div class="p-4 sm:p-6 bg-white">
+                        <div class="rounded-2xl overflow-hidden bg-gray-100 relative">
+                            <img id="productDetailImage" src="" alt="Produk" class="w-full cl-product-hero-img">
+                            <span class="absolute top-3 left-3 bg-orange-500 text-white text-[10px] font-black px-3 py-1.5 rounded-lg shadow">STAR+ ORIGINAL</span>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2 mt-3" id="productDetailThumbs"></div>
+                    </div>
+                    <div class="p-5 sm:p-7 flex flex-col">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span id="productDetailBadge" class="text-[10px] font-black text-orange-600 bg-orange-50 px-2 py-1 rounded-md">PRESET</span>
+                            <span class="text-[10px] text-green-600 bg-green-50 px-2 py-1 rounded-md font-bold"><i class="fa-solid fa-circle-check mr-1"></i>Digital Product</span>
+                        </div>
+                        <h1 id="productDetailName" class="text-xl sm:text-2xl font-black text-gray-900 leading-tight"></h1>
+                        <div class="flex flex-wrap items-center gap-3 mt-3 text-xs">
+                            <span class="text-orange-500 font-bold underline" id="productDetailRating">5.0</span>
+                            <span class="text-gray-300">|</span>
+                            <span id="productDetailSold" class="text-gray-600">0 Terjual</span>
+                            <span class="text-gray-300">|</span>
+                            <span class="text-gray-500">★★★★★</span>
+                        </div>
+                        <div class="mt-5 bg-orange-50 rounded-2xl px-4 py-4">
+                            <div id="productDetailOldPrice" class="text-xs text-gray-400 line-through"></div>
+                            <div id="productDetailPrice" class="text-3xl font-black text-orange-600 mt-0.5"></div>
+                        </div>
+                        <div class="mt-5 space-y-3 text-sm">
+                            <div class="flex gap-3"><i class="fa-solid fa-shield-halved text-orange-500 mt-0.5"></i><div><b>Produk Digital</b><p class="text-xs text-gray-500 mt-0.5">Preset/LUT diproses otomatis setelah pembayaran QRIS terkonfirmasi dan dikirim ke email akunmu.</p></div></div>
+                            <div class="flex gap-3"><i class="fa-solid fa-bolt text-orange-500 mt-0.5"></i><div><b>Pengiriman Otomatis</b><p class="text-xs text-gray-500 mt-0.5">Auto delivery aktif. Bot email server mengirim instruksi download setelah pembayaran QRIS sukses.</p></div></div>
+                            <div class="flex gap-3"><i class="fa-solid fa-rotate-left text-orange-500 mt-0.5"></i><div><b>Garansi File</b><p class="text-xs text-gray-500 mt-0.5">Data order tersimpan realtime di akun Firebase dan dapat dilacak dari menu Pesanan Saya.</p></div></div>
+                        </div>
+                        <div class="mt-auto pt-6">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-gray-600">Kuantitas</span>
+                                <div class="flex items-center border rounded-xl overflow-hidden">
+                                    <button onclick="changeProductQty(-1)" class="w-9 h-9 bg-gray-50">−</button>
+                                    <span id="productDetailQty" class="w-10 text-center text-sm font-black">1</span>
+                                    <button onclick="changeProductQty(1)" class="w-9 h-9 bg-gray-50">+</button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-4 cl-sticky-buy p-2 -mx-2">
+                                <button onclick="buyCurrentProduct()" class="border-2 border-orange-500 text-orange-600 font-black py-3 rounded-xl hover:bg-orange-50"><i class="fa-solid fa-bag-shopping mr-1"></i> Beli Sekarang</button>
+                                <button onclick="addCurrentProductToCart()" class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-black py-3 rounded-xl shadow-lg"><i class="fa-solid fa-cart-plus mr-1"></i> Keranjang</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cl-shopee-card p-5 sm:p-6">
+                <h2 class="font-black text-lg mb-3"><i class="fa-solid fa-file-lines text-orange-500 mr-2"></i>Deskripsi Produk</h2>
+                <p id="productDetailDescription" class="text-sm text-gray-600 leading-relaxed"></p>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
+                    <div class="bg-gray-50 rounded-xl p-3"><p class="text-[10px] text-gray-400">Format</p><b id="productDetailFormat" class="text-xs"></b></div>
+                    <div class="bg-gray-50 rounded-xl p-3"><p class="text-[10px] text-gray-400">Kategori</p><b id="productDetailCategory" class="text-xs"></b></div>
+                    <div class="bg-gray-50 rounded-xl p-3"><p class="text-[10px] text-gray-400">Lisensi</p><b class="text-xs">Personal</b></div>
+                    <div class="bg-gray-50 rounded-xl p-3"><p class="text-[10px] text-gray-400">Delivery</p><b class="text-xs">Email</b></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-orders" class="hidden space-y-4">
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+                    <div>
+                        <h2 class="text-xl font-black text-gray-900 flex items-center gap-2">
+                            <i class="fa-solid fa-box-open text-orange-500"></i> Riwayat Pesanan Digital Saya
+                        </h2>
+                        <p class="text-xs text-gray-500">Daftar preset & LUTs yang telah Anda beli. Akses link Google Drive kapan saja!</p>
+                    </div>
+                    <button onclick="switchTab('home')" class="text-xs font-bold text-orange-600 hover:text-orange-700 bg-orange-50 px-3 py-2 rounded-xl">
+                        <i class="fa-solid fa-plus mr-1"></i> Beli Preset Lain
+                    </button>
+                </div>
+
+                <div class="mt-4 cl-auto-card rounded-2xl p-4 sm:p-5">
+                    <div class="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 font-black text-sm">
+                                <span class="cl-live-dot"></span>
+                                AUTO ORDER ENGINE
+                                <span class="text-[9px] px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-100">LIVE</span>
+                            </div>
+                            <p class="text-[11px] text-gray-500 mt-1">Pembayaran → dikemas → dikirim → selesai diproses otomatis. Resi & tracking ikut berubah real-time.</p>
+                        </div>
+                        <div class="text-left md:text-right">
+                            <div class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Mesin Otomatis</div>
+                            <div class="text-xs font-black text-orange-600 mt-0.5"><i class="fa-solid fa-bolt mr-1"></i>Tanpa klik status</div>
+                        </div>
+                    </div>
+                    <div id="autoOrderDashboard" class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4"></div>
+                </div>
+
+                <!-- Orders Container -->
+                <div id="ordersListContainer" class="mt-4 space-y-4">
+                    <!-- Populated via Firebase / JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-900 text-gray-300 text-xs mt-12 border-t-4 border-orange-500">
+        <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-4 gap-8">
+            
+            <!-- Brand Column -->
+            <div class="space-y-3">
+                <div class="flex items-center gap-3">
+                    <img src="https://files.catbox.moe/ezfd8q.png" alt="CRAZY LENS Logo Footer" 
+                         class="h-10 w-auto glow-logo object-contain"
+                         onerror="this.src='https://placehold.co/100x100/EE4D2D/ffffff?text=CRAZY+LENS'">
+                    <div>
+                        <h3 class="font-black text-white text-base">CRAZY LENS</h3>
+                        <p class="text-[10px] text-orange-400 font-bold">OFFICIAL STORE STAR+</p>
+                    </div>
+                </div>
+                <p class="text-gray-400 leading-relaxed text-[11px]">
+                    Penyedia Preset Lightroom Mobile, Desktop, dan Video LUTs nomor 1 di Indonesia dengan lebih dari 50.000+ Kreator Konten dan Fotografer Puas!
+                </p>
+                <div class="flex items-center gap-2 text-base text-gray-400 pt-1">
+                    <a href="javascript:void(0)" onclick="showUnavailable('Media sosial')" class="hover:text-orange-400"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="javascript:void(0)" onclick="showUnavailable('Media sosial')" class="hover:text-orange-400"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="javascript:void(0)" onclick="showUnavailable('Media sosial')" class="hover:text-orange-400"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="javascript:void(0)" onclick="showUnavailable('Media sosial')" class="hover:text-orange-400"><i class="fa-brands fa-facebook"></i></a>
+                </div>
+            </div>
+
+            <!-- Customer Service -->
+            <div class="space-y-2">
+                <h4 class="font-extrabold text-white text-sm tracking-wide">LAYANAN PELANGGAN</h4>
+                <ul class="space-y-1.5 text-gray-400">
+                    <li><button onclick="openModal('helpModal')" class="hover:text-white transition">Pusat Bantuan & FAQ</button></li>
+                    <li><button onclick="openModal('guideModal')" class="hover:text-white transition">Cara Import File .DNG / .XMP</button></li>
+                    <li><button onclick="openModal('guideModal')" class="hover:text-white transition">Cara Pakai LUTs di Premiere / CapCut</button></li>
+                    <li><button onclick="toggleLiveChat()" class="hover:text-white transition">Live Chat CS 24/7</button></li>
+                    <li><button onclick="openModal('helpModal')" class="hover:text-white transition">Garansi Link Drive Permanent</button></li>
+                </ul>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="space-y-2">
+                <h4 class="font-extrabold text-white text-sm tracking-wide">METODE PEMBAYARAN</h4>
+                <div class="grid grid-cols-3 gap-2 pt-1">
+                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">CrazyPay</div>
+                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">QRIS</div>
+                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">GoPay</div>
+                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">OVO</div>
+                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">DANA</div>
+                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">Bank BCA</div>
+                </div>
+            </div>
+
+            <!-- Guarantee Badges -->
+            <div class="space-y-2">
+                <h4 class="font-extrabold text-white text-sm tracking-wide">JAMINAN CRAZY LENS</h4>
+                <div class="bg-gray-800 rounded-2xl p-3 border border-gray-700 space-y-2 text-[11px]">
+                    <div class="flex items-center gap-2 text-amber-300 font-bold">
+                        <i class="fa-solid fa-bolt text-lg"></i>
+                        <span>PENGIRIMAN PRESET VIA EMAIL</span>
+                    </div>
+                    <p class="text-gray-400">Order saat ini menggunakan mode dummy. Pengiriman preset asli via email akan dihubungkan ke bot/backend pada tahap berikutnya.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Copyright -->
+        <div class="border-t border-gray-800 py-4 text-center text-gray-500 text-[11px]">
+            &copy; 2026 CRAZY LENS Store. Hak Cipta Dilindungi. Dikembangkan dengan UI Shopee Style Super Keren.
+        </div>
+    </footer>
+
+    <!-- Floating Social Proof Toast -->
+    <div id="socialProofToast" class="fixed bottom-20 left-4 z-50 transform translate-y-20 opacity-0 transition-all duration-500 ease-in-out pointer-events-none">
+        <div class="glass-panel border border-orange-500/40 p-3 rounded-2xl shadow-2xl flex items-center gap-3 max-w-xs">
+            <div class="relative">
+                <img id="toastProductImg" src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=100&q=80" 
+                     class="w-10 h-10 rounded-xl object-cover border border-orange-500">
+                <span class="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[9px]">
+                    <i class="fa-solid fa-check"></i>
+                </span>
+            </div>
+            <div class="flex-1 text-xs">
+                <p class="font-bold text-gray-800">Seseorang di Jakarta</p>
+                <p class="text-[10px] text-gray-500">Baru saja membeli Preset Cinematic</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CRAZY LENS DUMMY ORDER UI -->
+    <div id="clDrawerOverlay" class="cl-drawer-overlay" onclick="toggleCartDrawer(false)"></div>
+    <aside id="cartDrawer" class="cl-drawer">
+        <div class="h-full flex flex-col">
+            <div class="p-5 border-b flex items-center justify-between">
+                <div>
+                    <h3 class="font-black text-lg">Keranjang Saya</h3>
+                    <p class="text-xs text-gray-500">Checkout QRIS • pembayaran realtime</p>
+                </div>
+                <button onclick="toggleCartDrawer(false)" class="w-9 h-9 rounded-xl bg-gray-100 hover:bg-gray-200"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="cartItems" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+            <div class="border-t p-5 space-y-3">
+                <div class="flex justify-between font-black"><span>Total</span><span id="cartTotal">Rp 0</span></div>
+                <button onclick="openCheckout()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-black py-3 rounded-2xl shadow-lg">
+                    Lanjut Order <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <div id="orderModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeOrderModal()">
+        <div class="cl-modal">
+            <div class="p-5 border-b flex items-center justify-between">
+                <div>
+                    <h3 id="orderModalTitle" class="font-black text-xl">Data Pemesan</h3>
+                    <p class="text-xs text-gray-500">QRIS otomatis • status pembayaran realtime • email delivery</p>
+                </div>
+                <button onclick="closeOrderModal()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="orderFormWrap" class="p-5">
+                <div class="bg-orange-50 border border-orange-100 rounded-2xl p-3 text-xs text-orange-800 mb-4">
+                    <i class="fa-solid fa-shield-halved mr-1"></i>
+                    Pembayaran diproses melalui <b>QRIS BuatQris Open API</b>. Secret API tetap di server.
+                </div>
+                <form onsubmit="submitRealOrder(event)" class="space-y-3">
+                    <div>
+                        <label class="text-xs font-bold text-gray-700">Nama Lengkap</label>
+                        <input id="orderName" required class="cl-input mt-1" placeholder="Nama kamu">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-700">Email Penerima Preset</label>
+                        <input id="orderEmail" required type="email" class="cl-input mt-1" placeholder="nama@email.com">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-700">No. WhatsApp</label>
+                        <input id="orderPhone" required type="tel" class="cl-input mt-1" placeholder="08xxxxxxxxxx">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-gray-700">Catatan (opsional)</label>
+                        <textarea id="orderNote" rows="3" class="cl-input mt-1" placeholder="Catatan order..."></textarea>
+                    </div>
+                    <div class="cl-payment-method text-[11px]">
+                        <div class="flex justify-between gap-3"><span class="text-gray-500">Total produk</span><b id="orderPreviewTotal">Rp 0</b></div>
+                        <div class="flex justify-between gap-3 mt-1"><span class="text-gray-500">Metode</span><b class="text-orange-600">QRIS</b></div>
+                    </div>
+                    <button id="createOrderButton" type="submit" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-black py-3 rounded-2xl">
+                        <i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS & Bayar
+                    </button>
+                </form>
+            </div>
+
+            <div id="orderPaymentWrap" class="hidden p-5 cl-auth-step">
+                <div class="text-center">
+                    <span class="cl-pill-live"><span class="cl-live-dot"></span> MENUNGGU PEMBAYARAN</span>
+                    <h3 class="font-black text-xl mt-3">Scan QRIS untuk bayar</h3>
+                    <p id="orderPaymentOrderText" class="text-xs text-gray-500 mt-1"></p>
+                </div>
+                <div class="cl-qr-wrap rounded-3xl p-4 mt-4 cl-payment-pulse">
+                    <img id="orderQrImage" src="" alt="QRIS Pembayaran" class="w-[260px] h-[260px] mx-auto rounded-2xl bg-white object-contain shadow-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-[10px] text-gray-400">Nominal yang harus dibayar</div>
+                        <div id="orderPaymentAmount" class="font-black text-lg text-orange-600 mt-0.5">Rp 0</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-[10px] text-gray-400">Kedaluwarsa</div>
+                        <div id="orderPaymentCountdown" class="font-black text-lg text-gray-900 mt-0.5">—</div>
+                    </div>
+                </div>
+                <a id="orderPaymentUrl" href="#" target="_blank" rel="noopener" class="block mt-3 text-center bg-gray-900 text-white font-black text-xs py-3 rounded-2xl">
+                    <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka Halaman Pembayaran
+                </a>
+                <div id="orderPaymentStatus" class="mt-3 bg-blue-50 border border-blue-100 rounded-2xl p-3 text-xs text-blue-800">
+                    <i class="fa-solid fa-rotate fa-spin mr-1"></i> Menunggu webhook pembayaran...
+                </div>
+            </div>
+
+            <div id="orderSuccessWrap" class="hidden p-5 text-center">
+                <div class="w-16 h-16 mx-auto rounded-full bg-green-100 text-green-600 flex items-center justify-center text-2xl mb-3">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="font-black text-xl">Pembayaran Berhasil!</h3>
+                <p id="orderSuccessText" class="text-sm text-gray-500 mt-2"></p>
+                <div class="grid grid-cols-2 gap-2 mt-5">
+                    <button onclick="closeOrderModal(); switchTab('orders')" class="bg-orange-500 text-white font-bold py-3 rounded-xl text-xs">
+                        <i class="fa-solid fa-box mr-1"></i> Lacak Pesanan
+                    </button>
+                    <button onclick="closeOrderModal()" class="bg-gray-900 text-white font-bold py-3 rounded-xl text-xs">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH GOOGLE / FIREBASE -->
+    <div id="authModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeAuthModal()">
+        <div class="cl-modal">
+            <div class="p-5 border-b flex items-center justify-between">
+                <div>
+                    <h3 class="font-black text-xl">Masuk ke CRAZY LENS</h3>
+                    <p class="text-xs text-gray-500">Login cepat dan aman dengan akun Google</p>
+                </div>
+                <button onclick="closeAuthModal()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-4">
+                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-50 via-white to-red-50 border border-orange-100 p-5">
+                    <div class="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-orange-200/30 blur-2xl"></div>
+                    <div class="relative flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center">
+                            <i class="fa-brands fa-google text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-black text-sm">Satu klik untuk masuk</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5">Akun Google terhubung langsung ke Firebase Authentication.</div>
+                        </div>
+                    </div>
+                </div>
+                <button id="googleLoginButton" onclick="loginWithGoogle()" class="w-full bg-white border border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-800 font-black py-3.5 rounded-2xl shadow-sm transition flex items-center justify-center gap-3">
+                    <span class="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                        <i class="fa-brands fa-google text-base"></i>
+                    </span>
+                    Lanjutkan dengan Google
+                </button>
+                <div class="flex items-center gap-2 text-[10px] text-gray-400 justify-center">
+                    <i class="fa-solid fa-shield-halved text-green-500"></i>
+                    <span>Data login dikelola oleh Firebase Authentication</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CRAZYPAY TOP UP -->
+    <div id="topupModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeTopup()">
+        <div class="cl-modal">
+            <div class="p-5 border-b flex items-center justify-between">
+                <div>
+                    <h3 class="font-black text-xl">CrazyPay Wallet</h3>
+                    <p class="text-xs text-gray-500">Top up otomatis via QRIS</p>
+                </div>
+                <button onclick="closeTopup()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="topupFormWrap" class="p-5 space-y-4">
+                <div class="rounded-3xl bg-gradient-to-br from-gray-950 to-gray-800 p-5 text-white">
+                    <div class="text-[10px] text-gray-400">Saldo CrazyPay</div>
+                    <div id="topupWalletBalance" class="text-3xl font-black mt-1 cl-wallet-balance">Rp 0</div>
+                    <div class="text-[10px] text-gray-400 mt-2"><i class="fa-solid fa-bolt text-yellow-300 mr-1"></i> Realtime Firebase</div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-700">Nominal Top Up</label>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <button onclick="setTopupAmount(10000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">10K</button>
+                        <button onclick="setTopupAmount(25000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">25K</button>
+                        <button onclick="setTopupAmount(50000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">50K</button>
+                        <button onclick="setTopupAmount(100000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">100K</button>
+                        <button onclick="setTopupAmount(250000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">250K</button>
+                        <button onclick="setTopupAmount(500000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">500K</button>
+                    </div>
+                    <input id="topupAmount" type="number" min="1000" step="1000" class="cl-input mt-3" placeholder="Atau masukkan nominal sendiri">
+                </div>
+                <button id="createTopupButton" onclick="createTopup()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-black py-3 rounded-2xl">
+                    <i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS Top Up
+                </button>
+            </div>
+
+            <div id="topupPaymentWrap" class="hidden p-5 cl-auth-step">
+                <div class="text-center">
+                    <span class="cl-pill-live"><span class="cl-live-dot"></span> QRIS AKTIF</span>
+                    <h3 class="font-black text-xl mt-3">Scan untuk Top Up</h3>
+                    <p id="topupPaymentText" class="text-xs text-gray-500 mt-1"></p>
+                </div>
+                <div class="cl-qr-wrap rounded-3xl p-4 mt-4 cl-payment-pulse">
+                    <img id="topupQrImage" src="" alt="QRIS Top Up" class="w-[260px] h-[260px] mx-auto rounded-2xl bg-white object-contain shadow-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-4">
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-[10px] text-gray-400">Bayar</div>
+                        <div id="topupPaymentAmount" class="font-black text-lg text-orange-600 mt-0.5">Rp 0</div>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-3">
+                        <div class="text-[10px] text-gray-400">Kedaluwarsa</div>
+                        <div id="topupCountdown" class="font-black text-lg mt-0.5">—</div>
+                    </div>
+                </div>
+                <a id="topupPaymentUrl" href="#" target="_blank" rel="noopener" class="block mt-3 text-center bg-gray-900 text-white font-black text-xs py-3 rounded-2xl">
+                    <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka Pembayaran
+                </a>
+                <div id="topupStatus" class="mt-3 bg-blue-50 border border-blue-100 rounded-2xl p-3 text-xs text-blue-800">
+                    <i class="fa-solid fa-rotate fa-spin mr-1"></i> Menunggu pembayaran...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="unavailablePage" class="modal-backdrop hidden" onclick="if(event.target===this) closeUnavailable()">
+        <div class="cl-modal text-center p-8">
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-orange-50 text-orange-500 flex items-center justify-center text-4xl">
+                <i class="fa-solid fa-puzzle-piece"></i>
+            </div>
+            <h3 class="font-black text-2xl mt-5">Halaman Tidak Tersedia</h3>
+            <p id="unavailableText" class="text-sm text-gray-500 mt-2">Fitur ini belum tersedia untuk sementara.</p>
+            <button onclick="closeUnavailable()" class="mt-6 w-full bg-gray-900 text-white font-black py-3 rounded-2xl">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+            </button>
+        </div>
+    </div>
+
+    <div id="clToast" class="cl-toast"></div>
+
+
+    <!-- UI Interactions + SINGLE HTML ENGINE -->
+    <script>
+        /*
+         * CRAZY LENS — SINGLE HTML EDITION
+         * - Firebase client is used for Google authentication + realtime reads.
+         * - No BuatQris secret is embedded here.
+         * - REAL QRIS: set CRAZY_CONFIG.paymentEndpoint to a secure HTTPS backend/proxy.
+         * - No endpoint => automatic DEMO payment flow so the UI remains fully testable.
+         */
+        const CRAZY_CONFIG = {
+            paymentEndpoint: '', // contoh: https://domain-kamu.com/api
+            autoDemoPaymentMs: 8000,
+            autoDemoPackMs: 7000,
+            autoDemoShipMs: 12000,
+            autoDemoFinishMs: 18000,
+            authContinueUrl: null
+        };
+
+        const CART_KEY = 'crazyLensCart';
+        const LOCAL_ORDERS_KEY = 'crazyLensLocalOrders';
+        const LOCAL_TOPUPS_KEY = 'crazyLensLocalTopups';
+        const LOCAL_WALLET_KEY = 'crazyLensLocalWallet';
+        let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+        let currentProduct = null;
+        let currentProductQty = 1;
+        let realtimeOrders = [];
+        let realtimeTopups = [];
+        let walletBalance = Number(localStorage.getItem(LOCAL_WALLET_KEY) || 0);
+        let currentUser = null;
+        let pendingAction = null;
+        let currentOrderPayment = null;
+        let currentTopupPayment = null;
+        let paymentCountdownTimer = null;
+        let userUnsubscribers = [];
+        let demoTimers = [];
+        const money = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+
+        const DEMO_PRODUCTS = {};
+        document.querySelectorAll('[data-product-card]').forEach(card => {
+            DEMO_PRODUCTS[card.dataset.productId] = {
+                id: card.dataset.productId,
+                name: card.dataset.name,
+                price: Number(card.dataset.price || 0),
+                oldPrice: Number(card.dataset.oldPrice || 0),
+                image: card.dataset.image || card.querySelector('img')?.src || '',
+                rating: card.dataset.rating || '5.0',
+                sold: card.dataset.sold || '0',
+                category: card.dataset.category || '',
+                format: card.innerText.includes('.CUBE') ? '.CUBE' : (card.innerText.includes('.XMP') ? '.XMP & .DNG' : '.DNG')
+            };
+        });
+
+        function esc(v='') {
+            return String(v).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+        }
+        function uid(prefix='CL') { return prefix + '-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2,7).toUpperCase(); }
+        function nowIso(){ return new Date().toISOString(); }
+
+        function showToast(message){
+            const el = document.getElementById('clToast'); if(!el) return;
+            el.textContent = message;
+            el.classList.add('show');
+            clearTimeout(window.__clToastTimer);
+            window.__clToastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+        }
+
+        function getFirebaseServices(){ return window.firebaseServices || null; }
+        function saveLocalOrders(){ localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(realtimeOrders)); window.__crazyLensBroadcast?.('state'); }
+        function saveLocalTopups(){ localStorage.setItem(LOCAL_TOPUPS_KEY, JSON.stringify(realtimeTopups)); window.__crazyLensBroadcast?.('state'); }
+        function loadLocalState(){
+            realtimeOrders = JSON.parse(localStorage.getItem(LOCAL_ORDERS_KEY) || '[]');
+            realtimeTopups = JSON.parse(localStorage.getItem(LOCAL_TOPUPS_KEY) || '[]');
+            walletBalance = Number(localStorage.getItem(LOCAL_WALLET_KEY) || 0);
+            updateWalletUI();
+        }
+
+        function switchTab(tabId){
+            ['home','orders','product'].forEach(id => document.getElementById('tab-'+id)?.classList.toggle('hidden', id !== tabId));
+            if(tabId === 'orders') renderOrders();
+            window.scrollTo({top:0,behavior:'smooth'});
+        }
+
+        function openProductFromCard(card,event){
+            if(event?.target?.closest('button')) return;
+            currentProduct = DEMO_PRODUCTS[card.dataset.productId] || {
+                id: card.dataset.productId,
+                name: card.dataset.name,
+                price: Number(card.dataset.price), oldPrice:Number(card.dataset.oldPrice||0),
+                image:card.dataset.image || card.querySelector('img')?.src || '', rating:card.dataset.rating||'5.0',
+                sold:card.dataset.sold||'0', category:card.dataset.category||'', format:'.DNG'
+            };
+            currentProductQty = 1;
+            renderProductPage();
+            switchTab('product');
+        }
+
+        function renderProductPage(){
+            if(!currentProduct) return;
+            const p=currentProduct;
+            const set=(id,val)=>{const e=document.getElementById(id); if(e)e.textContent=val;};
+            const img=document.getElementById('productDetailImage'); if(img){img.src=p.image; img.onerror=()=>img.src='https://placehold.co/900x900/111827/ffffff?text=CRAZY+LENS';}
+            set('productDetailName',p.name); set('productDetailRating',p.rating); set('productDetailSold',p.sold+' Terjual');
+            set('productDetailOldPrice',p.oldPrice?money(p.oldPrice):''); set('productDetailPrice',money(p.price)); set('productDetailQty',currentProductQty);
+            set('productDetailFormat',p.format);
+            set('productDetailCategory',(p.category||'').split(',').filter(Boolean).map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(' • ')||'Digital');
+            set('productDetailBadge',p.format.includes('CUBE')?'VIDEO LUT':'PRESET LIGHTROOM');
+            set('productDetailDescription', `${p.name} adalah produk digital CRAZY LENS. Pembayaran, proses order, tracking, dan delivery dirancang otomatis dalam satu alur.`);
+            const thumbs=document.getElementById('productDetailThumbs'); if(thumbs) thumbs.innerHTML=`<div class="rounded-xl overflow-hidden border-2 border-orange-500"><img src="${esc(p.image)}" class="w-full h-16 object-cover"></div>`;
+        }
+        function changeProductQty(delta){ currentProductQty=Math.max(1,currentProductQty+delta); const e=document.getElementById('productDetailQty'); if(e)e.textContent=currentProductQty; }
+        function addCurrentProductToCart(){ if(currentProduct) addToCart(currentProduct.id,currentProduct.name,currentProduct.price,currentProduct.oldPrice,currentProduct.image,currentProductQty); }
+        function buyCurrentProduct(){ if(!currentProduct) return; cart=[{...currentProduct,qty:currentProductQty}]; saveCart(); openCheckout(); }
+        function filterCategory(cat){ document.querySelectorAll('[data-product-card]').forEach(card=>{const cats=(card.dataset.category||'').split(','); card.classList.toggle('hidden',cat!=='all'&&!cats.includes(cat));}); document.getElementById('catalogSection')?.scrollIntoView({behavior:'smooth'}); }
+        function filterByTag(tag){ const q=String(tag).toLowerCase(); document.querySelectorAll('[data-product-card]').forEach(card=>card.classList.toggle('hidden',!card.innerText.toLowerCase().includes(q))); document.getElementById('catalogSection')?.scrollIntoView({behavior:'smooth'}); }
+        function handleSearch(){ const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase(); document.querySelectorAll('[data-product-card]').forEach(card=>card.classList.toggle('hidden',!!q&&!(((card.dataset.name||'')+' '+card.innerText).toLowerCase().includes(q)))); }
+        function triggerSearch(){handleSearch();document.getElementById('catalogSection')?.scrollIntoView({behavior:'smooth'});}
+        function scrollToCatalog(){document.getElementById('catalogSection')?.scrollIntoView({behavior:'smooth'});}
+        function applySorting(){
+            const grid=document.getElementById('productGrid'); if(!grid)return;
+            const cards=[...grid.querySelectorAll('[data-product-card]')]; const mode=document.getElementById('sortSelect')?.value;
+            cards.sort((a,b)=> mode==='price-low' ? +a.dataset.price-+b.dataset.price : mode==='price-high' ? +b.dataset.price-+a.dataset.price : mode==='rating' ? +b.dataset.rating-+a.dataset.rating : 0);
+            cards.forEach(c=>grid.appendChild(c));
+        }
+        function copyVoucher(code){ navigator.clipboard?.writeText(code).catch(()=>{}); showToast('Voucher '+code+' berhasil disalin'); }
+
+        function saveCart(){localStorage.setItem(CART_KEY,JSON.stringify(cart));updateCartUI();}
+        function addToCart(id,name,price,oldPrice,image,qty=1){
+            if(typeof name==='number'){image=oldPrice;oldPrice=price;price=name;name=id;id=String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-');qty=1;}
+            const ex=cart.find(x=>x.id===id||x.name===name); if(ex) ex.qty+=Number(qty||1); else cart.push({id,name,price:Number(price),oldPrice:Number(oldPrice||0),image,qty:Number(qty||1)});
+            saveCart(); showToast(name+' masuk keranjang'); toggleCartDrawer(true);
+        }
+        function removeFromCart(i){cart.splice(i,1);saveCart();}
+        function changeQty(i,d){if(!cart[i])return;cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);saveCart();}
+        function cartTotal(){return cart.reduce((s,x)=>s+Number(x.price||0)*Number(x.qty||0),0);}
+        function updateCartUI(){
+            const count=cart.reduce((s,x)=>s+Number(x.qty||0),0); document.getElementById('cartBadgeCount')?.replaceChildren(document.createTextNode(count));
+            document.getElementById('cartTotal') && (document.getElementById('cartTotal').textContent=money(cartTotal()));
+            document.getElementById('orderPreviewTotal') && (document.getElementById('orderPreviewTotal').textContent=money(cartTotal()));
+            const box=document.getElementById('cartItems'); if(!box)return;
+            if(!cart.length){box.innerHTML='<div class="h-full flex flex-col items-center justify-center text-center text-gray-400"><i class="fa-solid fa-cart-shopping text-4xl mb-3"></i><p class="font-bold text-sm">Keranjang masih kosong</p><p class="text-xs mt-1">Tambahkan preset dari katalog.</p></div>';return;}
+            box.innerHTML=cart.map((item,i)=>`<div class="border border-gray-100 rounded-2xl p-3 flex gap-3"><img src="${esc(item.image||'')}" class="w-16 h-16 rounded-xl object-cover" alt=""><div class="flex-1 min-w-0"><div class="font-bold text-xs leading-tight">${esc(item.name)}</div><div class="text-orange-600 font-black text-sm mt-1">${money(item.price)}</div><div class="flex items-center gap-2 mt-2"><button onclick="changeQty(${i},-1)" class="w-6 h-6 rounded-lg bg-gray-100">−</button><span class="text-xs font-bold">${item.qty}</span><button onclick="changeQty(${i},1)" class="w-6 h-6 rounded-lg bg-gray-100">+</button><button onclick="removeFromCart(${i})" class="ml-auto text-red-500 text-xs"><i class="fa-solid fa-trash"></i></button></div></div></div>`).join('');
+        }
+        function toggleCartDrawer(force){const d=document.getElementById('cartDrawer'),o=document.getElementById('clDrawerOverlay');if(!d||!o)return;const open=typeof force==='boolean'?force:!d.classList.contains('open');d.classList.toggle('open',open);o.classList.toggle('open',open);if(open)updateCartUI();}
+
+        // ===== FIREBASE AUTH (GOOGLE) =====
+        function handleLoginButton(){const a=getFirebaseServices()?.auth; if(a?.currentUser) openAccountMenu(); else openAuthModal();}
+        function openAccountMenu(){
+            if(currentUser?.email){
+                const name=currentUser.displayName || currentUser.email.split('@')[0];
+                const ok=confirm(`Akun aktif: ${name}\n${currentUser.email}\n\nLogout?`);
+                if(ok) logoutCrazyLens();
+            }else openAuthModal();
+        }
+        function openAuthModal(){document.getElementById('authModal')?.classList.remove('hidden');}
+        function closeAuthModal(){document.getElementById('authModal')?.classList.add('hidden');}
+
+        function explainAuthError(err){
+            const code=err?.code||'';
+            const map={
+                'auth/operation-not-allowed':'Login Google belum diaktifkan di Firebase Console. Buka Authentication > Sign-in method > Google lalu aktifkan.',
+                'auth/popup-blocked':'Popup login diblokir browser. Izinkan popup untuk website CRAZY LENS lalu coba lagi.',
+                'auth/popup-closed-by-user':'Popup login ditutup sebelum selesai.',
+                'auth/cancelled-popup-request':'Permintaan login dibatalkan. Coba lagi.',
+                'auth/account-exists-with-different-credential':'Email sudah terhubung dengan metode login lain di Firebase.',
+                'auth/unauthorized-domain':'Domain website belum ditambahkan ke Firebase Authentication > Settings > Authorized domains.',
+                'auth/network-request-failed':'Koneksi ke Firebase gagal. Periksa internet atau blokir browser.'
+            };
+            return map[code] || err?.message || 'Login Google gagal.';
+        }
+
+        async function loginWithGoogle(){
+            const svc=getFirebaseServices();
+            if(!svc?.signInWithPopup || !svc?.GoogleAuthProvider) return showToast('Firebase Google Auth belum siap');
+            try{
+                setButtonLoading('googleLoginButton',true,'Membuka Google...');
+                const provider=new svc.GoogleAuthProvider();
+                provider.setCustomParameters({prompt:'select_account'});
+                const result=await svc.signInWithPopup(svc.auth,provider);
+                const name=result?.user?.displayName || result?.user?.email?.split('@')[0] || 'Pengguna';
+                closeAuthModal();
+                showToast(`Selamat datang, ${name} ✓`);
+                completePendingAction();
+            }catch(err){
+                console.error('Firebase Google Auth:',err);
+                showToast(explainAuthError(err));
+            }finally{
+                setButtonLoading('googleLoginButton',false,'<span class="w-7 h-7 rounded-lg bg-white flex items-center justify-center shadow-sm"><i class="fa-brands fa-google text-base"></i></span> Lanjutkan dengan Google');
+            }
+        }
+
+        async function logoutCrazyLens(){try{if(getFirebaseServices()?.auth)await getFirebaseServices().signOut(getFirebaseServices().auth);showToast('Berhasil keluar');}catch{showToast('Gagal keluar');}}
+        function requireLogin(action){const a=getFirebaseServices()?.auth;if(a?.currentUser)action();else{pendingAction=action;openAuthModal();}}
+        function updateAuthUI(user){
+            currentUser=user||null; const l=document.getElementById('loginButtonLabel'),s=document.getElementById('loginButtonSub');
+            if(user){if(l)l.textContent='Akun aktif';if(s)s.textContent=(user.displayName||user.email?.split('@')[0]||'Akun');const e=document.getElementById('orderEmail');if(e)e.value=user.email||'';}
+            else{if(l)l.textContent='Akun';if(s)s.textContent='Masuk';}
+            renderOrders();
+        }
+
+        // ===== FIREBASE REALTIME + LOCAL DEMO FALLBACK =====
+        function detachUserRealtime(){userUnsubscribers.forEach(fn=>{try{fn()}catch{}});userUnsubscribers=[];}
+        function attachUserRealtime(user){
+            detachUserRealtime(); if(!user)return;
+            const svc=getFirebaseServices(); if(!svc?.db || !svc?.onValue || !svc?.ref)return;
+            try{
+                const walletRef=svc.ref(svc.db,`users/${user.uid}/wallet`);
+                const ordersRef=svc.ref(svc.db,`users/${user.uid}/orders`);
+                const topupsRef=svc.ref(svc.db,`users/${user.uid}/topups`);
+                userUnsubscribers.push(svc.onValue(walletRef,s=>{const v=s.val();if(v&&typeof v.balance!=='undefined'){walletBalance=Number(v.balance||0);updateWalletUI();}}));
+                userUnsubscribers.push(svc.onValue(ordersRef,s=>{const raw=s.val()||{};const arr=Object.values(raw);if(arr.length){realtimeOrders=arr.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));renderOrders();syncOpenOrderPayment();}}));
+                userUnsubscribers.push(svc.onValue(topupsRef,s=>{const raw=s.val()||{};const arr=Object.values(raw);if(arr.length){realtimeTopups=arr.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));syncOpenTopupPayment();}}));
+            }catch{}
+        }
+        function updateWalletUI(){document.getElementById('userWalletBalance')&&(document.getElementById('userWalletBalance').textContent=money(walletBalance));document.getElementById('topupWalletBalance')&&(document.getElementById('topupWalletBalance').textContent=money(walletBalance));localStorage.setItem(LOCAL_WALLET_KEY,String(walletBalance)); window.__crazyLensBroadcast?.('state');}
+
+        function getOrderIndex(id){return realtimeOrders.findIndex(o=>o.id===id);}
+        function upsertLocalOrder(order){const i=getOrderIndex(order.id);if(i===-1)realtimeOrders.unshift(order);else realtimeOrders[i]={...realtimeOrders[i],...order};saveLocalOrders();renderOrders();syncOpenOrderPayment();}
+        function upsertLocalTopup(t){const i=realtimeTopups.findIndex(x=>x.id===t.id);if(i===-1)realtimeTopups.unshift(t);else realtimeTopups[i]={...realtimeTopups[i],...t};saveLocalTopups();syncOpenTopupPayment();}
+
+        async function firebaseWrite(path,value){
+            const svc=getFirebaseServices(); const user=svc?.auth?.currentUser; if(!svc?.db||!user||!svc.set)return false;
+            try{await svc.set(svc.ref(svc.db,path),value);return true;}catch{return false;}
+        }
+        async function firebaseUpdate(path,value){
+            const svc=getFirebaseServices(); const user=svc?.auth?.currentUser; if(!svc?.db||!user||!svc.update)return false;
+            try{await svc.update(svc.ref(svc.db,path),value);return true;}catch{return false;}
+        }
+
+        function renderOrders(){
+            const box=document.getElementById('ordersListContainer'); if(!box)return;
+            renderAutoDashboard(realtimeOrders);
+            if(!currentUser){box.innerHTML='<div class="text-center py-16 text-gray-400"><div class="w-16 h-16 mx-auto rounded-3xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl"><i class="fa-solid fa-lock"></i></div><p class="font-black mt-4">Masuk untuk melihat pesanan</p><button onclick="openAuthModal()" class="mt-4 bg-orange-500 text-white font-black px-5 py-2.5 rounded-xl text-xs">Masuk dengan Google</button></div>';return;}
+            if(!realtimeOrders.length){box.innerHTML='<div class="text-center py-14 text-gray-400"><i class="fa-solid fa-box-open text-4xl mb-3"></i><p class="font-bold">Belum ada pesanan</p><p class="text-xs mt-1">Order kamu akan muncul otomatis di sini.</p></div>';return;}
+            const label=s=>({belum_bayar:'Belum Bayar',dikemas:'Dikemas',dikirim:'Dikirim',selesai:'Selesai',dibatalkan:'Dibatalkan'}[s]||s);
+            const cls=s=>({belum_bayar:'bg-amber-50 text-amber-700 border border-amber-100',dikemas:'bg-orange-50 text-orange-700 border border-orange-100',dikirim:'bg-blue-50 text-blue-700 border border-blue-100',selesai:'bg-green-50 text-green-700 border border-green-100',dibatalkan:'bg-red-50 text-red-700 border border-red-100'}[s]||'bg-gray-50 text-gray-500 border border-gray-100');
+            box.innerHTML=realtimeOrders.map(o=>{
+                const steps=['belum_bayar','dikemas','dikirim','selesai']; const idx=steps.indexOf(o.status); const paid=o.payment?.status==='paid';
+                return `<div class="cl-order-card border border-gray-100 rounded-3xl overflow-hidden bg-white"><div class="p-4 sm:p-5 border-b bg-gradient-to-r from-white via-orange-50/40 to-white"><div class="flex items-center justify-between gap-3"><div><div class="font-black text-sm">${esc(o.id)}</div><div class="text-xs text-gray-500 mt-1">${formatDate(o.createdAt)}</div></div><span class="${cls(o.status)} text-[10px] font-black px-2.5 py-1.5 rounded-full">${label(o.status)}</span></div></div>
+                    <div class="px-4 sm:px-5 py-4 border-b"><div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${steps.map((s,i)=>{const reached=idx>=i;return `<div class="rounded-2xl border ${reached?'bg-orange-50 border-orange-200 text-orange-700':'bg-gray-50 border-gray-100 text-gray-400'} p-3"><div class="text-[10px] font-black">${label(s)}</div><div class="text-[9px] mt-1">${reached?'✓ Terlewati':'Menunggu'}</div></div>`}).join('')}</div></div>
+                    <div class="p-4 sm:p-5 grid grid-cols-1 lg:grid-cols-[1.45fr_.9fr] gap-5"><div><div class="space-y-2">${(o.items||[]).map(i=>`<div class="flex gap-3 items-center"><img src="${esc(i.image||'')}" class="w-12 h-12 rounded-xl object-cover" alt=""><div class="flex-1 min-w-0 text-xs"><b class="line-clamp-2">${esc(i.name)}</b><div class="text-gray-500 mt-0.5">${i.qty} × ${money(i.price)}</div></div><b class="text-xs">${money(i.price*i.qty)}</b></div>`).join('')}</div>
+                    <div class="border-t mt-4 pt-3 flex justify-between text-sm font-black"><span>Total</span><span class="text-orange-600">${money(o.total||o.items?.reduce((s,i)=>s+i.price*i.qty,0))}</span></div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 text-[11px]"><div class="bg-gray-50 rounded-xl p-3"><span class="text-gray-400">Email delivery</span><div class="font-bold mt-1 break-all">${esc(o.email||currentUser.email||'-')}</div></div><div class="bg-gray-50 rounded-xl p-3"><span class="text-gray-400">Nomor Resi</span><div class="font-black mt-1 ${o.receipt&&o.receipt!=='-'?'text-orange-600':'text-gray-400'}">${esc(o.receipt||'-')}</div><div class="text-[9px] mt-1 text-gray-400">${esc(o.courier||'Resi otomatis')}</div></div></div>
+                    <div class="mt-3 bg-blue-50 border border-blue-100 rounded-2xl p-3 text-[11px] text-blue-900"><div class="flex items-start gap-2"><i class="fa-solid fa-location-dot mt-0.5 text-blue-600"></i><div class="flex-1"><b>${esc(o.tracking?.label||'Menunggu proses pembayaran')}</b><div class="text-blue-700/70 mt-0.5">${esc(o.tracking?.place||'CRAZY LENS')}</div><div class="mt-1.5 flex items-center gap-2"><span class="cl-live-dot"></span><span class="text-[9px] font-black uppercase tracking-wider">Realtime</span></div></div></div></div>
+                    <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]"><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Pembayaran</div><b class="${paid?'text-green-600':'text-orange-600'} mt-1 inline-block">${paid?'QRIS Berhasil':'Menunggu'}</b></div><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Delivery</div><b class="mt-1 inline-block">${o.delivery?.status==='sent'?'Terkirim':'Proses otomatis'}</b></div><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Dana</div><b class="${o.escrow==='released'?'text-green-600':'text-orange-600'} mt-1 inline-block">${o.escrow==='released'?'Diteruskan':'Demo ditahan'}</b></div><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Transaksi</div><b class="text-gray-700 mt-1 inline-block break-all">${esc(o.qris?.transactionId||'-')}</b></div></div>
+                    <div class="mt-3 flex flex-wrap gap-2">${o.status==='dikirim'?`<button onclick="confirmReceived('${esc(o.id)}')" class="bg-green-600 text-white font-black text-xs px-3 py-2.5 rounded-xl"><i class="fa-solid fa-circle-check mr-1"></i> Pesanan Diterima</button>`:''}${['belum_bayar','dikemas'].includes(o.status)?`<button onclick="cancelOrder('${esc(o.id)}')" class="border border-red-200 text-red-600 font-black text-xs px-3 py-2.5 rounded-xl"><i class="fa-solid fa-ban mr-1"></i> Batalkan</button>`:''}</div></div>
+                    <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/40"><div class="flex items-center justify-between mb-4"><div class="font-black text-sm"><i class="fa-solid fa-route text-orange-500 mr-1"></i> Tracking</div><span class="cl-pill-live"><span class="cl-live-dot"></span>LIVE</span></div>${renderStatusTimeline(o)}</div></div></div>`;
+            }).join('');
+        }
+
+        function formatDate(iso){return iso?new Date(iso).toLocaleString('id-ID'):'-';}
+        function getStatusTime(order,status){return (order.statusHistory||[]).find(x=>x.status===status)?.at||'';}
+        function renderStatusTimeline(order){
+            const labels=[['belum_bayar','fa-wallet'],['dikemas','fa-box'],['dikirim','fa-truck-fast'],['selesai','fa-circle-check']];
+            if(order.status==='dibatalkan') return `<div class="cl-status-line done flex gap-3 pb-7"><div class="cl-status-dot" style="background:#fef2f2;color:#dc2626"><i class="fa-solid fa-ban text-xs"></i></div><div class="pt-1"><div class="font-black text-sm text-red-600">Pesanan Dibatalkan</div><div class="text-[11px] text-gray-500">${formatDate(getStatusTime(order,'dibatalkan'))}</div></div></div>`;
+            const idx=labels.findIndex(x=>x[0]===order.status);
+            return labels.map((x,i)=>{const reached=idx>=i,current=idx===i;return `<div class="cl-status-line ${reached?'done':'pending'} ${current?'current':''} flex gap-3 pb-7"><div class="cl-status-dot"><i class="fa-solid ${x[1]} text-xs"></i></div><div class="pt-1"><div class="font-black text-sm">${({belum_bayar:'Belum Bayar',dikemas:'Dikemas',dikirim:'Dikirim',selesai:'Selesai'})[x[0]]}</div><div class="text-[11px] text-gray-500">${getStatusTime(order,x[0])?formatDate(getStatusTime(order,x[0])):'Menunggu otomatis'}</div>${current?'<div class="text-[10px] text-orange-600 font-black mt-1"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i>Auto engine aktif</div>':''}</div></div>`}).join('');
+        }
+        function renderAutoDashboard(orders){const box=document.getElementById('autoOrderDashboard');if(!box)return;const s={active:0,shipped:0,done:0,delivered:0};orders.forEach(o=>{if(['belum_bayar','dikemas','dikirim'].includes(o.status))s.active++;if(o.status==='dikirim')s.shipped++;if(o.status==='selesai')s.done++;if(o.delivery?.status==='sent')s.delivered++;});box.innerHTML=`<div class="cl-mini-chip"><div class="text-[10px] text-gray-400">Order aktif</div><div class="font-black text-base mt-0.5">${s.active}</div></div><div class="cl-mini-chip"><div class="text-[10px] text-gray-400">Sedang dikirim</div><div class="font-black text-base mt-0.5 text-blue-600">${s.shipped}</div></div><div class="cl-mini-chip"><div class="text-[10px] text-gray-400">Selesai</div><div class="font-black text-base mt-0.5 text-green-600">${s.done}</div></div><div class="cl-mini-chip"><div class="text-[10px] text-gray-400">Email terkirim</div><div class="font-black text-base mt-0.5 text-orange-600">${s.delivered}</div></div>`;}
+
+        // ===== PAYMENT HELPERS =====
+        async function makeQrData(text,targetImgId){
+            const target=document.getElementById(targetImgId); if(!target)return;
+            if(!window.QRCode){target.src='https://placehold.co/520x520/ffffff/111827?text=DEMO+QRIS';return;}
+            const holder=document.createElement('div');holder.style.cssText='position:fixed;left:-99999px;top:-99999px;width:320px;height:320px;background:#fff';document.body.appendChild(holder);
+            new QRCode(holder,{text,width:300,height:300,colorDark:'#111827',colorLight:'#ffffff'});
+            await new Promise(r=>setTimeout(r,120));
+            const canvas=holder.querySelector('canvas');const img=holder.querySelector('img');
+            target.src=canvas?canvas.toDataURL('image/png'):(img?.src||'');holder.remove();
+        }
+        function isRealPaymentMode(){return /^https:\/\//i.test(CRAZY_CONFIG.paymentEndpoint||'');}
+        async function paymentApi(path,body){
+            if(!isRealPaymentMode()) return null;
+            const a=getFirebaseServices()?.auth?.currentUser; const token=a?await a.getIdToken():null;
+            const res=await fetch(CRAZY_CONFIG.paymentEndpoint.replace(/\/$/,'')+path,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body)});
+            const data=await res.json().catch(()=>({})); if(!res.ok||data.success===false)throw new Error(data.message||`HTTP ${res.status}`); return data;
+        }
+        function setButtonLoading(id,loading,label){const el=document.getElementById(id);if(!el)return;if(!el.dataset.originalLabel)el.dataset.originalLabel=el.innerHTML;el.disabled=loading;el.classList.toggle('cl-btn-loading',loading);el.innerHTML=loading?(label||'Memproses...'):el.dataset.originalLabel;}
+
+        // ===== CHECKOUT / ORDER =====
+        function openCheckout(){if(!cart.length)return showToast('Keranjang masih kosong');requireLogin(()=>{toggleCartDrawer(false);document.getElementById('orderFormWrap').classList.remove('hidden');document.getElementById('orderPaymentWrap').classList.add('hidden');document.getElementById('orderSuccessWrap').classList.add('hidden');document.getElementById('orderPreviewTotal').textContent=money(cartTotal());if(currentUser?.email)document.getElementById('orderEmail').value=currentUser.email;document.getElementById('orderModal').classList.remove('hidden');});}
+        function closeOrderModal(){document.getElementById('orderModal')?.classList.add('hidden');clearPaymentCountdown();}
+
+        async function submitRealOrder(e){
+            e.preventDefault(); if(!currentUser)return requireLogin(()=>{}); if(!cart.length)return showToast('Keranjang kosong');
+            setButtonLoading('createOrderButton',true,'Membuat transaksi...');
+            try{
+                const order={id:uid('ORD'),userId:currentUser.uid,name:document.getElementById('orderName').value.trim(),email:document.getElementById('orderEmail').value.trim().toLowerCase(),phone:document.getElementById('orderPhone').value.trim(),note:document.getElementById('orderNote').value.trim(),items:cart.map(x=>({...x})),total:cartTotal(),createdAt:nowIso(),status:'belum_bayar',payment:{status:'pending',method:'QRIS'},receipt:'-',courier:'-',tracking:{label:'Menunggu pembayaran',place:'Payment Engine'},delivery:{status:'waiting'},escrow:'held',statusHistory:[{status:'belum_bayar',at:nowIso()}]};
+                let remote=null;
+                try{remote=await paymentApi('/orders/create',order);}catch(err){if(isRealPaymentMode())throw err;}
+                if(remote?.order)Object.assign(order,remote.order);
+                order.qris=remote?.qris||{transactionId:'DEMO-'+uid('QR'),expiredAt:new Date(Date.now()+15*60*1000).toISOString(),totalAmount:order.total};
+                upsertLocalOrder(order);
+                const path=`users/${currentUser.uid}/orders/${order.id}`;
+                await firebaseWrite(path,order);
+                currentOrderPayment={orderId:order.id,expiresAt:order.qris.expiredAt||order.qris.expired_at};
+                document.getElementById('orderFormWrap').classList.add('hidden');document.getElementById('orderPaymentWrap').classList.remove('hidden');
+                document.getElementById('orderPaymentOrderText').textContent='Order '+order.id;
+                document.getElementById('orderPaymentAmount').textContent=money(order.total);
+                document.getElementById('orderPaymentUrl').href=remote?.qris?.payment_url||'#';
+                document.getElementById('orderPaymentUrl').style.display=remote?.qris?.payment_url?'block':'none';
+                await makeQrData(`CRAZY LENS DEMO|${order.id}|${order.total}`, 'orderQrImage');
+                document.getElementById('orderPaymentStatus').innerHTML=isRealPaymentMode()?'<i class="fa-solid fa-rotate fa-spin mr-1"></i> Menunggu QRIS asli...':'<i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Mode DEMO: pembayaran otomatis berjalan...';
+                startPaymentCountdown('order',order.qris.expiredAt||order.qris.expired_at);
+                scheduleDemoOrder(order.id);
+                showToast(isRealPaymentMode()?'QRIS berhasil dibuat':'Demo order dibuat • auto engine aktif');
+            }catch(err){showToast(err.message||'Gagal membuat order');}
+            finally{setButtonLoading('createOrderButton',false,'<i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS & Bayar');}
+        }
+
+        function scheduleDemoOrder(id){
+            if(isRealPaymentMode())return;
+            demoTimers.push(setTimeout(()=>autoPayOrder(id),CRAZY_CONFIG.autoDemoPaymentMs));
+            demoTimers.push(setTimeout(()=>autoPackOrder(id),CRAZY_CONFIG.autoDemoPaymentMs+CRAZY_CONFIG.autoDemoPackMs));
+            demoTimers.push(setTimeout(()=>autoShipOrder(id),CRAZY_CONFIG.autoDemoPaymentMs+CRAZY_CONFIG.autoDemoPackMs+CRAZY_CONFIG.autoDemoShipMs));
+            demoTimers.push(setTimeout(()=>autoFinishOrder(id),CRAZY_CONFIG.autoDemoPaymentMs+CRAZY_CONFIG.autoDemoPackMs+CRAZY_CONFIG.autoDemoShipMs+CRAZY_CONFIG.autoDemoFinishMs));
+        }
+        function getLocalOrder(id){return realtimeOrders.find(o=>o.id===id);}
+        async function writeOrder(o){o.updatedAt=nowIso();upsertLocalOrder(o);await firebaseWrite(`users/${currentUser?.uid}/orders/${o.id}`,o);}
+        async function autoPayOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='belum_bayar')return;o.payment.status='paid';o.payment.paidAt=nowIso();o.status='dikemas';o.statusHistory.push({status:'dikemas',at:nowIso()});o.tracking={label:'Pembayaran terkonfirmasi • pesanan sedang dikemas',place:'CRAZY LENS Fulfillment'};await writeOrder(o);syncOpenOrderPayment();showToast('Pembayaran otomatis ✓');}
+        async function autoPackOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='dikemas')return;o.status='dikirim';o.receipt='CLX'+Math.floor(100000000+Math.random()*900000000);o.courier='CRAZY EXPRESS';o.statusHistory.push({status:'dikirim',at:nowIso()});o.tracking={label:'Paket diserahkan ke kurir',place:'Jakarta • Sortation Center'};await writeOrder(o);showToast('Resi dibuat otomatis ✓');}
+        async function autoShipOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='dikirim')return;o.tracking={label:'Paket sedang menuju email penerima',place:o.email||'Digital Delivery'};o.delivery={status:'sent',sentAt:nowIso(),message:'Preset siap diunduh via email (demo)'};await writeOrder(o);showToast('Delivery email otomatis ✓');}
+        async function autoFinishOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='dikirim')return;o.status='selesai';o.escrow='released';o.statusHistory.push({status:'selesai',at:nowIso()});o.tracking={label:'Pesanan selesai',place:'Digital Delivery'};await writeOrder(o);showToast('Order selesai • dana demo diteruskan ✓');}
+        function syncOpenOrderPayment(){if(!currentOrderPayment)return;const o=getLocalOrder(currentOrderPayment.orderId);if(!o)return;const status=document.getElementById('orderPaymentStatus');if(o.payment?.status==='paid'){if(status)status.innerHTML='<i class="fa-solid fa-circle-check mr-1"></i> Pembayaran terkonfirmasi • auto order berjalan.';if(document.getElementById('orderPaymentWrap')&&!document.getElementById('orderPaymentWrap').classList.contains('hidden')){document.getElementById('orderPaymentWrap').classList.add('hidden');document.getElementById('orderSuccessWrap').classList.remove('hidden');document.getElementById('orderSuccessText').innerHTML=`Order <b>${esc(o.id)}</b> sudah dibayar.<br><span class="text-orange-600 font-black">Auto Order aktif</span> — sistem lanjut otomatis.`;cart=[];saveCart();}clearPaymentCountdown();currentOrderPayment=null;}else if(o.status==='dibatalkan'){if(status)status.innerHTML='<i class="fa-solid fa-circle-xmark mr-1"></i> Order dibatalkan.';}}
+
+        async function confirmReceived(id){const o=getLocalOrder(id);if(!o||o.status!=='dikirim')return;await autoFinishOrder(id);showToast('Pesanan diterima ✓');}
+        async function cancelOrder(id){const o=getLocalOrder(id);if(!o||!['belum_bayar','dikemas'].includes(o.status))return;o.status='dibatalkan';o.statusHistory.push({status:'dibatalkan',at:nowIso()});o.tracking={label:'Pesanan dibatalkan',place:'CRAZY LENS'};o.escrow='none';await writeOrder(o);showToast('Pesanan dibatalkan');}
+
+        // ===== CRAZYPAY TOP UP =====
+        function openTopup(){requireLogin(()=>{document.getElementById('topupModal').classList.remove('hidden');document.getElementById('topupFormWrap').classList.remove('hidden');document.getElementById('topupPaymentWrap').classList.add('hidden');updateWalletUI();setTopupAmount(0);});}
+        function closeTopup(){document.getElementById('topupModal')?.classList.add('hidden');clearPaymentCountdown();}
+        function setTopupAmount(amount){const e=document.getElementById('topupAmount');if(e)e.value=amount?amount:'';}
+        async function createTopup(){
+            const amount=Number(document.getElementById('topupAmount').value||0);if(!amount||amount<1000)return showToast('Minimal top up Rp 1.000');
+            setButtonLoading('createTopupButton',true,'Membuat transaksi...');
+            try{
+                const topup={id:uid('TOP'),userId:currentUser.uid,amount,createdAt:nowIso(),status:'pending',payment:{status:'pending',method:'QRIS'}};
+                let remote=null;try{remote=await paymentApi('/topups/create',topup);}catch(err){if(isRealPaymentMode())throw err;}
+                if(remote?.topup)Object.assign(topup,remote.topup);topup.qris=remote?.qris||{transactionId:'DEMO-'+uid('QR'),expiredAt:new Date(Date.now()+15*60*1000).toISOString(),totalAmount:amount};
+                upsertLocalTopup(topup);await firebaseWrite(`users/${currentUser.uid}/topups/${topup.id}`,topup);
+                currentTopupPayment={topupId:topup.id,expiresAt:topup.qris.expiredAt||topup.qris.expired_at};
+                document.getElementById('topupFormWrap').classList.add('hidden');document.getElementById('topupPaymentWrap').classList.remove('hidden');
+                document.getElementById('topupPaymentText').textContent=`Top up ${topup.id} • saldo akan bertambah otomatis setelah pembayaran sukses.`;
+                document.getElementById('topupPaymentAmount').textContent=money(amount);
+                document.getElementById('topupPaymentUrl').href=remote?.qris?.payment_url||'#';document.getElementById('topupPaymentUrl').style.display=remote?.qris?.payment_url?'block':'none';
+                await makeQrData(`CRAZY LENS TOPUP DEMO|${topup.id}|${amount}`,'topupQrImage');
+                document.getElementById('topupStatus').innerHTML=isRealPaymentMode()?'<i class="fa-solid fa-rotate fa-spin mr-1"></i> Menunggu pembayaran QRIS asli...':'<i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Mode DEMO: pembayaran akan terkonfirmasi otomatis.';
+                startPaymentCountdown('topup',topup.qris.expiredAt||topup.qris.expired_at);
+                if(!isRealPaymentMode())setTimeout(()=>autoCompleteTopup(topup.id),CRAZY_CONFIG.autoDemoPaymentMs);
+                showToast(isRealPaymentMode()?'QRIS top up siap':'Top up demo dibuat • auto credit aktif');
+            }catch(err){showToast(err.message||'Gagal membuat top up');}
+            finally{setButtonLoading('createTopupButton',false,'<i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS Top Up');}
+        }
+        async function autoCompleteTopup(id){const t=realtimeTopups.find(x=>x.id===id);if(!t||t.status==='success')return;t.status='success';t.payment.status='paid';t.payment.paidAt=nowIso();walletBalance+=Number(t.amount||0);updateWalletUI();upsertLocalTopup(t);await firebaseWrite(`users/${currentUser?.uid}/topups/${t.id}`,t);await firebaseWrite(`users/${currentUser?.uid}/wallet`,{balance:walletBalance,updatedAt:nowIso(),mode:'demo'});syncOpenTopupPayment();showToast('CrazyPay +'+money(t.amount)+' ✓');}
+        function syncOpenTopupPayment(){if(!currentTopupPayment)return;const t=realtimeTopups.find(x=>x.id===currentTopupPayment.topupId);if(!t)return;const s=document.getElementById('topupStatus');if(t.status==='success'){if(s)s.innerHTML='<i class="fa-solid fa-circle-check mr-1"></i> Top up berhasil • saldo CrazyPay diperbarui.';clearPaymentCountdown();currentTopupPayment=null;setTimeout(closeTopup,1000);}}
+
+        // ===== GENERIC =====
+        function startPaymentCountdown(kind,iso){clearPaymentCountdown();const update=()=>{const ms=new Date(iso).getTime()-Date.now();const t=ms>0?formatEta(ms):'Kadaluarsa';const el=document.getElementById(kind==='order'?'orderPaymentCountdown':'topupCountdown');if(el)el.textContent=t;if(ms<=0)clearPaymentCountdown();};update();paymentCountdownTimer=setInterval(update,1000);}
+        function clearPaymentCountdown(){if(paymentCountdownTimer){clearInterval(paymentCountdownTimer);paymentCountdownTimer=null;}}
+        function formatEta(ms){if(ms<=0)return'sebentar lagi';const s=Math.ceil(ms/1000);if(s<60)return s+' dtk';const m=Math.floor(s/60);return m+'m '+String(s%60).padStart(2,'0')+'d';}
+        function showUnavailable(feature='Fitur ini'){document.getElementById('unavailableText').textContent=feature+' belum tersedia untuk sementara. Halaman ini akan ditambahkan nanti.';document.getElementById('unavailablePage').classList.remove('hidden');}
+        function closeUnavailable(){document.getElementById('unavailablePage').classList.add('hidden');}
+        function openModal(id){const labels={notifModal:'Notifikasi',helpModal:'Pusat Bantuan & FAQ'};if(id==='topUpModal')return openTopup();showUnavailable(labels[id]||'Fitur ini');}
+        function toggleLiveChat(){showUnavailable('Live Chat CS 24/7');}
+
+        function initSliders(){document.querySelectorAll('.ba-slider-container').forEach(container=>{const h=container.querySelector('.ba-handle'),b=container.querySelector('.ba-image-before');if(!h||!b)return;let moving=false;const slide=x=>{const r=container.getBoundingClientRect();const p=Math.max(0,Math.min(100,((x-r.left)/r.width)*100));h.style.left=p+'%';b.style.width=p+'%';};h.addEventListener('mousedown',e=>{moving=true;e.preventDefault()});container.addEventListener('mousedown',e=>{moving=true;slide(e.pageX-window.scrollX);});window.addEventListener('mousemove',e=>{if(moving)slide(e.pageX-window.scrollX)});window.addEventListener('mouseup',()=>moving=false);h.addEventListener('touchstart',()=>moving=true,{passive:true});container.addEventListener('touchmove',e=>{if(moving)slide(e.touches[0].pageX-window.scrollX)},{passive:true});window.addEventListener('touchend',()=>moving=false);});}
+
+        function resumeAutoEngine(){
+            if(isRealPaymentMode()) return;
+            const now=Date.now();
+            realtimeOrders.forEach(o=>{
+                if(!o.createdAt || ['selesai','dibatalkan'].includes(o.status)) return;
+                const age=now-new Date(o.createdAt).getTime();
+                const p=CRAZY_CONFIG.autoDemoPaymentMs, k=CRAZY_CONFIG.autoDemoPackMs, s=CRAZY_CONFIG.autoDemoShipMs, f=CRAZY_CONFIG.autoDemoFinishMs;
+                if(o.status==='belum_bayar' && age>=p) autoPayOrder(o.id);
+                if(o.status==='dikemas' && age>=p+k) autoPackOrder(o.id);
+                if(o.status==='dikirim' && age>=p+k+s) autoShipOrder(o.id);
+                if(o.status==='dikirim' && age>=p+k+s+f) autoFinishOrder(o.id);
+            });
+            realtimeTopups.forEach(t=>{
+                if(t.status==='pending' && t.createdAt && now-new Date(t.createdAt).getTime()>=CRAZY_CONFIG.autoDemoPaymentMs) autoCompleteTopup(t.id);
+            });
+        }
+
+        function completePendingAction(){if(pendingAction){const a=pendingAction;pendingAction=null;setTimeout(a,150);}}
+        document.addEventListener('DOMContentLoaded',()=>{loadLocalState();updateCartUI();renderOrders();initSliders();setInterval(resumeAutoEngine,3000);resumeAutoEngine();if(window.firebaseServices)onFirebaseReady();else window.addEventListener('crazyFirebaseReady',onFirebaseReady,{once:true});});
+
+        try{
+            const bc=new BroadcastChannel('crazy-lens-live');
+            bc.onmessage=e=>{
+                if(e.data?.type==='state'){loadLocalState();renderOrders();updateWalletUI();}
+            };
+            window.__crazyLensBroadcast=(type)=>bc.postMessage({type});
+        }catch{
+            window.__crazyLensBroadcast=()=>{};
+        }
+
+        window.addEventListener('storage',e=>{if(e.key===CART_KEY){cart=JSON.parse(localStorage.getItem(CART_KEY)||'[]');updateCartUI();}if(e.key===LOCAL_ORDERS_KEY||e.key===LOCAL_TOPUPS_KEY||e.key===LOCAL_WALLET_KEY){loadLocalState();renderOrders();}});
+
+        function onFirebaseReady(){
+            const svc=getFirebaseServices();if(!svc)return;
+            svc.onAuthStateChanged(svc.auth,user=>{updateAuthUI(user);if(user){attachUserRealtime(user);renderOrders();completePendingAction();}else{detachUserRealtime();renderOrders();}});
+
+        }
+    </script>
+
+    <!-- FIREBASE INITIALIZATION SCRIPT (ES MODULE) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+        import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3usv5rw801fV1nrXIwyDQ6eYEzC7hDk0",
+            authDomain: "kodangz.firebaseapp.com",
+            databaseURL: "https://kodangz-default-rtdb.firebaseio.com",
+            projectId: "kodangz",
+            storageBucket: "kodangz.firebasestorage.app",
+            messagingSenderId: "306989473099",
+            appId: "1:306989473099:web:9049d3135ce13e08a8dcce",
+            measurementId: "G-HMX0B2X63Z"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        let analytics = null;
+        try { analytics = getAnalytics(app); } catch {}
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        window.firebaseServices = {
+            app, analytics, auth, db, ref, onValue, set, update,
+            onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut
+        };
+        window.dispatchEvent(new Event('crazyFirebaseReady'));
+    </script>
+
+</body>
+</html>
