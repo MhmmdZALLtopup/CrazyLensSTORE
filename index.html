@@ -902,10 +902,6 @@
                 <div class="grid grid-cols-3 gap-2 pt-1">
                     <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">CrazyPay</div>
                     <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">QRIS</div>
-                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">GoPay</div>
-                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">OVO</div>
-                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">DANA</div>
-                    <div class="bg-white rounded-lg p-1.5 flex items-center justify-center text-gray-800 font-black text-[10px] shadow">Bank BCA</div>
                 </div>
             </div>
 
@@ -1009,9 +1005,7 @@
                             <label class="text-[10px] font-black text-gray-500 uppercase">Metode Pembayaran</label>
                             <select id="checkoutPaymentMethod" class="cl-input mt-1" onchange="selectPaymentMethodV5(this.value)">
                                 <option value="QRIS">QRIS • LIVE</option>
-                                <option value="VA">Transfer VA Bank • Belum terhubung</option>
-                                <option value="EWALLET">E-Wallet • Belum terhubung</option>
-                                <option value="COD">COD • Untuk produk fisik</option>
+                                <option value="CRAZYPAY">CrazyPay Wallet</option>
                             </select>
                         </div>
                     </div>
@@ -3071,5 +3065,298 @@
   window.openSettings=()=>{const m=document.getElementById('settingsModal');if(!m)return;const t=document.getElementById('darkModeToggle');if(t)t.checked=document.body.classList.contains('dark');const img=document.getElementById('settingsProfilePreview');const u=current();if(img&&u?.photoURL)img.src=u.photoURL;m.classList.remove('hidden');};
 })();
 </script>
+
+
+<!-- CRAZY LENS FINAL PATCH: 10 PRODUCTS + QRIS/CRAZYPAY ONLY -->
+<script>
+(() => {
+  'use strict';
+
+  const ALLOWED_PRODUCT_IDS = new Set([
+    'premium-wedding-luts',
+    'cinematic-dark-moody',
+    'cyberpunk-neon',
+    'extra-01-v6',
+    'extra-02-v6',
+    'extra-03-v6',
+    'extra-04-v6',
+    'extra-05-v6',
+    'extra-06-v6',
+    'extra-07-v6'
+  ]);
+
+  function enforceTenProducts() {
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
+
+    // Hanya 10 produk yang ditampilkan di katalog utama.
+    grid.querySelectorAll('[data-product-card]').forEach(card => {
+      const id = card.dataset.productId;
+      const allowed = ALLOWED_PRODUCT_IDS.has(id);
+      card.style.display = allowed ? '' : 'none';
+      if (allowed) {
+        card.classList.remove('hidden');
+      }
+    });
+
+    const badge = document.getElementById('productCountBadge');
+    if (badge) badge.textContent = '10 produk';
+
+    // Semua 10 produk wajib mempunyai Before/After slider.
+    document.querySelectorAll('[data-product-card]').forEach(card => {
+      if (!ALLOWED_PRODUCT_IDS.has(card.dataset.productId)) return;
+      try {
+        window.enhanceAllBAs?.();
+        if (typeof cardBA === 'function') cardBA(card);
+        const frame = card.querySelector('.ba-slider-container, .cl-ba-v5, .cl-v6-ba, .cl-ultra-ba');
+        if (frame && !frame.querySelector('.ba-image-before, .cl-ba-before-wrap')) {
+          if (typeof window.enhanceAllBAs === 'function') window.enhanceAllBAs();
+        }
+      } catch (_) {}
+    });
+  }
+
+  // Hapus/hide produk yang tidak termasuk 10 pilihan setelah semua engine selesai inject.
+  const boot = () => {
+    enforceTenProducts();
+    setTimeout(enforceTenProducts, 350);
+    setTimeout(enforceTenProducts, 1200);
+    setTimeout(enforceTenProducts, 2500);
+    window.addEventListener('crazyFirebaseReady', () => setTimeout(enforceTenProducts, 300));
+  };
+
+  // ---------------- PAYMENT: ONLY QRIS + CRAZYPAY ----------------
+  function configurePaymentMethods() {
+    const select = document.getElementById('checkoutPaymentMethod');
+    if (!select) return;
+
+    select.innerHTML = `
+      <option value="QRIS">QRIS • LIVE</option>
+      <option value="CRAZYPAY">CrazyPay Wallet</option>
+    `;
+
+    if (![...select.options].some(o => o.value === select.value)) {
+      select.value = 'QRIS';
+    }
+
+    select.onchange = () => window.selectPaymentMethodV5?.(select.value);
+    window.selectPaymentMethodV5?.(select.value);
+  }
+
+  window.selectPaymentMethodV5 = function(method) {
+    const normalized = method === 'CRAZYPAY' ? 'CRAZYPAY' : 'QRIS';
+    const hint = document.getElementById('checkoutPaymentHint');
+    const label = hint?.querySelectorAll('b')[1];
+    const button = document.getElementById('createOrderButton');
+
+    if (label) label.textContent = normalized === 'CRAZYPAY' ? 'CrazyPay Wallet' : 'QRIS LIVE';
+
+    if (hint) {
+      let note = hint.querySelector('.cl-payment-note');
+      if (!note) {
+        note = document.createElement('div');
+        note.className = 'cl-payment-note mt-2 text-[10px] text-gray-500';
+        hint.appendChild(note);
+      }
+      note.textContent = normalized === 'CRAZYPAY'
+        ? 'Bayar langsung menggunakan saldo CrazyPay kamu.'
+        : 'Scan QRIS dan pembayaran akan diverifikasi otomatis.';
+    }
+
+    if (button) {
+      button.innerHTML = normalized === 'CRAZYPAY'
+        ? '<i class="fa-solid fa-wallet mr-1"></i> Bayar dengan CrazyPay'
+        : '<i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS & Bayar';
+    }
+  };
+
+  async function checkoutWithCrazyPay(e) {
+    e?.preventDefault();
+
+    const u = typeof currentUser !== 'undefined' ? currentUser : null;
+    if (!u) return window.requireLogin?.(() => {});
+    if (!Array.isArray(cart) || !cart.length) return showToast?.('Keranjang kosong');
+
+    const selected = cart.filter(x => x.selected !== false);
+    if (!selected.length) return showToast?.('Pilih minimal 1 produk untuk checkout');
+
+    const totalProduct = selected.reduce((a, x) => a + Number(x.price || 0) * Number(x.qty || 0), 0);
+    const shipping = Number(document.getElementById('checkoutShipping')?.value || 0);
+    const voucher = Number(document.getElementById('checkoutVoucherValue')?.value || 0);
+    const total = Math.max(1000, totalProduct + shipping - voucher);
+
+    const balance = Number(typeof walletBalance !== 'undefined' ? walletBalance : 0);
+    if (balance < total) {
+      showToast?.(`Saldo CrazyPay kurang ${money?.(total - balance) || ('Rp ' + (total - balance).toLocaleString('id-ID'))}. Silakan Top Up.`);
+      setTimeout(() => window.openTopup?.(), 500);
+      return;
+    }
+
+    try {
+      window.setButtonLoading?.('createOrderButton', true, 'Memproses CrazyPay...');
+
+      const nowFn = typeof now === 'function' ? now : () => new Date().toISOString();
+      const oid = 'ORD-' + Date.now().toString(36).toUpperCase();
+      const order = {
+        id: oid,
+        userId: u.uid,
+        name: (document.getElementById('orderName')?.value || u.displayName || '').trim(),
+        email: (document.getElementById('orderEmail')?.value || u.email || '').trim().toLowerCase(),
+        phone: (document.getElementById('orderPhone')?.value || '').trim(),
+        note: (document.getElementById('orderNote')?.value || '').trim(),
+        address: (document.getElementById('checkoutAddress')?.value || '').trim(),
+        courier: document.getElementById('checkoutCourier')?.value || 'DIGITAL',
+        totalProduct,
+        shippingCost: shipping,
+        voucherDiscount: voucher,
+        total,
+        items: selected.map(x => ({ ...x })),
+        createdAt: nowFn(),
+        autoCancelAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        status: 'dikemas',
+        payment: {
+          status: 'paid',
+          method: 'CRAZYPAY',
+          paidAt: nowFn(),
+          amount: total
+        },
+        receipt: '-',
+        tracking: { label: 'Pembayaran CrazyPay terkonfirmasi • pesanan diproses', place: 'CRAZY LENS' },
+        delivery: { status: 'waiting' },
+        escrow: 'held',
+        statusHistory: [
+          { status: 'belum_bayar', at: nowFn(), source: 'checkout' },
+          { status: 'dikemas', at: nowFn(), source: 'crazypay' }
+        ],
+        sellerId: 'crazy-lens-store'
+      };
+
+      // Kurangi saldo CrazyPay lokal + realtime Firebase.
+      walletBalance = balance - total;
+      window.updateWalletUI?.();
+
+      if (typeof dbWrite === 'function') {
+        await dbWrite(`users/${u.uid}/wallet`, {
+          balance: walletBalance,
+          updatedAt: nowFn(),
+          source: 'CrazyPay Purchase'
+        });
+        await dbWrite(`wallets/${u.uid}`, {
+          balance: walletBalance,
+          updatedAt: nowFn(),
+          source: 'CrazyPay Purchase'
+        });
+        await dbWrite(`users/${u.uid}/walletTransactions/${oid}`, {
+          id: oid,
+          type: 'purchase',
+          amount: total,
+          balanceAfter: walletBalance,
+          createdAt: nowFn(),
+          orderId: oid,
+          method: 'CRAZYPAY'
+        });
+      } else if (typeof firebaseWrite === 'function') {
+        await firebaseWrite(`users/${u.uid}/wallet`, {
+          balance: walletBalance,
+          updatedAt: nowFn(),
+          source: 'CrazyPay Purchase'
+        });
+      }
+
+      try { upsertLocalOrder(order); } catch (_) {}
+      if (typeof dbWrite === 'function') {
+        await dbWrite(`users/${u.uid}/orders/${oid}`, order);
+        await dbWrite(`seller/orders/${oid}`, order);
+      } else if (typeof firebaseWrite === 'function') {
+        await firebaseWrite(`users/${u.uid}/orders/${oid}`, order);
+        await firebaseWrite(`seller/orders/${oid}`, order);
+      }
+
+      try { adjustStockV?.(selected, -1); } catch (_) {}
+      try { createNotification?.('Pembayaran CrazyPay berhasil', `${oid} • saldo CrazyPay terpotong ${money(total)}.`, 'wallet'); } catch (_) {}
+
+      // Hapus item yang sudah dibayar dari cart.
+      const selectedIds = new Set(selected.map(x => x.id));
+      cart = cart.filter(x => !selectedIds.has(x.id));
+      window.saveCart?.();
+
+      const successWrap = document.getElementById('orderSuccessWrap');
+      const formWrap = document.getElementById('orderFormWrap');
+      const paymentWrap = document.getElementById('orderPaymentWrap');
+      if (formWrap) formWrap.classList.add('hidden');
+      if (paymentWrap) paymentWrap.classList.add('hidden');
+      if (successWrap) {
+        successWrap.classList.remove('hidden');
+        const text = document.getElementById('orderSuccessText');
+        if (text) text.textContent = `${oid} berhasil dibayar dengan CrazyPay. Saldo tersisa ${money(walletBalance)}. Pesanan otomatis masuk proses packing.`;
+      }
+
+      showToast?.('Pembayaran CrazyPay berhasil ✓');
+      try { window.runPostPaymentAutomationV5?.(oid); } catch (_) {}
+      try { renderOrders?.(); } catch (_) {}
+    } catch (err) {
+      showToast?.('Pembayaran CrazyPay gagal: ' + (err?.message || err));
+    } finally {
+      window.setButtonLoading?.('createOrderButton', false, '<i class="fa-solid fa-wallet mr-1"></i> Bayar dengan CrazyPay');
+    }
+  }
+
+  function installSubmitBridge() {
+    const previousSubmit = window.submitRealOrder;
+    if (!previousSubmit || previousSubmit.__crazyPayBridge) return;
+
+    const bridge = async function(e) {
+      const method = document.getElementById('checkoutPaymentMethod')?.value || 'QRIS';
+      if (method === 'CRAZYPAY') return checkoutWithCrazyPay(e);
+      return previousSubmit(e);
+    };
+    bridge.__crazyPayBridge = true;
+    window.submitRealOrder = bridge;
+  }
+
+  function init() {
+    configurePaymentMethods();
+    enforceTenProducts();
+    installSubmitBridge();
+
+    const select = document.getElementById('checkoutPaymentMethod');
+    if (select) select.value = 'QRIS';
+    window.selectPaymentMethodV5?.('QRIS');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      boot();
+      setTimeout(init, 400);
+      setTimeout(enforceTenProducts, 1000);
+      setTimeout(installSubmitBridge, 1600);
+      setTimeout(enforceTenProducts, 2200);
+    }, { once: true });
+  } else {
+    boot();
+    setTimeout(init, 250);
+  }
+
+  // Pastikan engine dinamis tetap menampilkan hanya 10 produk.
+  if (window.MutationObserver) {
+    const observer = new MutationObserver(() => {
+      clearTimeout(window.__clTenProductsDebounce);
+      window.__clTenProductsDebounce = setTimeout(() => {
+        enforceTenProducts();
+        installSubmitBridge();
+        configurePaymentMethods();
+      }, 40);
+    });
+    const grid = document.getElementById('productGrid');
+    if (grid) observer.observe(grid, { childList: true });
+  }
+
+  window.addEventListener('crazyFirebaseReady', () => {
+    setTimeout(enforceTenProducts, 350);
+    setTimeout(init, 700);
+  });
+})();
+</script>
+
 </body>
 </html>
