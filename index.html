@@ -216,6 +216,46 @@
         .cl-pill-live { display:inline-flex; align-items:center; gap:6px; border:1px solid #bbf7d0; background:#f0fdf4; color:#15803d; border-radius:999px; padding:5px 9px; font-size:9px; font-weight:900; }
         .cl-payment-method { border:1px solid #fed7aa; background:#fff7ed; border-radius:14px; padding:10px 12px; }
 
+
+        /* ===== CRAZY LENS — ADVANCED SETTINGS / DARK / REVIEWS / CMS ===== */
+        :root{--cl-bg:#f6f6f8;--cl-card:#fff;--cl-soft:#f9fafb;--cl-text:#111827;--cl-muted:#6b7280;--cl-line:#e5e7eb;--cl-accent:#f97316;}
+        body.dark{background:var(--cl-bg);color:#e5e7eb;--cl-bg:#0a0a0b;--cl-card:#151517;--cl-soft:#1c1c1f;--cl-text:#f5f5f5;--cl-muted:#9ca3af;--cl-line:#2b2b30;}
+        body.dark .bg-white{background:#151517 !important;color:#e5e7eb;}
+        body.dark .bg-gray-50{background:#1c1c1f !important;}
+        body.dark .bg-gray-100{background:#242428 !important;}
+        body.dark .bg-gray-200{background:#2b2b30 !important;}
+        body.dark .text-gray-900,body.dark .text-gray-800{color:#f5f5f5 !important;}
+        body.dark .text-gray-700{color:#e5e7eb !important;}
+        body.dark .text-gray-600{color:#d1d5db !important;}
+        body.dark .text-gray-500{color:#a1a1aa !important;}
+        body.dark .text-gray-400{color:#9ca3af !important;}
+        body.dark .border-gray-100,body.dark .border-gray-200{border-color:#2b2b30 !important;}
+        body.dark .cl-shopee-card,body.dark .cl-timeline-card,body.dark .cl-mini-chip{background:#151517;border-color:#2b2b30;}
+        body.dark .cl-sticky-buy{background:rgba(20,20,22,.94);border-color:#2b2b30;}
+        body.dark .cl-drawer{background:#101012;color:#e5e7eb;}
+        body.dark .cl-input{background:#1b1b1f;color:#f5f5f5;border-color:#33333a;}
+        body.dark .cl-soft-gradient{background:linear-gradient(135deg,#151517,#1d1713 55%,#151517);}
+        body.dark .cl-qr-wrap{background:radial-gradient(circle at 50% 30%,#241a12 0,#151517 58%,#101012 100%);border-color:#633d20;}
+        body.dark .modal-backdrop .cl-modal{background:#111114;color:#e5e7eb;}
+        body.dark .modal-backdrop .cl-modal .border-b{border-color:#2b2b30 !important;}
+        .cl-settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+        .cl-setting-card{border:1px solid var(--cl-line);background:var(--cl-card);border-radius:18px;padding:14px;transition:.2s}
+        .cl-setting-card:hover{transform:translateY(-1px);box-shadow:0 12px 32px rgba(0,0,0,.07)}
+        .cl-switch{position:relative;width:48px;height:28px;display:inline-block;flex:none}.cl-switch input{display:none}.cl-slider{position:absolute;inset:0;background:#d1d5db;border-radius:999px;transition:.2s;cursor:pointer}.cl-slider:before{content:'';position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}.cl-switch input:checked+.cl-slider{background:#f97316}.cl-switch input:checked+.cl-slider:before{transform:translateX(20px)}
+        .cl-command-box{background:linear-gradient(135deg,#171717,#2a1b12 55%,#111827);color:#fff;border-radius:22px;padding:16px;box-shadow:0 16px 50px rgba(0,0,0,.18);}
+        .cl-command-output{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;white-space:pre-wrap;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.09);border-radius:16px;padding:12px;min-height:72px;color:#d1fae5}
+        .cl-review-star{font-size:24px;color:#d1d5db;cursor:pointer;transition:.15s}.cl-review-star.active,.cl-review-star:hover{color:#f59e0b;transform:scale(1.05)}
+        .cl-review-item{border:1px solid var(--cl-line);background:var(--cl-card);border-radius:18px;padding:14px}
+        .cl-review-avatar{width:38px;height:38px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;font-weight:900;flex:none}
+        .cl-upload-zone{border:2px dashed #fed7aa;background:linear-gradient(135deg,#fff7ed,#fff);border-radius:22px;padding:24px;text-align:center;transition:.2s;cursor:pointer}.cl-upload-zone:hover{transform:translateY(-1px);box-shadow:0 12px 36px rgba(249,115,22,.12)}
+        body.dark .cl-upload-zone{background:linear-gradient(135deg,#20160f,#151517);border-color:#7c4a26}
+        .cl-product-admin-row{border:1px solid var(--cl-line);background:var(--cl-card);border-radius:16px;padding:10px}
+        .cl-live-bar{display:flex;align-items:center;gap:7px;padding:8px 11px;border-radius:999px;background:#ecfdf5;color:#047857;border:1px solid #bbf7d0;font-size:10px;font-weight:900}
+        body.dark .cl-live-bar{background:#0d251a;border-color:#1e5636;color:#86efac}
+        .cl-img-fit{width:100%;height:100%;object-fit:cover}
+        .cl-remote-badge{font-size:9px;font-weight:900;padding:4px 7px;border-radius:999px;background:#eef2ff;color:#4338ca}
+        @media(max-width:720px){.cl-settings-grid{grid-template-columns:1fr}}
+
     </style>
 </head>
 <body class="text-gray-800 antialiased min-h-screen flex flex-col pb-20 md:pb-0">
@@ -320,6 +360,10 @@
                     <button onclick="switchTab('orders')" class="hidden sm:flex items-center gap-1.5 bg-yellow-400 hover:bg-yellow-300 text-red-950 font-bold text-xs px-3.5 py-2.5 rounded-2xl shadow transition">
                         <i class="fa-solid fa-box-archive"></i>
                         <span>Pesanan Saya</span>
+                    </button>
+
+                    <button onclick="openSettings()" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 transition border border-white/20" title="Settings">
+                        <i class="fa-solid fa-gear text-lg"></i>
                     </button>
 
                 </div>
@@ -493,7 +537,7 @@
                                 <p class="text-[10px] text-gray-400 line-through">Rp 200.000</p>
                                 <p class="text-sm font-black text-orange-600">Rp 19.000</p>
                             </div>
-                            <button onclick="addToCart('Premium Wedding LUTs Bundle',19000,'200000','https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=400&q=80')" class="bg-gradient-to-r from-orange-500 to-red-500 text-white w-8 h-8 rounded-xl shadow-md hover:scale-105 transition flex items-center justify-center">
+                            <button onclick="addToCart('premium-wedding-luts','Premium Wedding LUTs Bundle',19000,200000,'https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=400&q=80',1);event.stopPropagation()" class="bg-gradient-to-r from-orange-500 to-red-500 text-white w-8 h-8 rounded-xl shadow-md hover:scale-105 transition flex items-center justify-center">
                                 <i class="fa-solid fa-cart-plus text-xs"></i>
                             </button>
                         </div>
@@ -549,7 +593,7 @@
                             <p class="text-[10px] text-gray-400 line-through">Rp 150.000</p>
                             <p class="text-sm font-black text-orange-600">Rp 25.000</p>
                         </div>
-                        <button onclick="addToCart('Cinematic Dark Moody Street Style',25000,'150000','https://images.unsplash.com/photo-1529156069898-49953eb1b5b6?auto=format&fit=crop&w=400&q=80')" class="bg-white border-2 border-orange-500 text-orange-500 w-8 h-8 rounded-xl shadow-sm hover:bg-orange-50 transition flex items-center justify-center">
+                        <button onclick="addToCart('cinematic-dark-moody','Cinematic Dark Moody Street Style',25000,150000,'https://images.unsplash.com/photo-1529156069898-49953eb1b5b6?auto=format&fit=crop&w=400&q=80',1);event.stopPropagation()" class="bg-white border-2 border-orange-500 text-orange-500 w-8 h-8 rounded-xl shadow-sm hover:bg-orange-50 transition flex items-center justify-center">
                             <i class="fa-solid fa-cart-plus text-xs"></i>
                         </button>
                     </div>
@@ -579,7 +623,7 @@
                             <p class="text-[10px] text-gray-400 line-through">Rp 250.000</p>
                             <p class="text-sm font-black text-orange-600">Rp 45.000</p>
                         </div>
-                        <button onclick="addToCart('Cyberpunk Neon LUTs Premiere Pro',45000,'250000','https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=400&q=80')" class="bg-white border-2 border-orange-500 text-orange-500 w-8 h-8 rounded-xl shadow-sm hover:bg-orange-50 transition flex items-center justify-center">
+                        <button onclick="addToCart('cyberpunk-neon','Cyberpunk Neon LUTs Premiere Pro',45000,250000,'https://images.unsplash.com/photo-1502899576159-f224dc2349fa?auto=format&fit=crop&w=400&q=80',1);event.stopPropagation()" class="bg-white border-2 border-orange-500 text-orange-500 w-8 h-8 rounded-xl shadow-sm hover:bg-orange-50 transition flex items-center justify-center">
                             <i class="fa-solid fa-cart-plus text-xs"></i>
                         </button>
                     </div>
@@ -654,6 +698,30 @@
                     <div class="bg-gray-50 rounded-xl p-3"><p class="text-[10px] text-gray-400">Kategori</p><b id="productDetailCategory" class="text-xs"></b></div>
                     <div class="bg-gray-50 rounded-xl p-3"><p class="text-[10px] text-gray-400">Lisensi</p><b class="text-xs">Personal</b></div>
                     <div class="bg-gray-50 rounded-xl p-3"><p class="text-[10px] text-gray-400">Delivery</p><b class="text-xs">Email</b></div>
+                </div>
+            </div>
+            <div class="cl-shopee-card p-5 sm:p-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                        <h2 class="font-black text-lg"><i class="fa-solid fa-star text-amber-400 mr-2"></i>Review Produk</h2>
+                        <p class="text-xs text-gray-500 mt-1">Review realtime dari pembeli CRAZY LENS.</p>
+                    </div>
+                    <div id="reviewSummary" class="text-xs font-bold text-gray-600"></div>
+                </div>
+                <div id="reviewList" class="space-y-3 mt-4"></div>
+                <div class="mt-5 border-t border-gray-100 pt-5">
+                    <div class="font-black text-sm mb-2">Tulis review</div>
+                    <div id="reviewStarsInput" class="flex items-center gap-1 mb-3" aria-label="Pilih rating">
+                        <span class="cl-review-star" data-star="1" onclick="selectReviewStar(1)">★</span>
+                        <span class="cl-review-star" data-star="2" onclick="selectReviewStar(2)">★</span>
+                        <span class="cl-review-star" data-star="3" onclick="selectReviewStar(3)">★</span>
+                        <span class="cl-review-star" data-star="4" onclick="selectReviewStar(4)">★</span>
+                        <span class="cl-review-star" data-star="5" onclick="selectReviewStar(5)">★</span>
+                    </div>
+                    <textarea id="reviewText" class="cl-input" rows="3" placeholder="Ceritakan pengalaman kamu..."></textarea>
+                    <button onclick="submitProductReview()" class="mt-3 bg-gradient-to-r from-orange-500 to-red-600 text-white font-black px-5 py-3 rounded-2xl text-xs shadow-lg">
+                        <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Review
+                    </button>
                 </div>
             </div>
         </section>
@@ -757,7 +825,7 @@
                         <i class="fa-solid fa-bolt text-lg"></i>
                         <span>PENGIRIMAN PRESET VIA EMAIL</span>
                     </div>
-                    <p class="text-gray-400">Order saat ini menggunakan mode dummy. Pengiriman preset asli via email akan dihubungkan ke bot/backend pada tahap berikutnya.</p>
+                    <p class="text-gray-400">Pembayaran QRIS production memakai backend aman + webhook BuatQris. Pengiriman digital dan status order disinkronkan realtime melalui Firebase.</p>
                 </div>
             </div>
 
@@ -995,6 +1063,80 @@
         </div>
     </div>
 
+
+    <!-- SETTINGS -->
+    <div id="settingsModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeSettings()">
+        <div class="cl-modal" style="width:min(100%,900px)">
+            <div class="p-5 border-b flex items-center justify-between">
+                <div><h3 class="font-black text-xl">CRAZY LENS Settings</h3><p class="text-xs text-gray-500">Kontrol tampilan, realtime, QRIS, command, dan katalog.</p></div>
+                <button onclick="closeSettings()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-5">
+                <div class="cl-settings-grid">
+                    <div class="cl-setting-card">
+                        <div class="flex items-center justify-between gap-3"><div><div class="font-black text-sm">Mode Gelap</div><div class="text-[11px] text-gray-500 mt-1">Tampilan dark mode tersimpan di perangkat.</div></div><label class="cl-switch"><input id="darkModeToggle" type="checkbox" onchange="toggleDarkMode(this.checked)"><span class="cl-slider"></span></label></div>
+                    </div>
+                    <div class="cl-setting-card">
+                        <div class="flex items-center justify-between gap-3"><div><div class="font-black text-sm">Firebase Realtime</div><div class="text-[11px] text-gray-500 mt-1">Sinkronisasi order, wallet, produk & review.</div></div><span class="cl-live-bar"><span class="cl-live-dot"></span> LIVE</span></div>
+                    </div>
+                </div>
+
+                <div class="cl-setting-card">
+                    <div class="flex items-center justify-between gap-3 mb-3"><div><div class="font-black text-sm">QRIS Production</div><div class="text-[11px] text-gray-500 mt-1">Frontend hanya memanggil backend aman. Secret BuatQris tidak disimpan di HTML.</div></div><span id="qrisConnectionBadge" class="cl-remote-badge">BELUM TERHUBUNG</span></div>
+                    <label class="text-[11px] font-bold text-gray-700">Secure Payment Backend URL</label>
+                    <input id="paymentEndpointInput" class="cl-input mt-1" placeholder="https://domain-kamu.com/api">
+                    <p class="text-[10px] text-gray-500 mt-2">Backend tersebut yang memanggil <b>https://api.buatqris.site</b> dengan action api_create_qris / api_check_status dan secret di ENV.</p>
+                    <button onclick="savePaymentEndpoint()" class="mt-3 bg-gray-900 text-white font-black px-4 py-2.5 rounded-xl text-xs">Simpan Endpoint QRIS</button>
+                </div>
+
+                <div class="cl-setting-card">
+                    <div class="font-black text-sm">Command Center</div>
+                    <p class="text-[11px] text-gray-500 mt-1">Contoh: /theme dark, /theme light, /sync, /products, /orders, /upload, /help</p>
+                    <div class="cl-command-box mt-3">
+                        <div class="flex gap-2"><input id="commandInput" class="flex-1 bg-white/10 border border-white/10 rounded-xl px-3 py-2.5 text-xs text-white outline-none" placeholder="Ketik command..." onkeydown="if(event.key==='Enter')runCommand()"><button onclick="runCommand()" class="bg-orange-500 text-white font-black px-4 rounded-xl text-xs">Run</button></div>
+                        <div id="commandOutput" class="cl-command-output mt-3">CRAZY COMMAND READY</div>
+                    </div>
+                </div>
+
+                <div class="cl-setting-card">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div><div class="font-black text-sm">Product Center</div><div class="text-[11px] text-gray-500 mt-1">Upload satu folder produk untuk dipublish ke Firebase Storage + Realtime Database.</div></div>
+                        <button onclick="openProductManager()" class="bg-gradient-to-r from-orange-500 to-red-600 text-white font-black px-4 py-2.5 rounded-xl text-xs"><i class="fa-solid fa-folder-open mr-1"></i> Post Produk</button>
+                    </div>
+                </div>
+
+                <div class="cl-setting-card">
+                    <div class="font-black text-sm">iRestore Bridge</div>
+                    <p class="text-[11px] text-gray-500 mt-1">URL tujuan bisa diisi untuk bridge/API iRestore yang kamu gunakan.</p>
+                    <input id="irestoreEndpointInput" class="cl-input mt-2" placeholder="https://domain-irestore-kamu/...">
+                    <button onclick="saveIRestoreEndpoint()" class="mt-3 bg-gray-900 text-white font-black px-4 py-2.5 rounded-xl text-xs">Simpan iRestore Endpoint</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PRODUCT MANAGER -->
+    <div id="productManagerModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeProductManager()">
+        <div class="cl-modal" style="width:min(100%,950px)">
+            <div class="p-5 border-b flex items-center justify-between">
+                <div><h3 class="font-black text-xl">Product Center</h3><p class="text-xs text-gray-500">Folder → Firebase Storage → Realtime Catalog.</p></div>
+                <button onclick="closeProductManager()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 space-y-5">
+                <label class="cl-upload-zone block">
+                    <input id="productFolderInput" type="file" webkitdirectory directory multiple class="hidden" onchange="handleProductFolder(this.files)">
+                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl"><i class="fa-solid fa-folder-tree"></i></div>
+                    <div class="font-black mt-3">Pilih Folder Produk</div>
+                    <div class="text-[11px] text-gray-500 mt-1">Isi folder bisa berupa cover.jpg + file preset/lut + product.json opsional.</div>
+                </label>
+                <div id="productUploadProgress" class="hidden">
+                    <div class="flex justify-between text-[10px] font-bold mb-1"><span>Upload progress</span><span id="productUploadProgressText">0%</span></div>
+                    <div class="cl-progress-track"><div id="productUploadProgressFill" class="cl-progress-fill" style="width:0%"></div></div>
+                </div>
+                <div id="productManagerList" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
     <div id="unavailablePage" class="modal-backdrop hidden" onclick="if(event.target===this) closeUnavailable()">
         <div class="cl-modal text-center p-8">
             <div class="w-20 h-20 mx-auto rounded-3xl bg-orange-50 text-orange-500 flex items-center justify-center text-4xl">
@@ -1422,6 +1564,7 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD3usv5rw801fV1nrXIwyDQ6eYEzC7hDk0",
@@ -1439,12 +1582,268 @@
         try { analytics = getAnalytics(app); } catch {}
         const auth = getAuth(app);
         const db = getDatabase(app);
+        const storage = getStorage(app);
 
         window.firebaseServices = {
-            app, analytics, auth, db, ref, onValue, set, update,
+            app, analytics, auth, db, storage, ref, onValue, set, update, storageRef, uploadBytes, getDownloadURL,
             onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut
         };
         window.dispatchEvent(new Event('crazyFirebaseReady'));
+    </script>
+
+
+    <!-- ADVANCED SINGLE-HTML ENGINE -->
+    <script>
+    (()=>{
+        const ADV={
+            productsPath:'catalog/products',
+            reviewsPath:'catalog/reviews',
+            darkKey:'crazyLensDark',
+            paymentKey:'crazyLensPaymentEndpoint',
+            irestoreKey:'crazyLensIRestoreEndpoint',
+            adminKey:'crazyLensAdminEmail',
+            productSeedVersion:'v3'
+        };
+        window.CRAZY_CONFIG=window.CRAZY_CONFIG||{};
+        if(localStorage.getItem(ADV.paymentKey)!==null) CRAZY_CONFIG.paymentEndpoint=localStorage.getItem(ADV.paymentKey)||'';
+        let selectedReviewStar=5;
+        let productReviewUnsub=null, productCatalogUnsub=null;
+        let remoteProducts={};
+        let uploadedFilesCache=[];
+
+        const MORE_PRODUCTS=[
+          ['golden-hour-portrait','Golden Hour Portrait Pack',39000,149000,'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=85','mobile,portrait,warm','4.9','1.8rb','.DNG'],
+          ['urban-cinematic-vol2','Urban Cinematic Vol. 2',29000,129000,'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=85','cinematic,desktop,street','4.9','2.7rb','.XMP & .DNG'],
+          ['moody-autumn','Moody Autumn Film Pack',22000,99000,'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=85','moody,mobile,cinematic','4.8','1.1rb','.DNG'],
+          ['wedding-bride','Wedding Bride Deluxe',35000,179000,'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=85','wedding,mobile,desktop','5.0','3.4rb','.DNG & XMP'],
+          ['travel-teal-orange','Travel Teal Orange',27000,119000,'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=85','travel,cinematic,luts','4.9','980','.CUBE'],
+          ['night-neon-pack','Night Neon City',31000,139000,'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=85','luts,cyberpunk,cinematic','4.9','1.6rb','.CUBE'],
+          ['clean-aesthetic','Clean Aesthetic Lightroom',18000,89000,'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=85','mobile,aesthetic','4.7','760','.DNG'],
+          ['coffee-tone','Coffee Brown Tone',16000,79000,'https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=800&q=85','warm,mobile,moody','4.8','1.3rb','.DNG'],
+          ['luxury-fashion','Luxury Fashion Editorial',49000,199000,'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85','fashion,desktop,cinematic','5.0','1.9rb','.XMP'],
+          ['film-grain-35','35mm Film Grain Collection',25000,129000,'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=85','film,analog,mobile','4.8','870','.XMP & .DNG'],
+          ['street-night','Street Night Documentary',33000,149000,'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=85','street,night,luts','4.9','1.4rb','.CUBE'],
+          ['minimal-product','Minimal Product Studio',28000,109000,'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=85','product,studio,desktop','4.9','640','.XMP']
+        ];
+
+        function applyDarkMode(on){
+          document.body.classList.toggle('dark',!!on);
+          localStorage.setItem(ADV.darkKey,on?'1':'0');
+          const t=document.getElementById('darkModeToggle'); if(t)t.checked=!!on;
+        }
+        window.toggleDarkMode=applyDarkMode;
+        function initDark(){applyDarkMode(localStorage.getItem(ADV.darkKey)==='1');}
+
+        function setQrisBadge(){
+          const b=document.getElementById('qrisConnectionBadge'); if(!b)return;
+          const on=/^https?:\/\//i.test(CRAZY_CONFIG.paymentEndpoint||'');
+          b.textContent=on?'QRIS BACKEND AKTIF':'BELUM TERHUBUNG';
+          b.style.background=on?'#ecfdf5':'#fff7ed'; b.style.color=on?'#047857':'#c2410c';
+        }
+        window.openSettings=function(){
+          const e=document.getElementById('settingsModal'); if(!e)return;
+          document.getElementById('paymentEndpointInput').value=CRAZY_CONFIG.paymentEndpoint||'';
+          document.getElementById('irestoreEndpointInput').value=localStorage.getItem(ADV.irestoreKey)||'';
+          document.getElementById('commandOutput').textContent='CRAZY COMMAND READY';
+          setQrisBadge(); e.classList.remove('hidden');
+        };
+        window.closeSettings=function(){document.getElementById('settingsModal')?.classList.add('hidden');};
+        window.savePaymentEndpoint=function(){
+          const v=document.getElementById('paymentEndpointInput').value.trim();
+          if(v && !/^https?:\/\//i.test(v)) return showToast('Endpoint harus memakai HTTPS.');
+          CRAZY_CONFIG.paymentEndpoint=v; localStorage.setItem(ADV.paymentKey,v); setQrisBadge();
+          showToast(v?'Backend QRIS disimpan':'Mode QRIS belum terhubung');
+        };
+        window.saveIRestoreEndpoint=function(){const v=document.getElementById('irestoreEndpointInput').value.trim();localStorage.setItem(ADV.irestoreKey,v);showToast(v?'iRestore endpoint tersimpan':'Endpoint iRestore dikosongkan');};
+
+        window.runCommand=function(){
+          const input=(document.getElementById('commandInput')?.value||'').trim(); const out=document.getElementById('commandOutput'); if(!out)return;
+          if(!input)return; const cmd=input.toLowerCase().split(/\s+/);
+          let result='';
+          if(cmd[0]==='/theme' && cmd[1]==='dark'){applyDarkMode(true);result='Theme → DARK';}
+          else if(cmd[0]==='/theme' && cmd[1]==='light'){applyDarkMode(false);result='Theme → LIGHT';}
+          else if(cmd[0]==='/sync'){attachCatalogRealtime?.();if(currentUser)attachUserRealtime(currentUser);result='Realtime listener → REFRESHED';}
+          else if(cmd[0]==='/products'){renderProductManagerList();result=`Catalog → ${Object.keys({...DEMO_PRODUCTS,...remoteProducts}).length} produk`;}
+          else if(cmd[0]==='/orders'){switchTab('orders');result='Navigated → ORDERS';}
+          else if(cmd[0]==='/upload'){openProductManager();result='Product Center → OPEN';}
+          else if(cmd[0]==='/settings'){result='Settings → ACTIVE';}
+          else if(cmd[0]==='/help'){result='/theme dark | /theme light | /sync | /products | /orders | /upload | /settings';}
+          else result='Unknown command. Ketik /help';
+          out.textContent=result; document.getElementById('commandInput').value='';
+        };
+
+        function productFromSeed(x){return {id:x[0],name:x[1],price:x[2],oldPrice:x[3],image:x[4],category:x[5],rating:x[6],sold:x[7],format:x[8],source:'seed'};}
+        function esc2(v=''){return esc(v);}
+        function productCardHtml(p,remote=false){
+          return `<div data-product-card data-product-id="${esc2(p.id)}" data-category="${esc2(p.category||'') }" data-name="${esc2(p.name)}" data-price="${Number(p.price||0)}" data-old-price="${Number(p.oldPrice||0)}" data-image="${esc2(p.image||'')}" data-rating="${Number(p.rating||5)}" data-sold="${esc2(p.sold||'0')}" onclick="openProductFromCard(this,event)" class="bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex flex-col group cursor-pointer text-gray-800">
+            <div class="relative h-40 w-full mb-3 rounded-xl overflow-hidden bg-gray-100">
+              <img src="${esc2(p.image||'https://placehold.co/800x800/111827/fff?text=CRAZY+LENS')}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="${esc2(p.name)}">
+              <div class="absolute top-2 left-2 bg-white/90 backdrop-blur text-orange-600 text-[9px] font-black px-2 py-1 rounded-lg">${esc2(p.format||'DIGITAL')}</div>
+              ${remote?'<div class="absolute top-2 right-2 cl-remote-badge">LIVE</div>':''}
+            </div>
+            <span class="text-[10px] font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded-md mb-1 inline-block w-fit">${esc2((p.category||'digital').split(',')[0].toUpperCase())}</span>
+            <h3 class="font-extrabold text-xs sm:text-sm leading-tight mb-2 group-hover:text-orange-500 transition line-clamp-2">${esc2(p.name)}</h3>
+            <div class="flex items-center gap-1 text-[10px] text-yellow-500 mb-2"><i class="fa-solid fa-star"></i><span class="text-gray-500 font-semibold">${esc2(p.rating||'5.0')}</span><span class="text-gray-400 ml-1">${esc2(p.sold||'0')} Terjual</span></div>
+            <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between"><div><p class="text-[10px] text-gray-400 line-through">${p.oldPrice?money(p.oldPrice):''}</p><p class="text-sm font-black text-orange-600">${money(p.price)}</p></div><button onclick="addToCart('${esc2(p.id)}','${esc2(p.name).replace(/'/g,"\\'")}',${Number(p.price||0)},${Number(p.oldPrice||0)},'${esc2(p.image||'')}',1);event.stopPropagation()" class="bg-white border-2 border-orange-500 text-orange-500 w-8 h-8 rounded-xl shadow-sm hover:bg-orange-50 transition flex items-center justify-center"><i class="fa-solid fa-cart-plus text-xs"></i></button></div>
+          </div>`;
+        }
+
+        function seedMoreProducts(){
+          if(localStorage.getItem('crazyLensSeedProducts')===ADV.productSeedVersion)return;
+          const grid=document.getElementById('productGrid'); if(!grid)return;
+          MORE_PRODUCTS.map(productFromSeed).forEach(p=>{DEMO_PRODUCTS[p.id]=p;grid.insertAdjacentHTML('beforeend',productCardHtml(p,false));});
+          localStorage.setItem('crazyLensSeedProducts',ADV.productSeedVersion);
+        }
+        function renderRemoteProducts(){
+          const grid=document.getElementById('productGrid'); if(!grid)return;
+          Object.values(remoteProducts).forEach(p=>{
+            if(!p?.id || document.querySelector(`[data-product-id="${CSS.escape(p.id)}"]`))return;
+            DEMO_PRODUCTS[p.id]=p; grid.insertAdjacentHTML('afterbegin',productCardHtml(p,true));
+          });
+        }
+
+        function attachCatalogRealtime(){
+          const svc=getFirebaseServices?.(); if(!svc?.db||!svc.onValue)return;
+          if(productCatalogUnsub)try{productCatalogUnsub()}catch{}
+          const r=svc.ref(svc.db,ADV.productsPath);
+          productCatalogUnsub=svc.onValue(r,s=>{remoteProducts=s.val()||{};renderRemoteProducts();refreshCatalogUX();});
+        }
+        window.attachCatalogRealtime=attachCatalogRealtime;
+        function refreshCatalogUX(){
+          const cards=[...document.querySelectorAll('[data-product-card]')];
+          const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
+          cards.forEach(c=>c.classList.toggle('hidden',!!q&&!(((c.dataset.name||'')+' '+c.innerText).toLowerCase().includes(q))));
+        }
+
+        // Override product details to add realtime reviews.
+        window.renderProductPage=function(){
+          if(!currentProduct)return; const p=currentProduct; const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+          const img=document.getElementById('productDetailImage'); if(img){img.src=p.image||'';img.onerror=()=>img.src='https://placehold.co/900x900/111827/ffffff?text=CRAZY+LENS';}
+          set('productDetailName',p.name);set('productDetailRating',p.rating||'5.0');set('productDetailSold',(p.sold||'0')+' Terjual');set('productDetailOldPrice',p.oldPrice?money(p.oldPrice):'');set('productDetailPrice',money(p.price));set('productDetailQty',currentProductQty);set('productDetailFormat',p.format||'.DNG');set('productDetailCategory',(p.category||'Digital').split(',').filter(Boolean).map(x=>x.charAt(0).toUpperCase()+x.slice(1)).join(' • '));set('productDetailBadge',(p.format||'').includes('CUBE')?'VIDEO LUT':'PRESET LIGHTROOM');set('productDetailDescription',p.description||`${p.name} adalah produk digital CRAZY LENS. File dikirim otomatis setelah pembayaran terkonfirmasi dan status realtime disinkronkan melalui Firebase.`);
+          const thumbs=document.getElementById('productDetailThumbs');if(thumbs)thumbs.innerHTML=`<div class="rounded-xl overflow-hidden border-2 border-orange-500"><img src="${esc2(p.image||'')}" class="w-full h-16 object-cover"></div>`;
+          selectReviewStar(5);loadReviewsRealtime(p.id);
+        };
+
+        window.selectReviewStar=function(n){selectedReviewStar=n;document.querySelectorAll('.cl-review-star').forEach(s=>s.classList.toggle('active',Number(s.dataset.star)<=n));};
+        async function loadReviewsRealtime(productId){
+          const svc=getFirebaseServices?.(); const list=document.getElementById('reviewList'); if(!list)return;
+          if(productReviewUnsub)try{productReviewUnsub()}catch{}
+          const local=JSON.parse(localStorage.getItem('crazyLensLocalReviews')||'{}');
+          const render=(items)=>{
+            if(!items.length){list.innerHTML='<div class="text-center py-8 text-gray-400 text-xs"><i class="fa-regular fa-comment-dots text-2xl mb-2"></i><p>Belum ada review untuk produk ini.</p></div>';document.getElementById('reviewSummary').textContent='Belum ada rating';return;}
+            const avg=items.reduce((a,x)=>a+Number(x.rating||0),0)/items.length;document.getElementById('reviewSummary').innerHTML=`<span class="text-amber-500">★ ${avg.toFixed(1)}</span> • ${items.length} review`;
+            list.innerHTML=items.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).map(r=>`<div class="cl-review-item"><div class="flex items-start gap-3"><div class="cl-review-avatar">${esc2((r.name||'P').slice(0,1).toUpperCase())}</div><div class="flex-1"><div class="font-black text-xs">${esc2(r.name||'Pengguna')}</div><div class="text-amber-500 text-xs mt-0.5">${'★'.repeat(Number(r.rating||5))}${'☆'.repeat(5-Number(r.rating||5))}</div><p class="text-xs text-gray-600 mt-2 leading-relaxed">${esc2(r.text||'')}</p><div class="text-[9px] text-gray-400 mt-2">${r.createdAt?new Date(r.createdAt).toLocaleString('id-ID'):''}</div></div></div></div>`).join('');
+          };
+          const localItems=Array.isArray(local[productId])?local[productId]:[]; render(localItems);
+          if(svc?.db&&svc?.onValue&&svc?.ref){productReviewUnsub=svc.onValue(svc.ref(svc.db,`${ADV.reviewsPath}/${productId}`),snap=>{const raw=snap.val()||{};const arr=Object.values(raw);render(arr.length?arr:localItems);});}
+        }
+        window.submitProductReview=async function(){
+          if(!currentProduct)return showToast('Pilih produk dulu');
+          const text=(document.getElementById('reviewText')?.value||'').trim();if(text.length<3)return showToast('Review terlalu singkat');
+          const review={userId:currentUser?.uid||'guest',name:currentUser?.displayName||currentUser?.email?.split('@')[0]||'Guest',email:currentUser?.email||'',rating:selectedReviewStar,text,createdAt:nowIso()};
+          const svc=getFirebaseServices?.();
+          if(svc?.db&&currentUser&&svc?.set&&svc?.ref){try{await svc.set(svc.ref(svc.db,`${ADV.reviewsPath}/${currentProduct.id}/${currentUser.uid}`),review);document.getElementById('reviewText').value='';showToast('Review tersimpan realtime ✓');return;}catch(e){showToast('Firebase menolak review • cek Rules');return;}}
+          const local=JSON.parse(localStorage.getItem('crazyLensLocalReviews')||'{}');local[currentProduct.id]=[...(local[currentProduct.id]||[]).filter(x=>x.userId!==review.userId),review];localStorage.setItem('crazyLensLocalReviews',JSON.stringify(local));loadReviewsRealtime(currentProduct.id);showToast('Review tersimpan lokal ✓');
+        };
+
+        // ===== PRODUCT FOLDER PUBLISHING =====
+        window.openProductManager=function(){document.getElementById('settingsModal')?.classList.add('hidden');document.getElementById('productManagerModal')?.classList.remove('hidden');renderProductManagerList();};
+        window.closeProductManager=function(){document.getElementById('productManagerModal')?.classList.add('hidden');};
+        function groupFolderFiles(files){
+          const groups={}; [...files].forEach(f=>{const path=f.webkitRelativePath||f.name;const parts=path.split('/');const root=parts.length>1?parts[0]:'Uploaded Products';(groups[root]??=[]).push(f);});return groups;
+        }
+        async function handleProductFolder(files){
+          if(!files?.length)return; const svc=getFirebaseServices?.();
+          if(!svc?.storage||!svc.uploadBytes||!svc.getDownloadURL)return showToast('Firebase Storage belum siap');
+          if(!currentUser)return requireLogin(()=>handleProductFolder(files));
+          const groups=groupFolderFiles(files),names=Object.keys(groups); if(!names.length)return;
+          const box=document.getElementById('productUploadProgress');box.classList.remove('hidden');
+          let done=0,total=files.length;
+          for(const folder of names){
+            const arr=groups[folder]; let manifest=null; const manifestFile=arr.find(f=>/^(product|manifest)\.json$/i.test(f.name));
+            if(manifestFile){try{manifest=JSON.parse(await manifestFile.text())}catch{manifest=null}}
+            const pid=(manifest?.id||folder.toLowerCase().replace(/[^a-z0-9]+/g,'-')).replace(/^-+|-+$/g,'')||uid('PROD').toLowerCase();
+            const imageFile=arr.find(f=>/^image\/(jpeg|png|webp|avif|gif)$/i.test(f.type))||arr[0];
+            let coverUrl=manifest?.image||''; const fileUrls={};
+            for(const file of arr){
+              if(file.name.toLowerCase().endsWith('.json')){done++;continue;}
+              const clean=file.name.replace(/[^a-zA-Z0-9._-]/g,'_'); const sref=svc.storageRef(svc.storage,`products/${pid}/${clean}`); await svc.uploadBytes(sref,file); const url=await svc.getDownloadURL(sref);fileUrls[file.name]=url;if(file===imageFile)coverUrl=url;done++;document.getElementById('productUploadProgressFill').style.width=Math.round(done/total*100)+'%';document.getElementById('productUploadProgressText').textContent=Math.round(done/total*100)+'%';
+            }
+            const product={id:pid,name:manifest?.name||folder,price:Number(manifest?.price||25000),oldPrice:Number(manifest?.oldPrice||100000),image:coverUrl,category:manifest?.category||'digital',format:manifest?.format||'.DNG',rating:Number(manifest?.rating||5),sold:manifest?.sold||'0',description:manifest?.description||`Produk ${folder}`,files:fileUrls,publishedAt:nowIso(),publishedBy:currentUser.uid};
+            try{await svc.set(svc.ref(svc.db,`${ADV.productsPath}/${pid}`),product);}catch(e){showToast('Gagal publish '+folder+' • cek Firebase Rules');}
+            await maybeSendToIRestore(product,fileUrls);
+          }
+          box.classList.add('hidden');renderRemoteProducts();renderProductManagerList();showToast(`${names.length} folder produk dipublish ✓`);
+        }
+        async function maybeSendToIRestore(product,files){
+          const url=localStorage.getItem(ADV.irestoreKey)||''; if(!url)return;
+          try{const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'CRAZY LENS',product,files})});if(!res.ok)throw new Error('HTTP '+res.status);showToast('Produk terkirim ke iRestore ✓');}catch(e){showToast('iRestore bridge gagal: '+e.message);}
+        }
+        async function sendProductToIRestore(id){
+          const p=remoteProducts[id]||DEMO_PRODUCTS[id];if(!p)return;const url=localStorage.getItem(ADV.irestoreKey)||'';if(!url)return showToast('Isi iRestore Endpoint di Settings');try{const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'CRAZY LENS',product:p,files:p.files||{}})});if(!r.ok)throw new Error('HTTP '+r.status);showToast('Produk terkirim ke iRestore ✓')}catch(e){showToast('iRestore gagal: '+e.message)}
+        }
+        window.sendProductToIRestore=sendProductToIRestore;
+        window.handleProductFolder=handleProductFolder;
+        function renderProductManagerList(){
+          const box=document.getElementById('productManagerList');if(!box)return;const all=Object.values({...DEMO_PRODUCTS,...remoteProducts});
+          box.innerHTML=all.slice(0,80).map(p=>`<div class="cl-product-admin-row flex items-center gap-3"><img src="${esc2(p.image||'')}" class="w-12 h-12 rounded-xl object-cover"><div class="flex-1 min-w-0"><div class="font-black text-xs truncate">${esc2(p.name)}</div><div class="text-[10px] text-gray-500">${money(p.price)} • ${esc2(p.format||'DIGITAL')}</div></div><button onclick="sendProductToIRestore('${esc2(p.id)}')" class="bg-gray-900 text-white text-[10px] font-black px-3 py-2 rounded-xl">iRestore</button></div>`).join('');
+        }
+
+        // Real QRIS: use provider-returned image/link, never generate a fake QR in production.
+        const oldPaymentApi=window.paymentApi;
+        window.paymentApi=async function(path,body){
+          if(!/^https?:\/\//i.test(CRAZY_CONFIG.paymentEndpoint||''))return null;
+          const auth=getFirebaseServices?.()?.auth;const token=auth?await auth.currentUser?.getIdToken():null;
+          const base=CRAZY_CONFIG.paymentEndpoint.replace(/\/$/,'');
+          const res=await fetch(base+path,{method:'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},body:JSON.stringify(body)});
+          const data=await res.json().catch(()=>({})); if(!res.ok||data.success===false)throw new Error(data.message||`HTTP ${res.status}`);
+          if(data.data && !data.qris) data.qris=data.data;
+          if(data.result?.qris && !data.qris)data.qris=data.result.qris;
+          return data;
+        };
+
+        // Override QR output for live QRIS.
+        async function applyLiveQrisImage(qris,imgId){
+          const img=document.getElementById(imgId);if(!img)return;
+          const src=qris?.qr_url||qris?.qris_image||'';
+          if(!src)throw new Error('Backend QRIS tidak mengembalikan qr_url/qris_image');
+          img.src=src;
+        }
+        async function createTopupReal(){
+          if(!currentUser)return requireLogin(createTopupReal); const amount=Number(document.getElementById('topupAmount').value||0);if(!amount||amount<1000)return showToast('Minimal top up Rp 1.000');
+          if(!/^https?:\/\//i.test(CRAZY_CONFIG.paymentEndpoint||''))return showToast('Hubungkan Secure Payment Backend di Settings untuk QRIS asli.');
+          setButtonLoading('createTopupButton',true,'Membuat QRIS asli...');
+          try{
+            const topup={id:uid('TOP'),userId:currentUser.uid,amount,createdAt:nowIso(),status:'pending',payment:{status:'pending',method:'QRIS'}};
+            const remote=await window.paymentApi('/topups/create',topup);if(!remote?.qris)throw new Error('Respons QRIS tidak valid');
+            Object.assign(topup,{qris:remote.qris});if(remote.topup)Object.assign(topup,remote.topup);upsertLocalTopup(topup);await firebaseWrite(`users/${currentUser.uid}/topups/${topup.id}`,topup);
+            currentTopupPayment={topupId:topup.id,expiresAt:topup.qris.expired_at||topup.qris.expiredAt};
+            document.getElementById('topupFormWrap').classList.add('hidden');document.getElementById('topupPaymentWrap').classList.remove('hidden');document.getElementById('topupPaymentText').textContent=`Top up ${topup.id} • nominal QRIS ${money(topup.qris.total_amount||amount)}`;document.getElementById('topupPaymentAmount').textContent=money(topup.qris.total_amount||amount);document.getElementById('topupPaymentUrl').href=topup.qris.payment_url||'#';document.getElementById('topupPaymentUrl').style.display=topup.qris.payment_url?'block':'none';await applyLiveQrisImage(topup.qris,'topupQrImage');document.getElementById('topupStatus').innerHTML='<i class="fa-solid fa-bolt mr-1"></i> QRIS asli aktif • tunggu webhook Firebase.';startPaymentCountdown('topup',currentTopupPayment.expiresAt);showToast('QRIS asli berhasil dibuat ✓');
+          }catch(e){showToast(e.message||'Gagal membuat QRIS asli');}
+          finally{setButtonLoading('createTopupButton',false,'<i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS Top Up');}
+        }
+        window.createTopup=createTopupReal;
+
+        // Override order creation for real QRIS with provider response values.
+        window.submitRealOrder=async function(e){
+          e.preventDefault(); if(!currentUser)return requireLogin(()=>{});if(!cart.length)return showToast('Keranjang kosong');
+          if(!/^https?:\/\//i.test(CRAZY_CONFIG.paymentEndpoint||''))return showToast('Hubungkan Secure Payment Backend di Settings untuk QRIS asli.');
+          setButtonLoading('createOrderButton',true,'Membuat QRIS asli...');
+          try{
+            const order={id:uid('ORD'),userId:currentUser.uid,name:document.getElementById('orderName').value.trim(),email:document.getElementById('orderEmail').value.trim().toLowerCase(),phone:document.getElementById('orderPhone').value.trim(),note:document.getElementById('orderNote').value.trim(),items:cart.map(x=>({...x})),total:cartTotal(),createdAt:nowIso(),status:'belum_bayar',payment:{status:'pending',method:'QRIS'},receipt:'-',courier:'-',tracking:{label:'Menunggu pembayaran',place:'BuatQris'},delivery:{status:'waiting'},escrow:'held',statusHistory:[{status:'belum_bayar',at:nowIso()}]};
+            const remote=await window.paymentApi('/orders/create',order);if(!remote?.qris)throw new Error('Respons QRIS tidak valid');Object.assign(order,remote.order||{}, {qris:remote.qris});upsertLocalOrder(order);await firebaseWrite(`users/${currentUser.uid}/orders/${order.id}`,order);
+            currentOrderPayment={orderId:order.id,expiresAt:order.qris.expired_at||order.qris.expiredAt};document.getElementById('orderFormWrap').classList.add('hidden');document.getElementById('orderPaymentWrap').classList.remove('hidden');document.getElementById('orderPaymentOrderText').textContent='Order '+order.id;document.getElementById('orderPaymentAmount').textContent=money(order.qris.total_amount||order.total);document.getElementById('orderPaymentUrl').href=order.qris.payment_url||'#';document.getElementById('orderPaymentUrl').style.display=order.qris.payment_url?'block':'none';await applyLiveQrisImage(order.qris,'orderQrImage');document.getElementById('orderPaymentStatus').innerHTML='<i class="fa-solid fa-bolt mr-1"></i> QRIS asli aktif • menunggu webhook pembayaran...';startPaymentCountdown('order',currentOrderPayment.expiresAt);scheduleDemoOrder(order.id);showToast('QRIS asli order berhasil dibuat ✓');
+          }catch(e){showToast(e.message||'Gagal membuat order QRIS');}
+          finally{setButtonLoading('createOrderButton',false,'<i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS & Bayar');}
+        };
+
+        // Ensure demo auto-engine never advances a production order/topup.
+        window.resumeAutoEngine=function(){if(/^https?:\/\//i.test(CRAZY_CONFIG.paymentEndpoint||''))return;};
+
+        // Realtime product + UI bootstrap.
+        window.addEventListener('crazyFirebaseReady',()=>{setTimeout(()=>{initDark();seedMoreProducts();attachCatalogRealtime();setQrisBadge();},80)});
+        document.addEventListener('DOMContentLoaded',()=>{initDark();seedMoreProducts();setQrisBadge();setTimeout(()=>{if(currentUser)attachCatalogRealtime();},300);});
+    })();
     </script>
 
 </body>
