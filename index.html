@@ -327,7 +327,25 @@ body.dark .cl-v13-livecard .v13-icon,body.dark .cl-v13-trust-card i{background:#
 @media(max-width:980px){.cl-v13-livebar{grid-template-columns:repeat(2,minmax(0,1fr))}.cl-v13-explore{grid-template-columns:1fr 1fr}.cl-v13-recent-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.cl-v13-trust{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){body{padding-bottom:74px}.cl-v13-livebar{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cl-v13-livecard{padding:11px}.cl-v13-livevalue{font-size:16px}.cl-v13-explore{grid-template-columns:1fr}.cl-v13-recent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cl-v13-trust{grid-template-columns:1fr 1fr}.cl-v13-floating{right:12px;bottom:88px}.cl-v13-fab{width:46px;height:46px;border-radius:15px}.cl-v13-mobile-nav{position:fixed;left:10px;right:10px;bottom:10px;height:60px;z-index:75;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:rgba(17,24,39,.92);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:5px;box-shadow:0 20px 44px rgba(15,23,42,.28)}.cl-v13-mobile-nav button{background:transparent;color:#cbd5e1;border:0;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:900}.cl-v13-mobile-nav button.active{background:linear-gradient(135deg,#fb923c,#ef4444);color:#fff}.cl-v13-mobile-nav i{font-size:16px}.cl-v13-section-title{font-size:17px}}
 
-</style>
+
+        /* ===== V14 SIMPLE UX + CRAZYPAY WALLET ===== */
+        #v13LiveBar, #v13HomeEnhancements { display:none !important; }
+        #advancedSearchBar { box-shadow:0 1px 0 rgba(15,23,42,.04); }
+        .cl-simple-shell { max-width:980px; margin:0 auto; }
+        .cl-wallet-app { width:min(100%, 760px); max-height:min(92vh, 920px); overflow:hidden; border-radius:28px; background:#f7f9fc; }
+        .cl-wallet-hero { position:relative; overflow:hidden; background:linear-gradient(135deg,#ff6b2c 0%,#ef3f2f 52%,#b91c1c 100%); color:#fff; }
+        .cl-wallet-hero:before,.cl-wallet-hero:after{content:"";position:absolute;border-radius:999px;background:rgba(255,255,255,.10);filter:blur(1px)}
+        .cl-wallet-hero:before{width:220px;height:220px;right:-80px;top:-100px}.cl-wallet-hero:after{width:170px;height:170px;left:-70px;bottom:-100px}
+        .cl-wallet-balance-card{position:relative;z-index:2;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(18px);border-radius:24px;padding:18px;box-shadow:0 18px 40px rgba(127,29,29,.18)}
+        .cl-wallet-action{background:#fff;border:1px solid #e7eaf0;border-radius:20px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:900;color:#1f2937;transition:.2s;box-shadow:0 6px 18px rgba(15,23,42,.05)}
+        .cl-wallet-action:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(15,23,42,.08);border-color:#fed7aa}
+        .cl-wallet-action .ic{width:38px;height:38px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:#fff7ed;color:#ea580c;font-size:15px}
+        .cl-wallet-section{background:#fff;border:1px solid #e8ecf2;border-radius:22px;padding:15px}
+        .cl-tx-row{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid #eef1f5}.cl-tx-row:last-child{border-bottom:0}.cl-tx-ic{width:38px;height:38px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}.cl-tx-meta{min-width:0;flex:1}.cl-tx-title{font-size:12px;font-weight:900;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cl-tx-sub{font-size:10px;color:#94a3b8;margin-top:2px}.cl-tx-amt{font-size:12px;font-weight:900}.cl-add-money{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+        .dark-mode .cl-wallet-app{background:#0f172a}.dark-mode .cl-wallet-section{background:#111827;border-color:#243244}.dark-mode .cl-wallet-action{background:#111827;border-color:#243244;color:#f8fafc}.dark-mode .cl-tx-title{color:#f8fafc}.dark-mode .cl-tx-sub{color:#64748b}.dark-mode .cl-wallet-hero{box-shadow:none}
+        @media (max-width:640px){.cl-wallet-app{border-radius:22px}.cl-wallet-balance-card{padding:15px}.cl-add-money{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+    </style>
 
 <style id="crazy-v8-polish">
   :root{--cl-accent:#f97316;--cl-accent2:#ef4444;--cl-card:rgba(255,255,255,.92);--cl-border:rgba(15,23,42,.08)}
@@ -1190,67 +1208,94 @@ body.dark .cl-v13-livecard .v13-icon,body.dark .cl-v13-trust-card i{background:#
 
     <!-- CRAZYPAY TOP UP -->
     <div id="topupModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeTopup()">
-        <div class="cl-modal">
-            <div class="p-5 border-b flex items-center justify-between">
-                <div>
-                    <h3 class="font-black text-xl">CrazyPay Wallet</h3>
-                    <p class="text-xs text-gray-500">Top up otomatis via QRIS</p>
+        <div class="cl-wallet-app">
+            <div class="cl-wallet-hero p-4 sm:p-5">
+                <div class="relative z-10 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-wallet text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-orange-100 font-bold tracking-widest">CRAZY LENS</div>
+                            <h3 class="font-black text-xl leading-tight">CrazyPay</h3>
+                        </div>
+                    </div>
+                    <button onclick="closeTopup()" class="w-10 h-10 rounded-2xl bg-white/12 border border-white/15 text-white hover:bg-white/20 transition" aria-label="Tutup">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
-                <button onclick="closeTopup()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button>
+                <div class="cl-wallet-balance-card mt-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <div class="text-[10px] text-orange-100 font-bold">Saldo tersedia</div>
+                            <div id="topupWalletBalance" class="text-3xl sm:text-4xl font-black tracking-tight mt-1">Rp 0</div>
+                        </div>
+                        <div class="px-2.5 py-1 rounded-full bg-white/12 border border-white/15 text-[10px] font-black flex items-center gap-1">
+                            <span class="cl-live-dot"></span> LIVE
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-3 mt-4 text-[10px] text-orange-100">
+                        <span><i class="fa-solid fa-shield-halved mr-1"></i> Aman & realtime</span>
+                        <span id="crazyPayWalletEmail" class="truncate max-w-[55%]"></span>
+                    </div>
+                </div>
             </div>
 
-            <div id="topupFormWrap" class="p-5 space-y-4">
-                <div class="rounded-3xl bg-gradient-to-br from-gray-950 to-gray-800 p-5 text-white">
-                    <div class="text-[10px] text-gray-400">Saldo CrazyPay</div>
-                    <div id="topupWalletBalance" class="text-3xl font-black mt-1 cl-wallet-balance">Rp 0</div>
-                    <div class="text-[10px] text-gray-400 mt-2"><i class="fa-solid fa-bolt text-yellow-300 mr-1"></i> Realtime Firebase</div>
+            <div class="p-4 sm:p-5 max-h-[68vh] overflow-y-auto">
+                <div class="grid grid-cols-3 gap-2.5">
+                    <button class="cl-wallet-action" onclick="document.getElementById('topupAmount')?.focus()"><span class="ic"><i class="fa-solid fa-plus"></i></span><span>Top Up</span></button>
+                    <button class="cl-wallet-action" onclick="closeTopup(); scrollToCatalog();"><span class="ic"><i class="fa-solid fa-bag-shopping"></i></span><span>Belanja</span></button>
+                    <button class="cl-wallet-action" onclick="document.getElementById('crazyPayHistory')?.scrollIntoView({behavior:'smooth'})"><span class="ic"><i class="fa-solid fa-clock-rotate-left"></i></span><span>Riwayat</span></button>
                 </div>
-                <div>
-                    <label class="text-xs font-bold text-gray-700">Nominal Top Up</label>
-                    <div class="grid grid-cols-3 gap-2 mt-2">
-                        <button onclick="setTopupAmount(10000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">10K</button>
-                        <button onclick="setTopupAmount(25000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">25K</button>
-                        <button onclick="setTopupAmount(50000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">50K</button>
-                        <button onclick="setTopupAmount(100000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">100K</button>
-                        <button onclick="setTopupAmount(250000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">250K</button>
-                        <button onclick="setTopupAmount(500000)" class="bg-gray-50 border border-gray-200 rounded-xl py-2.5 text-xs font-black hover:border-orange-400">500K</button>
-                    </div>
-                    <input id="topupAmount" type="number" min="1000" step="1000" class="cl-input mt-3" placeholder="Atau masukkan nominal sendiri">
-                </div>
-                <button id="createTopupButton" onclick="createTopup()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-black py-3 rounded-2xl">
-                    <i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS Top Up
-                </button>
-            </div>
 
-            <div id="topupPaymentWrap" class="hidden p-5 cl-auth-step">
-                <div class="text-center">
-                    <span class="cl-pill-live"><span class="cl-live-dot"></span> QRIS AKTIF</span>
-                    <h3 class="font-black text-xl mt-3">Scan untuk Top Up</h3>
-                    <p id="topupPaymentText" class="text-xs text-gray-500 mt-1"></p>
-                </div>
-                <div class="cl-qr-wrap rounded-3xl p-4 mt-4 cl-payment-pulse">
-                    <img id="topupQrImage" src="" alt="QRIS Top Up" class="w-[260px] h-[260px] mx-auto rounded-2xl bg-white object-contain shadow-sm">
-                </div>
-                <div class="grid grid-cols-2 gap-2 mt-4">
-                    <div class="bg-gray-50 rounded-2xl p-3">
-                        <div class="text-[10px] text-gray-400">Bayar</div>
-                        <div id="topupPaymentAmount" class="font-black text-lg text-orange-600 mt-0.5">Rp 0</div>
+                <div id="topupFormWrap" class="cl-wallet-section mt-4 space-y-4">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <div class="font-black text-sm">Isi saldo</div>
+                            <div class="text-[10px] text-gray-400 mt-1">Bayar lewat QRIS, saldo masuk otomatis setelah pembayaran terkonfirmasi.</div>
+                        </div>
+                        <span class="text-[10px] font-black text-orange-600 bg-orange-50 px-2 py-1 rounded-lg">QRIS</span>
                     </div>
-                    <div class="bg-gray-50 rounded-2xl p-3">
-                        <div class="text-[10px] text-gray-400">Kedaluwarsa</div>
-                        <div id="topupCountdown" class="font-black text-lg mt-0.5">—</div>
+                    <div>
+                        <label class="text-[11px] font-black text-gray-700">Nominal</label>
+                        <div class="cl-add-money mt-2">
+                            <button onclick="setTopupAmount(10000)" class="py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-black hover:border-orange-400 hover:bg-orange-50">10K</button>
+                            <button onclick="setTopupAmount(25000)" class="py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-black hover:border-orange-400 hover:bg-orange-50">25K</button>
+                            <button onclick="setTopupAmount(50000)" class="py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-black hover:border-orange-400 hover:bg-orange-50">50K</button>
+                            <button onclick="setTopupAmount(100000)" class="py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-black hover:border-orange-400 hover:bg-orange-50">100K</button>
+                            <button onclick="setTopupAmount(250000)" class="py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-black hover:border-orange-400 hover:bg-orange-50">250K</button>
+                            <button onclick="setTopupAmount(500000)" class="py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-xs font-black hover:border-orange-400 hover:bg-orange-50">500K</button>
+                        </div>
+                        <input id="topupAmount" type="number" min="1000" step="1000" class="cl-input mt-3" placeholder="Masukkan nominal sendiri">
                     </div>
+                    <button id="createTopupButton" onclick="createTopup()" class="w-full bg-gradient-to-r from-orange-500 to-red-600 text-white font-black py-3.5 rounded-2xl shadow-lg shadow-orange-500/15">
+                        <i class="fa-solid fa-qrcode mr-1"></i> Lanjut ke QRIS
+                    </button>
+                    <div class="flex items-center gap-2 text-[10px] text-gray-400"><i class="fa-solid fa-circle-info text-orange-500"></i><span>Saldo CrazyPay bisa dipakai langsung untuk checkout produk.</span></div>
                 </div>
-                <a id="topupPaymentUrl" href="#" target="_blank" rel="noopener" class="block mt-3 text-center bg-gray-900 text-white font-black text-xs py-3 rounded-2xl">
-                    <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka Pembayaran
-                </a>
-                <div id="topupStatus" class="mt-3 bg-blue-50 border border-blue-100 rounded-2xl p-3 text-xs text-blue-800">
-                    <i class="fa-solid fa-rotate fa-spin mr-1"></i> Menunggu pembayaran...
+
+                <div id="topupPaymentWrap" class="hidden cl-wallet-section mt-4">
+                    <div class="text-center">
+                        <span class="cl-pill-live"><span class="cl-live-dot"></span> QRIS AKTIF</span>
+                        <h3 class="font-black text-xl mt-3">Scan untuk Top Up</h3>
+                        <p id="topupPaymentText" class="text-xs text-gray-500 mt-1"></p>
+                    </div>
+                    <div class="cl-qr-wrap rounded-3xl p-4 mt-4 cl-payment-pulse"><img id="topupQrImage" src="" alt="QRIS Top Up" class="w-[250px] h-[250px] max-w-full mx-auto rounded-2xl bg-white object-contain shadow-sm"></div>
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <div class="bg-gray-50 rounded-2xl p-3"><div class="text-[10px] text-gray-400">Total</div><div id="topupPaymentAmount" class="font-black text-lg text-orange-600 mt-0.5">Rp 0</div></div>
+                        <div class="bg-gray-50 rounded-2xl p-3"><div class="text-[10px] text-gray-400">Kedaluwarsa</div><div id="topupCountdown" class="font-black text-lg mt-0.5">—</div></div>
+                    </div>
+                    <a id="topupPaymentUrl" href="#" target="_blank" rel="noopener" class="block mt-3 text-center bg-gray-900 text-white font-black text-xs py-3 rounded-2xl"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka Pembayaran</a>
+                    <div id="topupStatus" class="mt-3 bg-blue-50 border border-blue-100 rounded-2xl p-3 text-xs text-blue-800"><i class="fa-solid fa-rotate fa-spin mr-1"></i> Menunggu pembayaran...</div>
+                </div>
+
+                <div id="crazyPayHistory" class="cl-wallet-section mt-4">
+                    <div class="flex items-center justify-between gap-3"><div><div class="font-black text-sm">Aktivitas terbaru</div><div class="text-[10px] text-gray-400 mt-1">Top up dan penggunaan CrazyPay kamu.</div></div><span class="text-[10px] font-black px-2 py-1 rounded-lg bg-gray-50 text-gray-500">Realtime</span></div>
+                    <div id="crazyPayTransactions" class="mt-2"></div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- SETTINGS: PROFILE + THEME ONLY -->
     <div id="settingsModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeSettings()">
@@ -1685,9 +1730,25 @@ function updateAuthUI(user){
         async function cancelOrder(id){const o=getLocalOrder(id);if(!o||!['belum_bayar','dikemas'].includes(o.status))return;o.status='dibatalkan';o.statusHistory.push({status:'dibatalkan',at:nowIso()});o.tracking={label:'Pesanan dibatalkan',place:'CRAZY LENS'};o.escrow='none';await writeOrder(o);showToast('Pesanan dibatalkan');}
 
         // ===== CRAZYPAY TOP UP =====
-        function openTopup(){requireLogin(()=>{document.getElementById('topupModal').classList.remove('hidden');document.getElementById('topupFormWrap').classList.remove('hidden');document.getElementById('topupPaymentWrap').classList.add('hidden');updateWalletUI();setTopupAmount(0);});}
+        function openTopup(){requireLogin(()=>{document.getElementById('topupModal').classList.remove('hidden');document.getElementById('topupFormWrap').classList.remove('hidden');document.getElementById('topupPaymentWrap').classList.add('hidden');updateWalletUI();setTopupAmount(0);renderCrazyPayOverview();});}
         function closeTopup(){document.getElementById('topupModal')?.classList.add('hidden');clearPaymentCountdown();}
         function setTopupAmount(amount){const e=document.getElementById('topupAmount');if(e)e.value=amount?amount:'';}
+        function renderCrazyPayOverview(){
+            const email=document.getElementById('crazyPayWalletEmail');
+            if(email) email.textContent=currentUser?.email || 'Belum login';
+            const wrap=document.getElementById('crazyPayTransactions'); if(!wrap)return;
+            const tx=[];
+            (realtimeTopups||[]).slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,4).forEach(t=>tx.push({type:'in',title:'Top Up CrazyPay',sub:t.payment?.status==='paid'?'Berhasil':'Menunggu pembayaran',amount:Number(t.amount||0),date:t.createdAt,status:t.status}));
+            (realtimeOrders||[]).slice().sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,4).forEach(o=>tx.push({type:'out',title:o.items?.[0]?.name||'Pembelian CRAZY LENS',sub:o.status==='selesai'?'Selesai':(o.status||'Order'),amount:Number(o.total||o.subtotal||0),date:o.createdAt,status:o.status}));
+            tx.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+            if(!tx.length){wrap.innerHTML='<div class="py-7 text-center text-xs text-gray-400">Belum ada transaksi.</div>';return;}
+            wrap.innerHTML=tx.slice(0,6).map(t=>{
+                const positive=t.type==='in';
+                const statusText=t.status==='success'||t.status==='selesai'?'Sukses':t.status==='pending'?'Menunggu':t.status||'';
+                return `<div class="cl-tx-row"><div class="cl-tx-ic ${positive?'bg-emerald-50 text-emerald-600':'bg-orange-50 text-orange-600'}"><i class="fa-solid ${positive?'fa-arrow-down':'fa-arrow-up'}"></i></div><div class="cl-tx-meta"><div class="cl-tx-title">${esc(t.title)}</div><div class="cl-tx-sub">${esc(statusText)} • ${t.date?new Date(t.date).toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}</div></div><div class="cl-tx-amt ${positive?'text-emerald-600':'text-orange-600'}">${positive?'+':'-'}${money(t.amount).replace('Rp ','Rp ')}</div></div>`;
+            }).join('');
+        }
+
         async function createTopup(){
             const amount=Number(document.getElementById('topupAmount').value||0);if(!amount||amount<1000)return showToast('Minimal top up Rp 1.000');
             setButtonLoading('createTopupButton',true,'Membuat transaksi...');
@@ -1773,6 +1834,8 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
             svc.onAuthStateChanged(svc.auth,user=>{updateAuthUI(user);if(user){attachUserRealtime(user);renderOrders();completePendingAction();}else{detachUserRealtime();renderOrders();}});
 
         }
+
+        setInterval(()=>{if(!document.getElementById('topupModal')?.classList.contains('hidden'))renderCrazyPayOverview();},2500);
     </script>
 
     <!-- FIREBASE INITIALIZATION SCRIPT (ES MODULE) -->
