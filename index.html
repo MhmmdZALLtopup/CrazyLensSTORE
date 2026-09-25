@@ -4243,75 +4243,278 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
 </script>
 
 
-<script>
-/* CRAZY LENS USER FINAL REPAIR V22 — one authoritative realtime catalog + working live chat */
-(()=>{
-  'use strict';
-  const CFG={productsPath:'catalog/products',firestoreCollection:'catalogProducts',chatRoot:'chats'};
-  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const money=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
-  const catalog={rtdb:{},fs:{}};
-  let activeChatThread=null,chatOff=null;
-  const svc=()=>window.firebaseServices||null;
-  const visible=()=>{
-    const latest={};const tomb=new Set();
-    for(const source of [catalog.rtdb,catalog.fs]) for(const [id,p0] of Object.entries(source||{})){
-      if(!p0)continue;const p={id:String(p0.id||id),...p0};const k=p.id;
-      if(p.deleted===true||p.active===false){tomb.add(k);continue;}
-      const prev=latest[k];const t1=Date.parse(p.updatedAt||p.publishedAt||0)||0;const t2=Date.parse(prev?.updatedAt||prev?.publishedAt||0)||0;
-      if(!prev||t1>=t2)latest[k]=p;
-    }
-    return Object.values(latest).filter(p=>!tomb.has(p.id)&&p.active!==false&&p.deleted!==true).sort((a,b)=>(Date.parse(b.updatedAt||b.publishedAt||0)||0)-(Date.parse(a.updatedAt||a.publishedAt||0)||0));
-  };
-  const setGlobal=()=>{window.CRAZY_LENS_PRODUCTS=Object.fromEntries(visible().map(p=>[p.id,p]));};
-  const resolveMedia=async el=>{const s=svc();const src=el?.getAttribute?.('src')||'';if(!src.startsWith('firestore-file://')||!s?.firestoreFile?.resolveVirtualMedia)return;try{await s.firestoreFile.resolveVirtualMedia(el)}catch{}};
 
-  function ba(frame){const before=frame.querySelector('.cl-ba-before'),handle=frame.querySelector('.cl-ba-handle');if(!before||!handle)return;let down=false;const move=x=>{const r=frame.getBoundingClientRect();const pct=Math.max(0,Math.min(100,((x-r.left)/Math.max(1,r.width))*100));before.style.width=pct+'%';handle.style.left=pct+'%'};frame.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;down=true;frame.setPointerCapture?.(e.pointerId);move(e.clientX);e.preventDefault();e.stopPropagation()});frame.addEventListener('pointermove',e=>{if(down)move(e.clientX)});frame.addEventListener('pointerup',()=>down=false);frame.addEventListener('pointercancel',()=>down=false)}
-
-  function card(p){
-    const id=esc(p.id),name=esc(p.name||'Produk CRAZY LENS'),after=esc(p.image||p.afterImage||'https://placehold.co/900x700/f3f4f6/6b7280?text=CRAZY+LENS'),before=esc(p.beforeImage||p.before||p.image||after);const safeName=String(p.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
-    const price=Number(p.flashSale?.active?p.flashSale.price:p.price||0);
-    return `<article class="cl-simple-product" data-product-card data-product-id="${id}" onclick="openProductByIdV('${id}')"><div class="cl-simple-media"><img src="${after}" alt="${name}" loading="lazy"><div class="cl-ba-before" style="width:50%"><img src="${before}" alt="Before ${name}" loading="lazy"></div><div class="cl-ba-handle"><div class="cl-ba-knob"><i class="fa-solid fa-arrows-left-right text-[9px]"></i></div></div><span class="cl-ba-label before">BEFORE</span><span class="cl-ba-label after">AFTER</span></div><div class="cl-simple-meta"><div class="flex items-center justify-between gap-2"><span class="cl-chip">${esc(String(p.category||'digital').split(',')[0])}</span><button type="button" onclick="event.stopPropagation();toggleWishlist('${id}')" class="cl-heart"><i class="fa-regular fa-heart"></i></button></div><h3>${name}</h3><div class="cl-rating"><i class="fa-solid fa-star"></i> ${Number(p.rating||0).toFixed(1)} <span>• ${esc(p.sold||0)} terjual</span></div><div class="cl-location"><i class="fa-solid fa-location-dot"></i>${esc(p.sellerLocation||'Indonesia')} ${Number(p.stock||0)>0?`• stok ${Number(p.stock)}`:''}</div><div class="cl-simple-bottom"><strong>${money(price)}</strong><button type="button" onclick="event.stopPropagation();addToCart('${id}','${safeName}',${price},${Number(p.oldPrice||0)},'${after}',1)"><i class="fa-solid fa-cart-plus"></i></button></div></div></article>`;
-  }
-
-  function renderCatalog(){
-    const grid=document.getElementById('productGrid');if(!grid)return;setGlobal();const ps=visible();const count=document.getElementById('productCountBadge');if(count)count.textContent=`${ps.length} produk`;
-    if(!ps.length){grid.innerHTML='<div class="col-span-full py-16 text-center"><div class="w-16 h-16 mx-auto rounded-3xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl"><i class="fa-solid fa-box-open"></i></div><div class="font-black text-gray-900 dark:text-white mt-4">Belum ada produk</div><div class="text-xs text-gray-400 mt-1">Belum ada produk aktif dari admin. Produk akan muncul otomatis secara realtime.</div><div class="text-[9px] text-green-600 font-black mt-3"><i class="fa-solid fa-circle mr-1"></i> FIREBASE REALTIME</div></div>';return}
-    grid.innerHTML=ps.map(card).join('');grid.querySelectorAll('.cl-ba-slider,.cl-ba-before').forEach(()=>{});grid.querySelectorAll('.cl-simple-media').forEach(ba);grid.querySelectorAll('img[src^="firestore-file://"],video[src^="firestore-file://"],source[src^="firestore-file://"]').forEach(resolveMedia);try{window.updateWishlistIcons?.()}catch{}
-  }
-
-  function attachCatalog(){const s=svc();if(!s?.db||!s.ref||!s.onValue)return false;try{window.__CL_USER_CATALOG_OFF?.();}catch{}window.__CL_USER_CATALOG_OFF=s.onValue(s.ref(s.db,CFG.productsPath),snap=>{catalog.rtdb=snap.val()||{};renderCatalog();});if(s.fdb){import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js').then(m=>{window.__CL_USER_FS_OFF?.();window.__CL_USER_FS_OFF=m.onSnapshot(m.collection(s.fdb,CFG.firestoreCollection),snap=>{const rows={};snap.forEach(d=>rows[d.id]={id:d.id,...d.data()});catalog.fs=rows;renderCatalog();},e=>console.warn('Firestore catalog',e))}).catch(e=>console.warn(e))}renderCatalog();return true}
-
-  // Remove legacy Cinematic Looks controls even if an older patch inserted them later.
-  function cleanupCinematic(){document.querySelectorAll('button,span,option').forEach(el=>{const txt=(el.textContent||'').trim();if(txt==='Cinematic Look'||txt==='#CinematicTone'||txt==='🎬 Cinematic'||(el.tagName==='OPTION'&&el.value==='cinematic'))el.remove()});}
-
-  // ---------- WORKING USER LIVE CHAT ----------
-  function user(){return (typeof currentUser!=='undefined'?currentUser:null)||svc()?.auth?.currentUser||null}
-  function threadFor(productId='store'){const u=user();if(!u)return null;return [u.uid,'crazy-lens-store'].sort().join('_')}
-  function renderChatMessages(msgs){const box=document.getElementById('chatMessages');if(!box)return;box.innerHTML=msgs.map(m=>`<div class="${m.senderRole==='admin'?'cl-chat-bubble cl-chat-them':'cl-chat-bubble cl-chat-me'}"><div>${esc(m.text||'')}</div><div class="text-[8px] opacity-60 mt-1">${m.createdAt?new Date(m.createdAt).toLocaleTimeString('id-ID'):''}</div></div>`).join('')||'<div class="text-center text-xs text-gray-400 py-10">Belum ada pesan. Tanyakan apa saja tentang produk.</div>';box.scrollTop=box.scrollHeight}
-  function attachChat(){const s=svc();if(!s?.db||!s.ref||!s.onValue||!activeChatThread)return;try{chatOff?.()}catch{}chatOff=s.onValue(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/messages`),snap=>{const rows=Object.values(snap.val()||{}).sort((a,b)=>(Date.parse(a.createdAt||0)||0)-(Date.parse(b.createdAt||0)||0));renderChatMessages(rows)},e=>console.warn('chat',e))}
-  window.openProductChat=function(productId='store'){
-    if(!user()){try{return requireLogin(()=>window.openProductChat(productId))}catch{return}}
-    activeChatThread=threadFor(productId);window.__CL_ACTIVE_CHAT_THREAD=activeChatThread;const p=visible().find(x=>x.id===productId)||window.currentProduct;const title=document.getElementById('chatTitle');if(title)title.textContent='Chat • '+(p?.name||'CRAZY LENS');document.getElementById('chatModal')?.classList.remove('hidden');attachChat();
-    const s=svc();if(s?.db?.constructor&&s.set&&s.ref){Promise.allSettled([s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/userId`),user().uid),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/userEmail`),user().email||''),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/email`),user().email||''),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/productId`),productId),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/sellerId`),'crazy-lens-store')])}
-  };
-  window.closeProductChat=function(){try{chatOff?.()}catch{}chatOff=null;document.getElementById('chatModal')?.classList.add('hidden')};
-  window.toggleLiveChat=()=>window.openProductChat('store');
-  window.sendChatMessage=async function(){const u=user();if(!u)return requireLogin(()=>window.sendChatMessage());const input=document.getElementById('chatInput');const text=(input?.value||'').trim();if(!text)return;if(!activeChatThread)window.openProductChat('store');const s=svc();if(!s?.set||!s.ref)throw new Error('Firebase belum siap');const msgId='MSG-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);await s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/messages/${msgId}`),{id:msgId,userId:u.uid,userEmail:u.email||'',senderRole:'user',text,productId:window.currentProduct?.id||'store',createdAt:new Date().toISOString()});if(input)input.value='';};
-
-  // Do not let old unavailable modal overwrite the working chat.
-  const oldToggle=window.toggleLiveChat;window.toggleLiveChat=()=>window.openProductChat('store');
-
-  function boot(){cleanupCinematic();document.getElementById('productGrid')?.replaceChildren();if(attachCatalog()){};try{window.__CL_USER_CATALOG_LOCK=true}catch{} }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
-  window.addEventListener('crazyFirebaseReady',()=>setTimeout(boot,100));
-  // Periodic repair for legacy engines that may repaint stale hardcoded cards.
-  setInterval(()=>{cleanupCinematic();if(window.__CL_USER_CATALOG_LOCK)renderCatalog()},1800);
-})();
-</script>
 <style>
 /* Final simple UX product cards */
 .cl-simple-product{background:#fff;border:1px solid #eee;border-radius:20px;padding:10px;overflow:hidden;cursor:pointer;transition:.18s;display:flex;flex-direction:column}.cl-simple-product:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(15,23,42,.08)}.cl-simple-media{position:relative;height:210px;border-radius:16px;overflow:hidden;background:#f3f4f6}.cl-simple-media>img{width:100%;height:100%;object-fit:cover;display:block}.cl-ba-before{position:absolute;inset:0 auto 0 0;width:50%;overflow:hidden;z-index:2}.cl-ba-before img{width:100%;height:100%;object-fit:cover;display:block}.cl-ba-handle{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#fff;z-index:3;transform:translateX(-50%);cursor:ew-resize;box-shadow:0 0 10px rgba(0,0,0,.35)}.cl-ba-knob{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:31px;height:31px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#f97316;color:#fff;border:2px solid #fff;box-shadow:0 5px 18px rgba(249,115,22,.35)}.cl-ba-label{position:absolute;top:9px;z-index:4;padding:4px 7px;border-radius:8px;background:rgba(15,23,42,.72);color:#fff;font-size:8px;font-weight:900}.cl-ba-label.before{left:9px}.cl-ba-label.after{right:9px;background:#f97316}.cl-simple-meta{padding:8px 2px 2px}.cl-simple-meta h3{font-size:12px;line-height:1.35;font-weight:900;color:#111827;margin:8px 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.cl-chip{font-size:8px;font-weight:900;color:#ea580c;background:#fff7ed;padding:4px 7px;border-radius:7px}.cl-heart{width:29px;height:29px;border:1px solid #eee;background:#fff;border-radius:9px;color:#ec4899}.cl-rating{font-size:9px;color:#f59e0b}.cl-rating span{color:#9ca3af}.cl-location{font-size:8px;color:#9ca3af;margin-top:5px}.cl-simple-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:9px;padding-top:8px;border-top:1px solid #f1f1f1}.cl-simple-bottom strong{font-size:14px;color:#ea580c;font-weight:900}.cl-simple-bottom button{width:33px;height:33px;border:0;border-radius:10px;background:#f97316;color:#fff}.dark .cl-simple-product{background:#11151c;border-color:#252c35}.dark .cl-simple-meta h3{color:#f8fafc}.dark .cl-simple-bottom{border-color:#252c35}.dark .cl-heart{background:#11151c;border-color:#2b3440}
 </style>
+
+<style id="crazy-lens-v23-final-css">
+  /* V23: clean final theme support */
+  :root{--cl-bg:#f6f6f8;--cl-card:#ffffff;--cl-text:#111827;--cl-line:#e5e7eb;--cl-muted:#6b7280}
+  body{background:var(--cl-bg);color:var(--cl-text);transition:background-color .2s ease,color .2s ease}
+  body.dark{--cl-bg:#0b0d10;--cl-card:#11151a;--cl-text:#f8fafc;--cl-line:#252a31;--cl-muted:#9ca3af;background:#0b0d10;color:#f8fafc}
+  body.dark .bg-white{background-color:#11151a!important}
+  body.dark .bg-gray-50{background-color:#15191f!important}
+  body.dark .bg-gray-100{background-color:#1b2027!important}
+  body.dark .text-gray-900,body.dark .text-gray-800{color:#f8fafc!important}
+  body.dark .text-gray-700{color:#e5e7eb!important}
+  body.dark .text-gray-600,body.dark .text-gray-500{color:#9ca3af!important}
+  body.dark .border-gray-100,body.dark .border-gray-200{border-color:#252a31!important}
+  .cl-v23-settings-card{background:var(--cl-card);border:1px solid var(--cl-line);border-radius:20px;padding:16px}
+  .cl-v23-empty{grid-column:1/-1;padding:56px 20px;text-align:center;border:1px dashed var(--cl-line);border-radius:24px;background:var(--cl-card)}
+  .cl-v23-empty-icon{width:64px;height:64px;margin:0 auto;border-radius:20px;display:flex;align-items:center;justify-content:center;background:#fff7ed;color:#f97316;font-size:25px}
+  .cl-v23-card{background:var(--cl-card)!important;border-color:var(--cl-line)!important;color:var(--cl-text)!important}
+  .cl-v23-card .cl-v23-meta{color:var(--cl-text)}
+  .cl-v23-card .cl-v23-muted{color:var(--cl-muted)}
+  .cl-v23-media{position:relative;height:210px;border-radius:17px;overflow:hidden;background:#eef0f3;user-select:none;touch-action:none;cursor:ew-resize}
+  .cl-v23-media>img{width:100%;height:100%;object-fit:cover;display:block}
+  .cl-v23-before{position:absolute;inset:0 auto 0 0;width:50%;overflow:hidden;z-index:2;pointer-events:none}
+  .cl-v23-before img{width:100%;height:100%;object-fit:cover;display:block}
+  .cl-v23-handle{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#fff;z-index:4;transform:translateX(-50%);box-shadow:0 0 12px rgba(0,0,0,.35);pointer-events:none}
+  .cl-v23-knob{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#f97316;color:#fff;border:2px solid #fff;box-shadow:0 6px 18px rgba(249,115,22,.35)}
+  .cl-v23-label{position:absolute;top:9px;z-index:5;padding:4px 7px;border-radius:8px;background:rgba(15,23,42,.74);color:#fff;font-size:8px;font-weight:900;pointer-events:none}
+  .cl-v23-label.before{left:9px}.cl-v23-label.after{right:9px;background:#f97316}
+  .cl-v23-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--cl-line);padding-top:9px;margin-top:9px}
+  .cl-v23-price{font-size:15px;font-weight:950;color:#ea580c}.cl-v23-old{font-size:10px;color:#9ca3af;text-decoration:line-through;min-height:12px}
+  .cl-v23-action{width:34px;height:34px;border:0;border-radius:11px;background:#f97316;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .cl-v23-heart{width:30px;height:30px;border:1px solid var(--cl-line);border-radius:9px;background:var(--cl-card);color:#ec4899;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  body.dark .cl-v23-chip{background:#241b14;color:#fb923c}.cl-v23-chip{font-size:8px;font-weight:900;color:#c2410c;background:#fff7ed;padding:4px 7px;border-radius:7px}
+  body.dark .cl-v23-empty{background:#11151a}
+</style>
+
+<script id="crazy-lens-v23-final-engine">
+(()=>{
+  'use strict';
+  const V={productsPath:'catalog/products',firestoreCollection:'catalogProducts',chatRoot:'chats',darkKey:'crazyLensDarkV23'};
+  const state={rtdb:{},fs:{},ready:false};
+  let rtdbOff=null, fsOff=null, chatOff=null, activeChatThread=null;
+  const svc=()=>window.firebaseServices||null;
+  const user=()=>svc()?.auth?.currentUser || (typeof currentUser!=='undefined'?currentUser:null);
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+  const ts=p=>{const t=Date.parse(p?.updatedAt||p?.publishedAt||p?.createdAt||'');return Number.isFinite(t)?t:0};
+
+  function normalise(p,id){
+    if(!p)return null;
+    const x={...p,id:String(p.id||id||'')};
+    if(!x.id)return null;
+    x.name=String(x.name||'Produk CRAZY LENS');
+    x.price=Number(x.price||0); x.oldPrice=Number(x.oldPrice||0); x.stock=Number(x.stock??0);
+    x.rating=Number(x.rating||0); x.sold=String(x.sold||0);
+    x.image=x.image||x.afterImage||x.cover||'';
+    x.beforeImage=x.beforeImage||x.before||x.image||x.afterImage||'';
+    x.format=x.format||'DIGITAL'; x.category=x.category||'digital'; x.sellerLocation=x.sellerLocation||'CRAZY LENS';
+    x.downloadUrl=x.downloadUrl||x.files?.download||'';
+    return x;
+  }
+
+  // Pick the newest record across RTDB and Firestore. This prevents an old mirror/delete record from winning.
+  function products(){
+    const latest=new Map();
+    for(const source of [state.fs,state.rtdb]){
+      for(const [id,raw] of Object.entries(source||{})){
+        const p=normalise(raw,id); if(!p)continue;
+        const prev=latest.get(p.id);
+        if(!prev || ts(p)>=ts(prev)) latest.set(p.id,p);
+      }
+    }
+    return [...latest.values()]
+      .filter(p=>p.deleted!==true && p.active!==false)
+      .sort((a,b)=>ts(b)-ts(a));
+  }
+
+  function snapshotMap(){return Object.fromEntries(products().map(p=>[p.id,p]));}
+
+  function setCatalogCount(n){
+    ['productCountBadge','v13ProductCount'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=n+' produk';});
+  }
+
+  function cardHtml(p){
+    const id=esc(p.id),name=esc(p.name); const after=esc(p.image||'https://placehold.co/900x700/f3f4f6/6b7280?text=CRAZY+LENS');
+    const before=esc(p.beforeImage||p.image||'https://placehold.co/900x700/e5e7eb/6b7280?text=BEFORE');
+    const price=Number(p.flashSale?.active?p.flashSale.price:p.flashSalePrice||p.price||0);
+    const old=Number(p.oldPrice||p.price||0);
+    const rating=Number(p.rating||0).toFixed(1); const sold=esc(p.sold||0);
+    return `<article class="cl-v23-card cl-simple-product" data-product-card data-product-id="${id}" data-category="${esc(p.category)}" data-name="${name.toLowerCase()}" data-price="${price}" data-old-price="${old}" data-image="${after}">
+      <div class="cl-v23-media" data-ba="1">
+        <img src="${after}" alt="After ${name}" loading="lazy">
+        <div class="cl-v23-before"><img src="${before}" alt="Before ${name}" loading="lazy"></div>
+        <div class="cl-v23-handle"><div class="cl-v23-knob"><i class="fa-solid fa-arrows-left-right text-[9px]"></i></div></div>
+        <span class="cl-v23-label before">BEFORE</span><span class="cl-v23-label after">AFTER</span>
+      </div>
+      <div class="cl-v23-meta pt-2">
+        <div class="flex items-center gap-2"><span class="cl-v23-chip">${esc(String(p.category).split(',')[0]||'digital')}</span><button class="cl-v23-heart" data-action="wish" type="button" aria-label="Favorit"><i class="fa-regular fa-heart"></i></button></div>
+        <h3 class="font-black text-sm leading-tight mt-2 line-clamp-2">${name}</h3>
+        <div class="text-[10px] text-amber-500 mt-2"><i class="fa-solid fa-star"></i> ${rating} <span class="cl-v23-muted">• ${sold} terjual</span></div>
+        <div class="text-[9px] cl-v23-muted mt-1"><i class="fa-solid fa-location-dot mr-1"></i>${esc(p.sellerLocation)}${p.stock?` • stok ${p.stock}`:''}</div>
+        <div class="cl-v23-bottom"><div><div class="cl-v23-old">${old>price?money(old):''}</div><div class="cl-v23-price">${money(price)}</div></div><button class="cl-v23-action" data-action="cart" type="button" aria-label="Tambah ke keranjang"><i class="fa-solid fa-cart-plus"></i></button></div>
+      </div>
+    </article>`;
+  }
+
+  function bindBA(frame){
+    if(!frame || frame.dataset.v23Bound==='1')return; frame.dataset.v23Bound='1';
+    const before=frame.querySelector('.cl-v23-before'), handle=frame.querySelector('.cl-v23-handle'); if(!before||!handle)return;
+    let dragging=false;
+    const move=x=>{const r=frame.getBoundingClientRect();const pct=Math.max(0,Math.min(100,((x-r.left)/Math.max(1,r.width))*100));before.style.width=pct+'%';handle.style.left=pct+'%';};
+    frame.addEventListener('pointerdown',e=>{dragging=true;frame.setPointerCapture?.(e.pointerId);move(e.clientX);e.preventDefault();e.stopPropagation();});
+    frame.addEventListener('pointermove',e=>{if(dragging)move(e.clientX)});
+    frame.addEventListener('pointerup',()=>dragging=false); frame.addEventListener('pointercancel',()=>dragging=false);
+  }
+
+  async function resolveVirtualMedia(){
+    const f=svc()?.firestoreFile; if(!f?.resolveVirtualMedia)return;
+    document.querySelectorAll('#productGrid img[src^="firestore-file://"],#productGrid video[src^="firestore-file://"],#productGrid source[src^="firestore-file://"]').forEach(el=>{f.resolveVirtualMedia(el).catch(()=>{})});
+  }
+
+  function bindCardEvents(){
+    const grid=document.getElementById('productGrid'); if(!grid)return;
+    grid.querySelectorAll('[data-ba="1"]').forEach(bindBA);
+    grid.querySelectorAll('[data-product-card]').forEach(card=>{
+      const id=card.dataset.productId; const p=snapshotMap()[id]; if(!p)return;
+      card.addEventListener('click',e=>{
+        if(e.target.closest('[data-action]'))return;
+        window.openProductByIdV?.(id);
+      });
+      card.querySelector('[data-action="wish"]')?.addEventListener('click',e=>{e.stopPropagation();window.toggleWishlist?.(id);});
+      card.querySelector('[data-action="cart"]')?.addEventListener('click',e=>{e.stopPropagation();window.addToCart?.(id,p.name,Number(p.flashSale?.active?p.flashSale.price:p.flashSalePrice||p.price||0),Number(p.oldPrice||0),p.image||'',1);});
+    });
+    resolveVirtualMedia();
+  }
+
+  function render(){
+    const grid=document.getElementById('productGrid'); if(!grid)return;
+    const ps=products(); setCatalogCount(ps.length); window.CRAZY_LENS_PRODUCTS=snapshotMap();
+    if(!ps.length){grid.innerHTML=`<div class="cl-v23-empty"><div class="cl-v23-empty-icon"><i class="fa-solid fa-box-open"></i></div><div class="font-black text-gray-900 dark:text-white text-base mt-4">Belum ada produk</div><div class="text-[11px] text-gray-400 mt-1 max-w-md mx-auto">Produk akan muncul otomatis setelah admin mempublish produk ke Firebase.</div><div class="text-[9px] text-emerald-600 font-black mt-4"><i class="fa-solid fa-circle mr-1"></i> FIREBASE REALTIME</div></div>`;return;}
+    grid.innerHTML=ps.map(cardHtml).join(''); bindCardEvents();
+  }
+
+  function catalogDomHealthy(){
+    const grid=document.getElementById('productGrid'); if(!grid)return true;
+    const expected=products(); if(!expected.length)return grid.querySelectorAll('[data-product-card]').length===0;
+    const cards=[...grid.querySelectorAll('[data-product-card]')]; if(cards.length!==expected.length)return false;
+    const ids=new Set(cards.map(x=>x.dataset.productId)); return expected.every(p=>ids.has(p.id));
+  }
+
+  function attachCatalog(){
+    const s=svc(); if(!s?.db||!s.ref||!s.onValue)return false;
+    try{rtdbOff?.();}catch{};
+    rtdbOff=s.onValue(s.ref(s.db,V.productsPath),snap=>{state.rtdb=snap.val()||{};state.ready=true;render()},err=>{state.rtdb={};state.ready=true;render();console.warn('CRAZY LENS catalog RTDB:',err)});
+    if(s.fdb){
+      import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js').then(mod=>{
+        try{fsOff?.()}catch{}
+        fsOff=mod.onSnapshot(mod.collection(s.fdb,V.firestoreCollection),snap=>{const rows={};snap.forEach(d=>rows[d.id]={id:d.id,...d.data()});state.fs=rows;state.ready=true;render()},err=>console.warn('CRAZY LENS catalog Firestore:',err));
+      }).catch(err=>console.warn('CRAZY LENS Firestore listener:',err));
+    }
+    render(); return true;
+  }
+
+  // ---------- Product entry points ----------
+  window.openProductByIdV=function(id){
+    const p=products().find(x=>x.id===String(id)); if(!p)return;
+    window.currentProduct=p; window.currentProductQty=1;
+    try{window.saveRecent?.(p.id)}catch{}
+    try{window.renderProductPage?.()}catch(e){console.warn('product detail',e)}
+    try{window.switchTab?.('product')}catch{}
+  };
+  window.openProductFromCard=(card,e)=>{if(e?.target?.closest('button'))return;window.openProductByIdV(card?.dataset?.productId)};
+
+  // ---------- Search/filter on the authoritative catalog ----------
+  window.handleSearch=function(){
+    const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
+    const cards=[...document.querySelectorAll('#productGrid [data-product-card]')];
+    cards.forEach(c=>c.classList.toggle('hidden',!!q&&!((c.dataset.name||'').includes(q))));
+    const box=document.getElementById('searchSuggestBox'); const list=document.getElementById('searchSuggestList');
+    if(box&&list){
+      if(!q){box.classList.add('hidden');list.innerHTML='';return;}
+      const matches=products().filter(p=>(`${p.name} ${p.category} ${p.format} ${p.sellerLocation}`.toLowerCase()).includes(q)).slice(0,6);
+      list.innerHTML=matches.map(p=>`<button type="button" class="w-full text-left px-3 py-2 hover:bg-orange-50 text-xs font-bold" data-suggest="${esc(p.id)}">${esc(p.name)}</button>`).join('');
+      box.classList.toggle('hidden',matches.length===0);
+      list.querySelectorAll('[data-suggest]').forEach(b=>b.onclick=()=>{box.classList.add('hidden');window.openProductByIdV(b.dataset.suggest)});
+    }
+  };
+  window.filterCategory=function(cat){
+    const c=String(cat||'all').toLowerCase();
+    document.querySelectorAll('#productGrid [data-product-card]').forEach(card=>{const cats=(card.dataset.category||'').toLowerCase().split(',').map(x=>x.trim());card.classList.toggle('hidden',c!=='all'&&!cats.includes(c));});
+    document.getElementById('catalogSection')?.scrollIntoView({behavior:'smooth'});
+  };
+  window.filterByTag=function(tag){const input=document.getElementById('searchInput');if(input){input.value=tag;window.handleSearch()}};
+  window.applySorting=function(){
+    const mode=document.getElementById('sortSelect')?.value||'popular';
+    const arr=products().slice();
+    if(mode==='rating')arr.sort((a,b)=>Number(b.rating||0)-Number(a.rating||0));
+    else if(mode==='price-low')arr.sort((a,b)=>Number(a.price||0)-Number(b.price||0));
+    else if(mode==='price-high')arr.sort((a,b)=>Number(b.price||0)-Number(a.price||0));
+    else arr.sort((a,b)=>Number(b.sold||0)-Number(a.sold||0));
+    const grid=document.getElementById('productGrid'); if(grid&&arr.length){grid.innerHTML=arr.map(cardHtml).join('');bindCardEvents();}
+  };
+
+  // ---------- Settings: only profile picture + theme ----------
+  function applyTheme(on){
+    document.body.classList.toggle('dark',!!on);
+    document.documentElement.style.colorScheme=on?'dark':'light';
+    localStorage.setItem(V.darkKey,on?'1':'0');
+    const t=document.getElementById('darkModeToggle');if(t)t.checked=!!on;
+  }
+  window.toggleDarkMode=applyTheme;
+  window.openSettings=function(){
+    const m=document.getElementById('settingsModal');if(!m)return;
+    // Hide any legacy/accidental controls that are not profile/theme.
+    ['#paymentEndpointInput','#irestoreEndpointInput','#commandInput','#commandOutput','#qrisConnectionBadge'].forEach(sel=>m.querySelectorAll(sel).forEach(el=>el.closest('.cl-setting-card')?.classList.add('hidden')));
+    const t=document.getElementById('darkModeToggle');if(t)t.checked=document.body.classList.contains('dark');
+    const u=user(),img=document.getElementById('settingsProfilePreview');if(u?.photoURL&&img)img.src=u.photoURL;
+    m.classList.remove('hidden');
+  };
+  window.closeSettings=function(){document.getElementById('settingsModal')?.classList.add('hidden')};
+  async function uploadProfilePhoto(file){
+    const u=user(); if(!u||!file)return;
+    if(!file.type.startsWith('image/')){window.showToast?.('Pilih file gambar.');return}
+    try{
+      const data=await new Promise((resolve,reject)=>{const url=URL.createObjectURL(file),im=new Image();im.onload=()=>{try{const max=512,scale=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*scale));c.height=Math.max(1,Math.round(im.height*scale));c.getContext('2d').drawImage(im,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',.72))}catch(e){reject(e)}finally{URL.revokeObjectURL(url)}};im.onerror=reject;im.src=url});
+      const s=svc(); const payload={photoURL:data,name:u.displayName||u.email?.split('@')[0]||'Pengguna',email:u.email||'',updatedAt:new Date().toISOString()};
+      if(s?.set&&s?.ref&&s?.db)await s.set(s.ref(s.db,`users/${u.uid}/profile`),payload);
+      document.getElementById('settingsProfilePreview')?.setAttribute('src',data);if(document.getElementById('profilePhotoStatus'))document.getElementById('profilePhotoStatus').textContent='Foto profil tersimpan ✓';
+      try{u.photoURL=data}catch{}; window.showToast?.('Foto profil diperbarui ✓');
+    }catch(e){console.warn(e);window.showToast?.('Gagal menyimpan foto profil: '+(e?.message||e))}
+  }
+  window.uploadProfilePhoto=uploadProfilePhoto;
+
+  // ---------- Live Chat: same thread shape expected by admin ----------
+  function threadId(){const u=user();return u?[u.uid,'crazy-lens-store'].sort().join('_'):null}
+  function renderChat(rows){const box=document.getElementById('chatMessages');if(!box)return;box.innerHTML=rows.map(m=>{const me=m.senderRole==='user'||m.userId===user()?.uid;return `<div class="cl-chat-bubble ${me?'cl-chat-me':'cl-chat-them'}"><div>${esc(m.text||'')}</div><div class="text-[8px] opacity-60 mt-1">${m.createdAt?new Date(m.createdAt).toLocaleTimeString('id-ID'):''}</div></div>`}).join('')||'<div class="text-center text-xs text-gray-400 py-10">Belum ada pesan. Tanyakan apa saja tentang produk.</div>';box.scrollTop=box.scrollHeight}
+  function attachChat(){const s=svc();if(!s?.db||!s.ref||!s.onValue||!activeChatThread)return;try{chatOff?.()}catch{};chatOff=s.onValue(s.ref(s.db,`${V.chatRoot}/${activeChatThread}/messages`),snap=>{const rows=Object.values(snap.val()||{}).sort((a,b)=>(Date.parse(a.createdAt||0)||0)-(Date.parse(b.createdAt||0)||0));renderChat(rows)},err=>{console.warn('chat',err);renderChat([])})}
+  function needLogin(action){const u=user();if(u){action();return}if(typeof window.requireLogin==='function')return window.requireLogin(action);if(typeof window.handleLoginButton==='function')return window.handleLoginButton();window.showToast?.('Silakan login dengan Google terlebih dahulu.')}
+  window.openProductChat=function(productId='store'){needLogin(()=>{const u=user();activeChatThread=threadId();const p=products().find(x=>x.id===productId)||window.currentProduct;document.getElementById('chatTitle')?.replaceChildren(document.createTextNode('Chat • '+(p?.name||'CRAZY LENS')));document.getElementById('chatModal')?.classList.remove('hidden');attachChat();const s=svc();if(s?.set&&s?.ref&&s?.db){Promise.allSettled([s.set(s.ref(s.db,`${V.chatRoot}/${activeChatThread}/userId`),u.uid),s.set(s.ref(s.db,`${V.chatRoot}/${activeChatThread}/userEmail`),u.email||''),s.set(s.ref(s.db,`${V.chatRoot}/${activeChatThread}/productId`),productId),s.set(s.ref(s.db,`${V.chatRoot}/${activeChatThread}/sellerId`),'crazy-lens-store'),s.set(s.ref(s.db,`${V.chatRoot}/${activeChatThread}/updatedAt`),new Date().toISOString())])}})};
+  window.closeProductChat=function(){try{chatOff?.()}catch{}chatOff=null;document.getElementById('chatModal')?.classList.add('hidden')};
+  window.toggleLiveChat=()=>window.openProductChat('store');
+  window.sendChatMessage=async function(){needLogin(async()=>{const u=user();const input=document.getElementById('chatInput');const text=(input?.value||'').trim();if(!text)return;if(!activeChatThread)window.openProductChat('store');const s=svc();if(!s?.set||!s?.ref||!s?.db){window.showToast?.('Firebase belum siap.');return}const id='MSG-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);try{await s.set(s.ref(s.db,`${V.chatRoot}/${activeChatThread}/messages/${id}`),{id,userId:u.uid,userEmail:u.email||'',senderRole:'user',text,productId:window.currentProduct?.id||'store',createdAt:new Date().toISOString()});if(input)input.value=''}catch(e){console.warn(e);window.showToast?.('Pesan gagal dikirim: '+(e?.message||e))}})};
+
+  // ---------- Remove legacy Cinematic Look controls ----------
+  function cleanupCinematic(){
+    document.querySelectorAll('button,span,a,option').forEach(el=>{
+      const txt=(el.textContent||'').trim();
+      if(txt==='Cinematic Look'||txt==='#CinematicTone'||(el.tagName==='OPTION'&&el.value==='cinematic'))el.remove();
+    });
+    document.querySelectorAll('[onclick*="filterCategory(\\\'cinematic\\\')"],[onclick*="filterCategory(\"cinematic\")"],[data-category*="cinematic"]').forEach(el=>{if(!el.closest('[data-product-card]'))el.remove()});
+  }
+
+  function initTheme(){applyTheme(localStorage.getItem(V.darkKey)==='1'||(localStorage.getItem('crazyLensDark')==='1'))}
+
+  function boot(){
+    initTheme();cleanupCinematic();
+    document.getElementById('productGrid')?.replaceChildren();
+    if(!attachCatalog())window.addEventListener('crazyFirebaseReady',attachCatalog,{once:true});
+    const input=document.getElementById('profilePhotoInput');if(input&&!input.dataset.v23Bound){input.dataset.v23Bound='1';input.addEventListener('change',e=>uploadProfilePhoto(e.target.files?.[0]))}
+    // Keep catalog authoritative if a legacy renderer repaints it.
+    const grid=document.getElementById('productGrid');
+    if(grid&&!grid.dataset.v23Observed){grid.dataset.v23Observed='1';const mo=new MutationObserver(()=>{if(!catalogDomHealthy())setTimeout(render,0)});mo.observe(grid,{childList:true});}
+    setTimeout(cleanupCinematic,50);setTimeout(cleanupCinematic,500);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+  window.addEventListener('crazyFirebaseReady',()=>setTimeout(boot,80));
+})();
+</script>
 </body>
 </html>
