@@ -1844,7 +1844,7 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
         import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, onValue, set, update, get, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+        import { getFirestore, collection as fsCollection, doc as fsDoc, getDoc, getDocs, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyD3usv5rw801fV1nrXIwyDQ6eYEzC7hDk0",
@@ -1862,15 +1862,77 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
         try { analytics = getAnalytics(app); } catch {}
         const auth = getAuth(app);
         const db = getDatabase(app);
-        const storage = getStorage(app);
+        const fdb = getFirestore(app);
+
+        // ===== Firestore Virtual File Vault: replaces Firebase Storage =====
+        const FILE_CHUNK_BYTES = 360000;
+        const FILE_COLLECTION = 'firestoreFiles';
+        const VIRTUAL_SCHEME = 'firestore-file://';
+        const fileMetaRef = id => fsDoc(fdb, FILE_COLLECTION, id);
+        const fileChunkRef = (id, index) => fsDoc(fdb, FILE_COLLECTION, id, 'chunks', String(index));
+        const bytesToBase64 = bytes => { let out=''; const step=0x8000; for(let i=0;i<bytes.length;i+=step) out += String.fromCharCode(...bytes.subarray(i,i+step)); return btoa(out); };
+        const base64ToBytes = b64 => { const bin=atob(b64||''); const out=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i); return out; };
+        async function makePreview(file,max=1000,quality=.78){
+            return new Promise(resolve=>{
+                if(!file?.type?.startsWith('image/')) return resolve('');
+                const obj=URL.createObjectURL(file),img=new Image();
+                img.onload=()=>{try{const c=document.createElement('canvas');const scale=Math.min(1,max/Math.max(img.width,img.height));c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL('image/jpeg',quality));}catch{resolve('')}finally{URL.revokeObjectURL(obj)}};
+                img.onerror=()=>{URL.revokeObjectURL(obj);resolve('')};img.src=obj;
+            });
+        }
+        async function storeVirtualFile(file,logicalPath,onProgress){
+            const id='F-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9);
+            const preview=await makePreview(file);
+            const meta={id,name:file.name,path:logicalPath,mime:file.type||'application/octet-stream',size:file.size,createdAt:new Date().toISOString(),chunkBytes:FILE_CHUNK_BYTES,chunkCount:Math.ceil(file.size/FILE_CHUNK_BYTES),preview:preview||'',status:'ready'};
+            await setDoc(fileMetaRef(id),meta);
+            let index=0;
+            for(let start=0;start<file.size;start+=FILE_CHUNK_BYTES){
+                const raw=new Uint8Array(await file.slice(start,Math.min(start+FILE_CHUNK_BYTES,file.size)).arrayBuffer());
+                await setDoc(fileChunkRef(id,index),{index,data:bytesToBase64(raw),bytes:raw.byteLength});
+                index++;onProgress?.(file.size?Math.min(1,(start+raw.byteLength)/file.size):1);
+            }
+            return {id,virtualUrl:VIRTUAL_SCHEME+id,previewUrl:preview,meta};
+        }
+        async function readVirtualFile(id){
+            const meta=(await getDoc(fileMetaRef(id))).data(); if(!meta)return null;
+            const snap=await getDocs(fsCollection(fdb,FILE_COLLECTION,id,'chunks')); const docs=snap.docs.sort((a,b)=>Number(a.id)-Number(b.id));
+            const parts=[];let total=0;for(const d of docs){const bytes=base64ToBytes(d.data().data);parts.push(bytes);total+=bytes.length;}
+            const out=new Uint8Array(total);let off=0;for(const part of parts){out.set(part,off);off+=part.length;}
+            return {meta,bytes:out};
+        }
+        async function downloadVirtualFile(id){
+            const file=await readVirtualFile(id);if(!file){showToast('File tidak ditemukan di Firestore');return;}
+            const url=URL.createObjectURL(new Blob([file.bytes],{type:file.meta.mime||'application/octet-stream'}));
+            const a=document.createElement('a');a.href=url;a.download=file.meta.name||id;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500);
+        }
+        async function resolveVirtualMedia(el){
+            const src=el?.getAttribute?.('src')||''; if(!src.startsWith(VIRTUAL_SCHEME)||el.dataset.firestoreResolved==='1')return;
+            const id=src.slice(VIRTUAL_SCHEME.length); const file=await readVirtualFile(id); if(!file)return;
+            const obj=URL.createObjectURL(new Blob([file.bytes],{type:file.meta.mime||'application/octet-stream'}));el.src=obj;el.dataset.firestoreResolved='1';el.dataset.firestoreObjectUrl=obj;
+        }
+        function hydrateVirtualMedia(root=document){
+            root.querySelectorAll?.('img[src^="firestore-file://"],video[src^="firestore-file://"],source[src^="firestore-file://"]').forEach(el=>resolveVirtualMedia(el).catch(()=>{}));
+        }
+        document.addEventListener('click',e=>{const a=e.target.closest?.('a[href^="firestore-file://"]');if(!a)return;e.preventDefault();downloadVirtualFile(a.getAttribute('href').slice(VIRTUAL_SCHEME.length)).catch(err=>showToast('Download gagal: '+(err?.message||err)));});
+        const mediaObserver=new MutationObserver(()=>hydrateVirtualMedia(document));
+        mediaObserver.observe(document.documentElement,{childList:true,subtree:true});
+        window.downloadFirestoreFile=downloadVirtualFile;
+
+        const virtualStorage = {};
+        function storageRef(_storage,path){return {path,__virtual:true,__file:null};}
+        async function uploadBytes(r,file,meta={}){const x=await storeVirtualFile(file,r.path,()=>{});r.__file=x;return {ref:r,metadata:{name:file.name,size:file.size,contentType:meta.contentType||file.type||'application/octet-stream'},virtualFile:x};}
+        async function getDownloadURL(r){const x=r?.__file;if(x)return x.meta.mime.startsWith('image/') && x.previewUrl ? x.previewUrl : x.virtualUrl;return r?.__virtual?VIRTUAL_SCHEME+encodeURIComponent(r.path):'';}
+        virtualStorage.__virtual=true;
 
         window.firebaseServices = {
-            app, analytics, auth, db, storage, ref, onValue, set, update, get, remove, runTransaction, storageRef, uploadBytes, getDownloadURL, updateProfile,
-            onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut
+            app, analytics, auth, db, fdb, storage:virtualStorage,
+            ref, onValue, set, update, get, remove, runTransaction,
+            storageRef, uploadBytes, getDownloadURL, updateProfile,
+            onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut,
+            firestoreFile: { storeVirtualFile, readVirtualFile, downloadVirtualFile, resolveVirtualMedia, FILE_CHUNK_BYTES }
         };
         window.dispatchEvent(new Event('crazyFirebaseReady'));
     </script>
-
 
     <!-- ADVANCED SINGLE-HTML ENGINE -->
     <script>
@@ -1890,20 +1952,7 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
         let remoteProducts={};
         let uploadedFilesCache=[];
 
-        const MORE_PRODUCTS=[
-          ['golden-hour-portrait','Golden Hour Portrait Pack',39000,149000,'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=85','mobile,portrait,warm','4.9','1.8rb','.DNG'],
-          ['urban-cinematic-vol2','Urban Cinematic Vol. 2',29000,129000,'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=85','cinematic,desktop,street','4.9','2.7rb','.XMP & .DNG'],
-          ['moody-autumn','Moody Autumn Film Pack',22000,99000,'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=85','moody,mobile,cinematic','4.8','1.1rb','.DNG'],
-          ['wedding-bride','Wedding Bride Deluxe',35000,179000,'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=85','wedding,mobile,desktop','5.0','3.4rb','.DNG & XMP'],
-          ['travel-teal-orange','Travel Teal Orange',27000,119000,'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=85','travel,cinematic,luts','4.9','980','.CUBE'],
-          ['night-neon-pack','Night Neon City',31000,139000,'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=85','luts,cyberpunk,cinematic','4.9','1.6rb','.CUBE'],
-          ['clean-aesthetic','Clean Aesthetic Lightroom',18000,89000,'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=85','mobile,aesthetic','4.7','760','.DNG'],
-          ['coffee-tone','Coffee Brown Tone',16000,79000,'https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=800&q=85','warm,mobile,moody','4.8','1.3rb','.DNG'],
-          ['luxury-fashion','Luxury Fashion Editorial',49000,199000,'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85','fashion,desktop,cinematic','5.0','1.9rb','.XMP'],
-          ['film-grain-35','35mm Film Grain Collection',25000,129000,'https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=800&q=85','film,analog,mobile','4.8','870','.XMP & .DNG'],
-          ['street-night','Street Night Documentary',33000,149000,'https://images.unsplash.com/photo-1519501025264-65ba15a82390?auto=format&fit=crop&w=800&q=85','street,night,luts','4.9','1.4rb','.CUBE'],
-          ['minimal-product','Minimal Product Studio',28000,109000,'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=85','product,studio,desktop','4.9','640','.XMP']
-        ];
+        const MORE_PRODUCTS=[];
 
         function applyDarkMode(on){
           document.body.classList.toggle('dark',!!on);
@@ -2120,8 +2169,8 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
         window.resumeAutoEngine=function(){if(/^https?:\/\//i.test(CRAZY_CONFIG.paymentEndpoint||''))return;};
 
         // Realtime product + UI bootstrap.
-        window.addEventListener('crazyFirebaseReady',()=>{setTimeout(()=>{initDark();seedMoreProducts();attachCatalogRealtime();setQrisBadge();},80)});
-        document.addEventListener('DOMContentLoaded',()=>{initDark();seedMoreProducts();setQrisBadge();setTimeout(()=>{if(currentUser)attachCatalogRealtime();},300);});
+        window.addEventListener('crazyFirebaseReady',()=>{setTimeout(()=>{initDark();attachCatalogRealtime();setQrisBadge();},80)});
+        document.addEventListener('DOMContentLoaded',()=>{initDark();setQrisBadge();setTimeout(()=>{if(currentUser)attachCatalogRealtime();},300);});
     })();
     </script>
 
@@ -2447,24 +2496,10 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
     'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=88',
     'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=88'
   ];
-  const extraNames=[
-    'Soft Film Portrait','Urban Sunset Pack','Misty Mountain Film','Luxury Wedding Glow','Ocean Travel Cinema','Night Drive Neon','Clean White Skin','Mocha Cafe Mood','Runway Flash Editorial','Analog Dust 35mm',
-    'City Rain Documentary','Studio Product White','Pastel Portrait Airy','Dark Fashion Mono','Forest Deep Green','Blue Sea Travel','Street Matte Black','Retro Pop 90s','Golden Skin Deluxe','Wedding Champagne',
-    'Minimal Shadow Studio','Street Film Classic','Summer Sun Pop','Cafe Grain Deluxe','Cinema Orange Teal','Blue Hour Portrait','Faded Memory Film','Coastal Wedding Light','Neon Runway 4K','Product Shadow Pro',
-    'Golden Road Trip','Editorial Midnight','Soft Peach Aesthetic','Vintage Kodak Warm','Motion City Pack','Sunset Grain Story','Luxury Portrait Skin','Night Street Grain','Pastel Bridal Film','Cyber Red Cinema',
-    'Morning Light Preset','Urban Coffee Film','Night Portrait Pro','Travel Documentary 4K','Fashion Silver Mono','Wedding Soft Beige','Film Bloom Collection','Street Chrome LUT','Aesthetic Cream Tone','Luxury Beige Editorial'
-  ];
-  const cats=['mobile,portrait,warm','cinematic,desktop,street','nature,film,mobile','wedding,mobile,desktop','travel,cinematic,luts','luts,cyberpunk,cinematic','mobile,aesthetic','warm,mobile,moody','fashion,desktop,cinematic','film,analog,mobile'];
-  const fmts=['.DNG','.XMP & .DNG','.DNG','.DNG & .XMP','.CUBE','.CUBE','.DNG','.DNG','.XMP','.CUBE'];
-  const locs=['Jakarta','Bandung','Surabaya','Yogyakarta','Bali'];
-  extraNames.forEach((name,i)=>{
-    const id='extra-'+(i+1).toString().padStart(2,'0')+'-v6';
-    const image=imgs[i%imgs.length];
-    const before=imgs[(i+4)%imgs.length];
-    const price=15000+(i%12)*3500+(i%4)*1000;
-    const old=price*4+(i%3)*10000;
-    products[id]={id,name,price,oldPrice:old,image,beforeImage:before,category:cats[i%cats.length],format:fmts[i%fmts.length],sellerLocation:locs[i%locs.length],rating:(4.5+(i%6)*.1).toFixed(1),sold:String(220+i*61),stock:20+(i%60),sku:'CLV6-'+String(500+i),description:`${name} adalah preset/LUT premium CRAZY LENS dengan warna modern, detail kulit terjaga, highlight halus, dan workflow cepat untuk creator.`,gallery:[image,before,imgs[(i+7)%imgs.length]],video:'',weight:0,variations:[{name:'Basic',price,stock:12+(i%8)},{name:'Pro',price:price+7000,stock:6+(i%5)},{name:'Ultimate',price:price+15000,stock:3+(i%4)}],sellerId:'crazy-lens-store',publishedAt:new Date(Date.now()-i*3600*1000).toISOString(),active:true,source:'v6-seed'};
-  });
+  const extraNames=[];
+  const cats=[];
+  const fmts=[];
+  const locs=[];
   Object.values(products).forEach(p=>{
     if(!p||!p.id)return;
     if(!p.beforeImage){
@@ -2499,7 +2534,6 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
     bindOneBA(grid.lastElementChild?.querySelector('.cl-v6-ba'));
   }
   window.addProductV6ToCart=id=>{const p=getProduct(id);if(!p)return;const v=p.selectedVariation||p.variations?.[0]||{price:p.price};if(typeof addToCart==='function')addToCart(p.id,p.name,Number(v.price||p.price),Number(p.oldPrice||0),p.image,1);};
-  Object.values(products).forEach(addProductCard);
 
   function bindOneBA(frame){
     if(!frame||frame.dataset.v6Bound==='1')return;
