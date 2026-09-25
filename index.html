@@ -427,7 +427,6 @@ body.dark .cl-v13-livecard .v13-icon,body.dark .cl-v13-trust-card i{background:#
                     </div>
                     <!-- Quick Tag Chips -->
                     <div class="hidden md:flex gap-2 mt-1.5 text-[11px] text-orange-100 overflow-x-auto no-scrollbar">
-                        <span class="hover:underline cursor-pointer" onclick="filterByTag('Cinematic')">#CinematicTone</span>
                         <span class="hover:underline cursor-pointer" onclick="filterByTag('Moody')">#MoodyAutumn</span>
                         <span class="hover:underline cursor-pointer" onclick="filterByTag('Wedding')">#WeddingSuite</span>
                         <span class="hover:underline cursor-pointer" onclick="filterByTag('Cyberpunk')">#CyberpunkNeon</span>
@@ -502,7 +501,7 @@ body.dark .cl-v13-livecard .v13-icon,body.dark .cl-v13-trust-card i{background:#
                 <div class="ml-auto text-[10px] text-gray-400 hidden sm:flex items-center gap-2"><span class="cl-live-dot"></span> Katalog realtime</div>
             </div>
             <div id="advancedFilterPanel" class="hidden mt-3 grid grid-cols-2 md:grid-cols-6 gap-2">
-                <select id="filterCategoryAdvanced" onchange="applyAdvancedFilters()" class="cl-input text-xs"><option value="">Semua kategori</option><option value="mobile">Mobile</option><option value="desktop">Desktop</option><option value="luts">LUTs</option><option value="cinematic">Cinematic</option><option value="wedding">Wedding</option><option value="fashion">Fashion</option><option value="film">Film</option></select>
+                <select id="filterCategoryAdvanced" onchange="applyAdvancedFilters()" class="cl-input text-xs"><option value="">Semua kategori</option><option value="mobile">Mobile</option><option value="desktop">Desktop</option><option value="luts">LUTs</option><option value="wedding">Wedding</option><option value="fashion">Fashion</option><option value="film">Film</option></select>
                 <input id="filterPriceMin" type="number" min="0" oninput="applyAdvancedFilters()" class="cl-input text-xs" placeholder="Harga min">
                 <input id="filterPriceMax" type="number" min="0" oninput="applyAdvancedFilters()" class="cl-input text-xs" placeholder="Harga max">
                 <select id="filterLocationAdvanced" onchange="applyAdvancedFilters()" class="cl-input text-xs"><option value="">Semua lokasi seller</option><option>Jakarta</option><option>Bandung</option><option>Surabaya</option><option>Yogyakarta</option><option>Bali</option></select>
@@ -533,7 +532,7 @@ body.dark .cl-v13-livecard .v13-icon,body.dark .cl-v13-trust-card i{background:#
   </div>
   <div><div class="cl-v13-section-head mb-3"><div><div class="cl-v13-section-title">Explore by Mood</div><div class="cl-v13-section-sub">Pilih karakter warna tanpa perlu membuka filter manual.</div></div></div>
     <div class="cl-v13-chip-row">
-      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='cinematic';handleSearch()">🎬 Cinematic</button>
+      
       <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='wedding';handleSearch()">💍 Wedding</button>
       <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='film';handleSearch()">🎞 Film</button>
       <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='portrait';handleSearch()">✨ Portrait</button>
@@ -638,13 +637,6 @@ body.dark .cl-v13-livecard .v13-icon,body.dark .cl-v13-trust-card i{background:#
                             <i class="fa-solid fa-video"></i>
                         </div>
                         <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Video LUTs (.CUBE)</span>
-                    </button>
-
-                    <button onclick="filterCategory('cinematic')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
-                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center text-xl shadow-md group-hover:scale-110 transition">
-                            <i class="fa-solid fa-clapperboard"></i>
-                        </div>
-                        <span class="text-xs font-semibold text-gray-700 group-hover:text-orange-600">Cinematic Look</span>
                     </button>
 
                     <button onclick="openModal('unavailableModal')" class="group flex flex-col items-center gap-1.5 p-2 rounded-2xl hover:bg-orange-50 transition">
@@ -4250,5 +4242,76 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
 })();
 </script>
 
+
+<script>
+/* CRAZY LENS USER FINAL REPAIR V22 — one authoritative realtime catalog + working live chat */
+(()=>{
+  'use strict';
+  const CFG={productsPath:'catalog/products',firestoreCollection:'catalogProducts',chatRoot:'chats'};
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+  const catalog={rtdb:{},fs:{}};
+  let activeChatThread=null,chatOff=null;
+  const svc=()=>window.firebaseServices||null;
+  const visible=()=>{
+    const latest={};const tomb=new Set();
+    for(const source of [catalog.rtdb,catalog.fs]) for(const [id,p0] of Object.entries(source||{})){
+      if(!p0)continue;const p={id:String(p0.id||id),...p0};const k=p.id;
+      if(p.deleted===true||p.active===false){tomb.add(k);continue;}
+      const prev=latest[k];const t1=Date.parse(p.updatedAt||p.publishedAt||0)||0;const t2=Date.parse(prev?.updatedAt||prev?.publishedAt||0)||0;
+      if(!prev||t1>=t2)latest[k]=p;
+    }
+    return Object.values(latest).filter(p=>!tomb.has(p.id)&&p.active!==false&&p.deleted!==true).sort((a,b)=>(Date.parse(b.updatedAt||b.publishedAt||0)||0)-(Date.parse(a.updatedAt||a.publishedAt||0)||0));
+  };
+  const setGlobal=()=>{window.CRAZY_LENS_PRODUCTS=Object.fromEntries(visible().map(p=>[p.id,p]));};
+  const resolveMedia=async el=>{const s=svc();const src=el?.getAttribute?.('src')||'';if(!src.startsWith('firestore-file://')||!s?.firestoreFile?.resolveVirtualMedia)return;try{await s.firestoreFile.resolveVirtualMedia(el)}catch{}};
+
+  function ba(frame){const before=frame.querySelector('.cl-ba-before'),handle=frame.querySelector('.cl-ba-handle');if(!before||!handle)return;let down=false;const move=x=>{const r=frame.getBoundingClientRect();const pct=Math.max(0,Math.min(100,((x-r.left)/Math.max(1,r.width))*100));before.style.width=pct+'%';handle.style.left=pct+'%'};frame.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;down=true;frame.setPointerCapture?.(e.pointerId);move(e.clientX);e.preventDefault();e.stopPropagation()});frame.addEventListener('pointermove',e=>{if(down)move(e.clientX)});frame.addEventListener('pointerup',()=>down=false);frame.addEventListener('pointercancel',()=>down=false)}
+
+  function card(p){
+    const id=esc(p.id),name=esc(p.name||'Produk CRAZY LENS'),after=esc(p.image||p.afterImage||'https://placehold.co/900x700/f3f4f6/6b7280?text=CRAZY+LENS'),before=esc(p.beforeImage||p.before||p.image||after);const safeName=String(p.name||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    const price=Number(p.flashSale?.active?p.flashSale.price:p.price||0);
+    return `<article class="cl-simple-product" data-product-card data-product-id="${id}" onclick="openProductByIdV('${id}')"><div class="cl-simple-media"><img src="${after}" alt="${name}" loading="lazy"><div class="cl-ba-before" style="width:50%"><img src="${before}" alt="Before ${name}" loading="lazy"></div><div class="cl-ba-handle"><div class="cl-ba-knob"><i class="fa-solid fa-arrows-left-right text-[9px]"></i></div></div><span class="cl-ba-label before">BEFORE</span><span class="cl-ba-label after">AFTER</span></div><div class="cl-simple-meta"><div class="flex items-center justify-between gap-2"><span class="cl-chip">${esc(String(p.category||'digital').split(',')[0])}</span><button type="button" onclick="event.stopPropagation();toggleWishlist('${id}')" class="cl-heart"><i class="fa-regular fa-heart"></i></button></div><h3>${name}</h3><div class="cl-rating"><i class="fa-solid fa-star"></i> ${Number(p.rating||0).toFixed(1)} <span>• ${esc(p.sold||0)} terjual</span></div><div class="cl-location"><i class="fa-solid fa-location-dot"></i>${esc(p.sellerLocation||'Indonesia')} ${Number(p.stock||0)>0?`• stok ${Number(p.stock)}`:''}</div><div class="cl-simple-bottom"><strong>${money(price)}</strong><button type="button" onclick="event.stopPropagation();addToCart('${id}','${safeName}',${price},${Number(p.oldPrice||0)},'${after}',1)"><i class="fa-solid fa-cart-plus"></i></button></div></div></article>`;
+  }
+
+  function renderCatalog(){
+    const grid=document.getElementById('productGrid');if(!grid)return;setGlobal();const ps=visible();const count=document.getElementById('productCountBadge');if(count)count.textContent=`${ps.length} produk`;
+    if(!ps.length){grid.innerHTML='<div class="col-span-full py-16 text-center"><div class="w-16 h-16 mx-auto rounded-3xl bg-orange-50 text-orange-500 flex items-center justify-center text-2xl"><i class="fa-solid fa-box-open"></i></div><div class="font-black text-gray-900 dark:text-white mt-4">Belum ada produk</div><div class="text-xs text-gray-400 mt-1">Belum ada produk aktif dari admin. Produk akan muncul otomatis secara realtime.</div><div class="text-[9px] text-green-600 font-black mt-3"><i class="fa-solid fa-circle mr-1"></i> FIREBASE REALTIME</div></div>';return}
+    grid.innerHTML=ps.map(card).join('');grid.querySelectorAll('.cl-ba-slider,.cl-ba-before').forEach(()=>{});grid.querySelectorAll('.cl-simple-media').forEach(ba);grid.querySelectorAll('img[src^="firestore-file://"],video[src^="firestore-file://"],source[src^="firestore-file://"]').forEach(resolveMedia);try{window.updateWishlistIcons?.()}catch{}
+  }
+
+  function attachCatalog(){const s=svc();if(!s?.db||!s.ref||!s.onValue)return false;try{window.__CL_USER_CATALOG_OFF?.();}catch{}window.__CL_USER_CATALOG_OFF=s.onValue(s.ref(s.db,CFG.productsPath),snap=>{catalog.rtdb=snap.val()||{};renderCatalog();});if(s.fdb){import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js').then(m=>{window.__CL_USER_FS_OFF?.();window.__CL_USER_FS_OFF=m.onSnapshot(m.collection(s.fdb,CFG.firestoreCollection),snap=>{const rows={};snap.forEach(d=>rows[d.id]={id:d.id,...d.data()});catalog.fs=rows;renderCatalog();},e=>console.warn('Firestore catalog',e))}).catch(e=>console.warn(e))}renderCatalog();return true}
+
+  // Remove legacy Cinematic Looks controls even if an older patch inserted them later.
+  function cleanupCinematic(){document.querySelectorAll('button,span,option').forEach(el=>{const txt=(el.textContent||'').trim();if(txt==='Cinematic Look'||txt==='#CinematicTone'||txt==='🎬 Cinematic'||(el.tagName==='OPTION'&&el.value==='cinematic'))el.remove()});}
+
+  // ---------- WORKING USER LIVE CHAT ----------
+  function user(){return (typeof currentUser!=='undefined'?currentUser:null)||svc()?.auth?.currentUser||null}
+  function threadFor(productId='store'){const u=user();if(!u)return null;return [u.uid,'crazy-lens-store'].sort().join('_')}
+  function renderChatMessages(msgs){const box=document.getElementById('chatMessages');if(!box)return;box.innerHTML=msgs.map(m=>`<div class="${m.senderRole==='admin'?'cl-chat-bubble cl-chat-them':'cl-chat-bubble cl-chat-me'}"><div>${esc(m.text||'')}</div><div class="text-[8px] opacity-60 mt-1">${m.createdAt?new Date(m.createdAt).toLocaleTimeString('id-ID'):''}</div></div>`).join('')||'<div class="text-center text-xs text-gray-400 py-10">Belum ada pesan. Tanyakan apa saja tentang produk.</div>';box.scrollTop=box.scrollHeight}
+  function attachChat(){const s=svc();if(!s?.db||!s.ref||!s.onValue||!activeChatThread)return;try{chatOff?.()}catch{}chatOff=s.onValue(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/messages`),snap=>{const rows=Object.values(snap.val()||{}).sort((a,b)=>(Date.parse(a.createdAt||0)||0)-(Date.parse(b.createdAt||0)||0));renderChatMessages(rows)},e=>console.warn('chat',e))}
+  window.openProductChat=function(productId='store'){
+    if(!user()){try{return requireLogin(()=>window.openProductChat(productId))}catch{return}}
+    activeChatThread=threadFor(productId);window.__CL_ACTIVE_CHAT_THREAD=activeChatThread;const p=visible().find(x=>x.id===productId)||window.currentProduct;const title=document.getElementById('chatTitle');if(title)title.textContent='Chat • '+(p?.name||'CRAZY LENS');document.getElementById('chatModal')?.classList.remove('hidden');attachChat();
+    const s=svc();if(s?.db?.constructor&&s.set&&s.ref){Promise.allSettled([s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/userId`),user().uid),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/userEmail`),user().email||''),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/email`),user().email||''),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/productId`),productId),s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/sellerId`),'crazy-lens-store')])}
+  };
+  window.closeProductChat=function(){try{chatOff?.()}catch{}chatOff=null;document.getElementById('chatModal')?.classList.add('hidden')};
+  window.toggleLiveChat=()=>window.openProductChat('store');
+  window.sendChatMessage=async function(){const u=user();if(!u)return requireLogin(()=>window.sendChatMessage());const input=document.getElementById('chatInput');const text=(input?.value||'').trim();if(!text)return;if(!activeChatThread)window.openProductChat('store');const s=svc();if(!s?.set||!s.ref)throw new Error('Firebase belum siap');const msgId='MSG-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);await s.set(s.ref(s.db,`${CFG.chatRoot}/${activeChatThread}/messages/${msgId}`),{id:msgId,userId:u.uid,userEmail:u.email||'',senderRole:'user',text,productId:window.currentProduct?.id||'store',createdAt:new Date().toISOString()});if(input)input.value='';};
+
+  // Do not let old unavailable modal overwrite the working chat.
+  const oldToggle=window.toggleLiveChat;window.toggleLiveChat=()=>window.openProductChat('store');
+
+  function boot(){cleanupCinematic();document.getElementById('productGrid')?.replaceChildren();if(attachCatalog()){};try{window.__CL_USER_CATALOG_LOCK=true}catch{} }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
+  window.addEventListener('crazyFirebaseReady',()=>setTimeout(boot,100));
+  // Periodic repair for legacy engines that may repaint stale hardcoded cards.
+  setInterval(()=>{cleanupCinematic();if(window.__CL_USER_CATALOG_LOCK)renderCatalog()},1800);
+})();
+</script>
+<style>
+/* Final simple UX product cards */
+.cl-simple-product{background:#fff;border:1px solid #eee;border-radius:20px;padding:10px;overflow:hidden;cursor:pointer;transition:.18s;display:flex;flex-direction:column}.cl-simple-product:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(15,23,42,.08)}.cl-simple-media{position:relative;height:210px;border-radius:16px;overflow:hidden;background:#f3f4f6}.cl-simple-media>img{width:100%;height:100%;object-fit:cover;display:block}.cl-ba-before{position:absolute;inset:0 auto 0 0;width:50%;overflow:hidden;z-index:2}.cl-ba-before img{width:100%;height:100%;object-fit:cover;display:block}.cl-ba-handle{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#fff;z-index:3;transform:translateX(-50%);cursor:ew-resize;box-shadow:0 0 10px rgba(0,0,0,.35)}.cl-ba-knob{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:31px;height:31px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#f97316;color:#fff;border:2px solid #fff;box-shadow:0 5px 18px rgba(249,115,22,.35)}.cl-ba-label{position:absolute;top:9px;z-index:4;padding:4px 7px;border-radius:8px;background:rgba(15,23,42,.72);color:#fff;font-size:8px;font-weight:900}.cl-ba-label.before{left:9px}.cl-ba-label.after{right:9px;background:#f97316}.cl-simple-meta{padding:8px 2px 2px}.cl-simple-meta h3{font-size:12px;line-height:1.35;font-weight:900;color:#111827;margin:8px 0 6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.cl-chip{font-size:8px;font-weight:900;color:#ea580c;background:#fff7ed;padding:4px 7px;border-radius:7px}.cl-heart{width:29px;height:29px;border:1px solid #eee;background:#fff;border-radius:9px;color:#ec4899}.cl-rating{font-size:9px;color:#f59e0b}.cl-rating span{color:#9ca3af}.cl-location{font-size:8px;color:#9ca3af;margin-top:5px}.cl-simple-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:9px;padding-top:8px;border-top:1px solid #f1f1f1}.cl-simple-bottom strong{font-size:14px;color:#ea580c;font-weight:900}.cl-simple-bottom button{width:33px;height:33px;border:0;border-radius:10px;background:#f97316;color:#fff}.dark .cl-simple-product{background:#11151c;border-color:#252c35}.dark .cl-simple-meta h3{color:#f8fafc}.dark .cl-simple-bottom{border-color:#252c35}.dark .cl-heart{background:#11151c;border-color:#2b3440}
+</style>
 </body>
 </html>
