@@ -3747,5 +3747,311 @@ function completePendingAction(){if(pendingAction){const a=pendingAction;pending
 })();
 </script>
 
+
+<!-- CRAZY LENS V15: SIMPLE USER UX + REMOTE-ONLY CATALOG -->
+<style id="crazy-v15-simple-ui">
+  /* Simpler user UX: keep the core store flow, remove decorative dashboard clutter. */
+  #v13LiveBar,
+  #v13HomeEnhancements,
+  .cl-v13-floating { display:none !important; }
+  #tab-home > .grid.grid-cols-1.md\:grid-cols-3 > :nth-child(2),
+  #tab-home > .grid.grid-cols-1.md\:grid-cols-3 > :nth-child(3) { display:none !important; }
+  #tab-home > .grid.grid-cols-1.md\:grid-cols-3 { grid-template-columns:1fr !important; }
+  #productGrid { min-height: 150px; }
+  .cl-v15-empty {
+    grid-column: 1 / -1;
+    min-height: 260px;
+    border:1px dashed #d1d5db;
+    border-radius:24px;
+    background:linear-gradient(180deg,#fff,#fafafa);
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    text-align:center; padding:32px 18px;
+  }
+  body.dark .cl-v15-empty { background:#111827; border-color:#374151; }
+  .cl-v15-empty-icon { width:62px;height:62px;border-radius:20px;background:#fff7ed;color:#f97316;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px; }
+  body.dark .cl-v15-empty-icon { background:#24170f; }
+  .cl-v15-live-card { display:flex;align-items:center;gap:8px;font-size:10px;font-weight:800;color:#16a34a; }
+  .cl-v15-card .ba-slider-container { touch-action:none; }
+  .cl-v15-card img { user-select:none; -webkit-user-drag:none; }
+  #flashSaleGrid.cl-v15-flash-empty { min-height:0; }
+  #flashSaleGrid.cl-v15-flash-empty::before { content:'Belum ada Flash Sale'; display:block; color:rgba(255,255,255,.78); font-size:11px; padding:18px; grid-column:1/-1; text-align:center; }
+</style>
+<script>
+(() => {
+  'use strict';
+  const V15 = {
+    productsPath: 'catalog/products'
+  };
+  let catalog = {};
+  let catalogUnsub = null;
+  let catalogReady = false;
+  const esc = (v='') => String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money = (n) => 'Rp ' + Number(n||0).toLocaleString('id-ID');
+  const svc = () => window.firebaseServices || null;
+
+  function activeProducts(){
+    return Object.values(catalog||{}).filter(p=>p && p.id && p.active !== false);
+  }
+  function normalize(p){
+    if(!p) return null;
+    return {
+      ...p,
+      id:String(p.id||''),
+      name:String(p.name||'Produk CRAZY LENS'),
+      price:Number(p.price||0),
+      oldPrice:Number(p.oldPrice||0),
+      stock:Number(p.stock ?? 0),
+      rating:Number(p.rating||0),
+      sold:String(p.sold||'0'),
+      image:p.image || p.afterImage || p.cover || '',
+      beforeImage:p.beforeImage || p.before || p.image || p.afterImage || '',
+      format:p.format || 'DIGITAL',
+      category:p.category || 'digital',
+      sellerLocation:p.sellerLocation || 'CRAZY LENS',
+      downloadUrl:p.downloadUrl || p.files?.download || ''
+    };
+  }
+
+  function productCard(p){
+    const cat = esc(String(p.category).split(',')[0]);
+    const safeName = esc(p.name).replace(/'/g,'\\\'');
+    const after = esc(p.image || 'https://placehold.co/900x700/f3f4f6/6b7280?text=CRAZY+LENS');
+    const before = esc(p.beforeImage || p.image || 'https://placehold.co/900x700/e5e7eb/6b7280?text=BEFORE');
+    return `<div data-product-card data-product-id="${esc(p.id)}" data-category="${esc(p.category)}" data-name="${esc(p.name)}" data-price="${p.price}" data-old-price="${p.oldPrice}" data-image="${after}" data-before-image="${before}" data-rating="${p.rating}" data-sold="${esc(p.sold)}" data-seller-location="${esc(p.sellerLocation)}" data-stock="${p.stock}" onclick="openProductFromCard(this,event)" class="cl-v15-card bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col group cursor-pointer text-gray-800 transition hover:-translate-y-0.5 hover:shadow-lg">
+      <div class="relative h-44 w-full mb-3 rounded-xl overflow-hidden bg-gray-100 ba-slider-container" data-v15-ba="1">
+        <img src="${after}" class="w-full h-full object-cover transition duration-500 group-hover:scale-[1.02]" alt="After ${esc(p.name)}">
+        <div class="ba-image-before" style="width:50%"><img src="${before}" class="w-full h-full object-cover" alt="Before ${esc(p.name)}"></div>
+        <div class="ba-handle"><div class="ba-handle-button"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></div></div>
+        <span class="absolute left-2 top-2 z-30 text-[8px] font-black px-2 py-1 rounded-lg bg-black/70 text-white">BEFORE</span>
+        <span class="absolute right-2 top-2 z-30 text-[8px] font-black px-2 py-1 rounded-lg bg-orange-500 text-white">AFTER</span>
+      </div>
+      <div class="flex items-center gap-1 mb-1">
+        <span class="text-[9px] font-black text-orange-600 bg-orange-50 px-2 py-1 rounded-md">${cat || 'DIGITAL'}</span>
+        <button aria-label="Favorit" onclick="event.stopPropagation();toggleWishlist('${esc(p.id)}')" class="ml-auto w-8 h-8 rounded-xl bg-white border border-gray-200 text-pink-500 hover:bg-pink-50"><i class="fa-regular fa-heart text-xs"></i></button>
+      </div>
+      <h3 class="font-extrabold text-sm leading-tight mb-1.5 line-clamp-2">${esc(p.name)}</h3>
+      <div class="flex items-center gap-1 text-[10px] text-amber-500 mb-2"><i class="fa-solid fa-star"></i><b>${p.rating || '0.0'}</b><span class="text-gray-400">• ${esc(p.sold)} terjual</span></div>
+      <div class="text-[9px] text-gray-400 mb-2"><i class="fa-solid fa-location-dot mr-1"></i>${esc(p.sellerLocation)}${p.stock ? ` • stok ${p.stock}` : ''}</div>
+      <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between gap-2">
+        <div><p class="text-[10px] text-gray-400 line-through">${p.oldPrice ? money(p.oldPrice) : ''}</p><p class="text-base font-black text-orange-600">${money(p.price)}</p></div>
+        <button onclick="event.stopPropagation();addToCart('${esc(p.id)}','${safeName}',${p.price},${p.oldPrice},'${after}',1)" class="bg-orange-500 text-white w-9 h-9 rounded-xl shadow-sm hover:bg-orange-600 transition flex items-center justify-center"><i class="fa-solid fa-cart-plus text-xs"></i></button>
+      </div>
+    </div>`;
+  }
+
+  function bindBA(frame){
+    if(!frame || frame.dataset.v15Bound==='1') return;
+    frame.dataset.v15Bound='1';
+    const before=frame.querySelector('.ba-image-before');
+    const handle=frame.querySelector('.ba-handle');
+    if(!before||!handle) return;
+    let moving=false;
+    const slide=(x)=>{
+      const r=frame.getBoundingClientRect();
+      const pct=Math.max(0,Math.min(100,((x-r.left)/Math.max(1,r.width))*100));
+      before.style.width=pct+'%';
+      handle.style.left=pct+'%';
+    };
+    frame.addEventListener('pointerdown',e=>{moving=true;frame.setPointerCapture?.(e.pointerId);slide(e.clientX);e.preventDefault();e.stopPropagation();});
+    frame.addEventListener('pointermove',e=>{if(moving){slide(e.clientX);e.stopPropagation();}});
+    frame.addEventListener('pointerup',e=>{moving=false;e.stopPropagation();});
+    frame.addEventListener('pointercancel',()=>moving=false);
+  }
+
+  function showEmpty(){
+    const grid=document.getElementById('productGrid'); if(!grid)return;
+    grid.innerHTML=`<div class="cl-v15-empty"><div class="cl-v15-empty-icon"><i class="fa-solid fa-box-open"></i></div><div class="font-black text-gray-800 dark:text-white text-base">Belum ada produk</div><div class="text-[11px] text-gray-400 mt-1 max-w-sm">Katalog akan muncul otomatis setelah admin menambahkan produk melalui dashboard.</div><div class="cl-v15-live-card mt-4"><span class="cl-live-dot"></span> Menunggu katalog Firebase</div></div>`;
+    const badge=document.getElementById('productCountBadge'); if(badge)badge.textContent='0 produk';
+    const v=document.getElementById('v13ProductCount'); if(v)v.textContent='0 produk';
+  }
+
+  function renderCatalog(){
+    const grid=document.getElementById('productGrid'); if(!grid)return;
+    const ps=activeProducts().map(normalize).filter(Boolean);
+    window.CRAZY_LENS_PRODUCTS = Object.fromEntries(ps.map(p=>[p.id,p]));
+    const badge=document.getElementById('productCountBadge'); if(badge)badge.textContent=`${ps.length} produk`;
+    const v=document.getElementById('v13ProductCount'); if(v)v.textContent=`${ps.length} produk`;
+    if(!ps.length){showEmpty();renderFlash([]);return;}
+    grid.innerHTML=ps.map(productCard).join('');
+    grid.querySelectorAll('[data-v15-ba="1"]').forEach(bindBA);
+    // Restore wishlist icons.
+    try{window.updateWishlistIcons?.();}catch{}
+    renderFlash(ps);
+  }
+
+  function renderFlash(ps){
+    const grid=document.getElementById('flashSaleGrid'); if(!grid)return;
+    const live=ps.filter(p=>p.flashSale===true || p.isFlashSale===true || Number(p.flashSalePrice||0)>0 || p.promoType==='flash');
+    grid.innerHTML='';
+    grid.classList.toggle('cl-v15-flash-empty', !live.length);
+    const parent=grid.closest('.bg-gradient-to-r');
+    if(parent) parent.classList.toggle('hidden', !live.length);
+    live.slice(0,8).forEach(p=>{
+      const promo=Number(p.flashSalePrice||p.promoPrice||p.price||0);
+      const card=document.createElement('div');
+      card.className='bg-white rounded-2xl p-3 shadow-md border border-gray-100 flex flex-col group cursor-pointer text-gray-800';
+      card.dataset.productCard=''; card.dataset.productId=p.id; card.dataset.category=p.category||''; card.dataset.name=p.name; card.dataset.price=promo; card.dataset.oldPrice=p.oldPrice||p.price; card.dataset.image=p.image||''; card.onclick=e=>{if(e.target.closest('button'))return; window.openProductByIdV?.(p.id);};
+      card.innerHTML=`<div class="relative h-36 w-full mb-3 rounded-xl overflow-hidden bg-gray-100 ba-slider-container" data-v15-ba="1"><img src="${esc(p.image)}" class="w-full h-full object-cover"><div class="ba-image-before" style="width:50%"><img src="${esc(p.beforeImage||p.image)}" class="w-full h-full object-cover"></div><div class="ba-handle"><div class="ba-handle-button"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></div></div><span class="absolute left-2 top-2 z-30 text-[8px] font-black px-2 py-1 rounded-lg bg-black/70 text-white">BEFORE</span><span class="absolute right-2 top-2 z-30 text-[8px] font-black px-2 py-1 rounded-lg bg-red-500 text-white">FLASH</span></div><span class="text-[9px] font-black text-red-600 bg-red-50 px-2 py-1 rounded-md w-fit">Flash Sale</span><h3 class="font-extrabold text-sm leading-tight mt-2 line-clamp-2">${esc(p.name)}</h3><div class="mt-auto pt-2 flex items-center justify-between"><div><p class="text-[10px] text-gray-400 line-through">${money(p.oldPrice||p.price)}</p><p class="text-sm font-black text-orange-600">${money(promo)}</p></div><button onclick="event.stopPropagation();addToCart('${esc(p.id)}','${esc(p.name).replace(/'/g,'\\\'')}',${promo},${Number(p.oldPrice||p.price)},'${esc(p.image||'')}',1)" class="bg-orange-500 text-white w-8 h-8 rounded-xl flex items-center justify-center"><i class="fa-solid fa-cart-plus text-xs"></i></button></div>`;
+      grid.appendChild(card);
+      bindBA(card.querySelector('[data-v15-ba="1"]'));
+    });
+  }
+
+  function attachRealtime(){
+    const s=svc();
+    if(!s?.db || !s?.ref || !s?.onValue) return false;
+    if(catalogUnsub) try{catalogUnsub();}catch{}
+    catalogUnsub=s.onValue(s.ref(s.db,V15.productsPath),snap=>{
+      catalog=snap.val()||{};
+      catalogReady=true;
+      renderCatalog();
+    },err=>{
+      catalogReady=true;
+      const grid=document.getElementById('productGrid');
+      if(grid)grid.innerHTML='<div class="cl-v15-empty"><div class="cl-v15-empty-icon"><i class="fa-solid fa-cloud-exclamation"></i></div><div class="font-black text-gray-800 dark:text-white text-base">Katalog belum bisa dimuat</div><div class="text-[11px] text-gray-400 mt-1">Periksa Firebase Rules agar katalog dapat dibaca.</div></div>';
+    });
+    return true;
+  }
+
+  function boot(){
+    // Remove all hardcoded/seeded product cards from the old HTML engines.
+    const grid=document.getElementById('productGrid');
+    if(grid)grid.innerHTML='';
+    // Hide old flash sale until realtime catalog tells us there is one.
+    const fg=document.getElementById('flashSaleGrid');
+    if(fg)fg.innerHTML='';
+    if(!attachRealtime()){
+      window.addEventListener('crazyFirebaseReady',()=>attachRealtime(),{once:true});
+    }
+    // Keep Settings to profile photo + dark mode only.
+    const settings=document.getElementById('settingsModal');
+    if(settings){settings.querySelectorAll('#paymentEndpointInput,#irestoreEndpointInput,#commandInput,#commandOutput,#qrisConnectionBadge').forEach(e=>{e.closest('.cl-setting-card, .space-y-4, div')?.classList.add('hidden');});}
+  }
+
+  // Make Product Card rendering stay remote-only even when legacy engines fire.
+  window.__crazyLensV15RenderCatalog = renderCatalog;
+  window.addEventListener('crazyFirebaseReady',()=>setTimeout(boot,80),{once:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,120),{once:true});
+  else setTimeout(boot,120);
+})();
+</script>
+
+<!-- CRAZY LENS V16: EXTRA SIMPLE UX POLISH -->
+<style id="crazy-v16-simple-polish">
+  #advancedSearchBar { display:none !important; }
+  #catalogSection { margin-top: 4px; }
+  #catalogSection .text-xl { font-size: 18px; }
+  #catalogSection .text-xs { line-height:1.4; }
+  #productGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  @media (min-width:640px){#productGrid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+  @media (min-width:1024px){#productGrid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+</style>
+<script>
+(() => {
+  'use strict';
+  const esc=(v='')=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const normalize=(p)=>p?({...p,id:String(p.id||''),name:String(p.name||'Produk CRAZY LENS'),price:Number(p.price||0),oldPrice:Number(p.oldPrice||0),stock:Number(p.stock??0),rating:Number(p.rating||0),sold:String(p.sold||'0'),image:p.image||p.afterImage||p.cover||'',beforeImage:p.beforeImage||p.before||p.image||p.afterImage||'',format:p.format||'DIGITAL',category:p.category||'digital',sellerLocation:p.sellerLocation||'CRAZY LENS'}):null;
+  function sourceProducts(){
+    const db=window.__crazyLensV15Catalog;
+    if(db && typeof db==='object') return db;
+    const w=window.CRAZY_LENS_PRODUCTS||{};
+    return w && typeof w==='object' ? w : {};
+  }
+  function getProducts(){return Object.values(sourceProducts()).map(normalize).filter(p=>p&&p.id&&p.active!==false);}
+
+  window.__crazyLensV15Catalog = window.__crazyLensV15Catalog || {};
+
+  // Use the same Firebase path as admin dashboard. No hardcoded product fallback.
+  function attachUserCatalog(){
+    const s=window.firebaseServices;
+    if(!s?.db||!s.ref||!s.onValue)return false;
+    if(window.__crazyV16CatalogOff)try{window.__crazyV16CatalogOff();}catch{}
+    window.__crazyV16CatalogOff=s.onValue(s.ref(s.db,'catalog/products'),snap=>{
+      window.__crazyLensV15Catalog=snap.val()||{};
+      renderCatalog();
+    },()=>{window.__crazyLensV15Catalog={};renderCatalog();});
+    return true;
+  }
+
+  function simpleCard(p){
+    const safeName=esc(p.name).replace(/'/g,"\\'");
+    const after=esc(p.image||'https://placehold.co/900x700/f3f4f6/6b7280?text=CRAZY+LENS');
+    const before=esc(p.beforeImage||p.image||after);
+    const price=p.price||0, old=p.oldPrice||0;
+    return `<article data-product-card data-product-id="${esc(p.id)}" data-category="${esc(p.category)}" data-name="${esc(p.name)}" data-price="${price}" data-old-price="${old}" data-image="${after}" data-before-image="${before}" data-rating="${p.rating}" data-sold="${esc(p.sold)}" data-seller-location="${esc(p.sellerLocation)}" data-stock="${p.stock}" class="cl-v15-card bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col group cursor-pointer text-gray-800 transition hover:-translate-y-0.5 hover:shadow-lg">
+      <div class="relative h-44 w-full mb-3 rounded-xl overflow-hidden bg-gray-100 ba-slider-container" data-v16-ba="1">
+        <img src="${after}" class="w-full h-full object-cover" alt="After ${esc(p.name)}">
+        <div class="ba-image-before" style="width:50%"><img src="${before}" class="w-full h-full object-cover" alt="Before ${esc(p.name)}"></div>
+        <div class="ba-handle"><div class="ba-handle-button"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></div></div>
+        <span class="absolute left-2 top-2 z-30 text-[8px] font-black px-2 py-1 rounded-lg bg-black/70 text-white">BEFORE</span>
+        <span class="absolute right-2 top-2 z-30 text-[8px] font-black px-2 py-1 rounded-lg bg-orange-500 text-white">AFTER</span>
+      </div>
+      <div class="flex items-center gap-1 mb-1"><span class="text-[9px] font-black text-orange-600 bg-orange-50 px-2 py-1 rounded-md">${esc(String(p.category).split(',')[0]||'digital')}</span><button onclick="event.stopPropagation();toggleWishlist('${esc(p.id)}')" class="ml-auto w-8 h-8 rounded-xl bg-white border border-gray-200 text-pink-500"><i class="fa-regular fa-heart text-xs"></i></button></div>
+      <h3 class="font-extrabold text-sm leading-tight mb-1.5 line-clamp-2">${esc(p.name)}</h3>
+      <div class="flex items-center gap-1 text-[10px] text-amber-500 mb-2"><i class="fa-solid fa-star"></i><b>${p.rating?p.rating.toFixed(1):'0.0'}</b><span class="text-gray-400">• ${esc(p.sold)} terjual</span></div>
+      <div class="text-[9px] text-gray-400 mb-2"><i class="fa-solid fa-location-dot mr-1"></i>${esc(p.sellerLocation)}${p.stock?` • stok ${p.stock}`:''}</div>
+      <div class="mt-auto pt-2 border-t border-gray-100 flex items-center justify-between gap-2"><div><p class="text-[10px] text-gray-400 line-through">${old?('Rp '+Number(old).toLocaleString('id-ID')):''}</p><p class="text-base font-black text-orange-600">Rp ${Number(price).toLocaleString('id-ID')}</p></div><button onclick="event.stopPropagation();addToCart('${esc(p.id)}','${safeName}',${price},${old},'${after}',1)" class="bg-orange-500 text-white w-9 h-9 rounded-xl flex items-center justify-center"><i class="fa-solid fa-cart-plus text-xs"></i></button></div>
+    </article>`;
+  }
+
+  function bind(frame){
+    if(!frame||frame.dataset.v16Bound==='1')return;frame.dataset.v16Bound='1';
+    const before=frame.querySelector('.ba-image-before'),handle=frame.querySelector('.ba-handle'); if(!before||!handle)return; let moving=false;
+    const slide=x=>{const r=frame.getBoundingClientRect();const pct=Math.max(0,Math.min(100,((x-r.left)/Math.max(1,r.width))*100));before.style.width=pct+'%';handle.style.left=pct+'%';};
+    frame.addEventListener('pointerdown',e=>{moving=true;frame.setPointerCapture?.(e.pointerId);slide(e.clientX);e.preventDefault();e.stopPropagation()});
+    frame.addEventListener('pointermove',e=>{if(moving){slide(e.clientX);e.stopPropagation()}});
+    frame.addEventListener('pointerup',e=>{moving=false;e.stopPropagation()});frame.addEventListener('pointercancel',()=>moving=false);
+    frame.closest('[data-product-card]')?.addEventListener('click',e=>{if(e.target.closest('button'))return;const id=frame.closest('[data-product-card]')?.dataset.productId; if(id&&window.__crazyV16OpenProduct)window.__crazyV16OpenProduct(id);});
+  }
+
+  function renderCatalog(){
+    const grid=document.getElementById('productGrid');if(!grid)return;
+    const ps=getProducts();
+    window.CRAZY_LENS_PRODUCTS=Object.fromEntries(ps.map(p=>[p.id,p]));
+    const badge=document.getElementById('productCountBadge');if(badge)badge.textContent=ps.length+' produk';
+    if(!ps.length){
+      grid.innerHTML='<div class="cl-v15-empty"><div class="cl-v15-empty-icon"><i class="fa-solid fa-box-open"></i></div><div class="font-black text-gray-800 dark:text-white text-base">Belum ada produk</div><div class="text-[11px] text-gray-400 mt-1 max-w-sm">Produk akan muncul otomatis setelah admin menambahkannya.</div><div class="cl-v15-live-card mt-4"><span class="cl-live-dot"></span> Menunggu Firebase</div></div>';
+      return;
+    }
+    grid.innerHTML=ps.map(simpleCard).join('');
+    grid.querySelectorAll('[data-v16-ba="1"]').forEach(bind);
+    try{window.updateWishlistIcons?.();}catch{}
+  }
+
+  window.__crazyV16OpenProduct=function(id){
+    const p=getProducts().find(x=>x.id===id);if(!p)return;
+    if(typeof window.saveRecent==='function')try{window.saveRecent(id);}catch{}
+    window.currentProduct=p; window.currentProductQty=1;
+    try{window.renderProductPage?.();}catch{}
+    if(typeof window.switchTab==='function')window.switchTab('product');
+  };
+  window.openProductByIdV=window.__crazyV16OpenProduct;
+  window.openProductFromCard=function(card,event){if(event?.target?.closest('button'))return;window.__crazyV16OpenProduct(card?.dataset?.productId)};
+
+  const oldHandle=window.handleSearch;
+  window.handleSearch=function(){
+    const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
+    const grid=document.getElementById('productGrid');if(!grid)return;
+    const box=document.getElementById('searchSuggestBox'),list=document.getElementById('searchSuggestList');
+    const ps=getProducts();
+    const matches=ps.filter(p=>!q||`${p.name} ${p.category} ${p.format} ${p.sellerLocation}`.toLowerCase().includes(q));
+    [...grid.querySelectorAll('[data-product-card]')].forEach(c=>{const p=ps.find(x=>x.id===c.dataset.productId);c.classList.toggle('hidden',!!q&&!matches.some(m=>m.id===p?.id));});
+    if(box&&list&&q){box.classList.remove('hidden');list.innerHTML=matches.slice(0,6).map(p=>`<button class="w-full flex items-center gap-3 p-3 text-left hover:bg-orange-50" onclick="openProductByIdV('${esc(p.id)}');document.getElementById('searchSuggestBox')?.classList.add('hidden')"><img src="${esc(p.image)}" class="w-9 h-9 rounded-lg object-cover"><span class="flex-1 min-w-0"><b class="block text-xs truncate">${esc(p.name)}</b><span class="text-[9px] text-gray-400">${moneySafe(p.price)}</span></span><i class="fa-solid fa-chevron-right text-gray-300 text-[9px]"></i></button>`).join('')||'<div class="p-4 text-xs text-gray-400">Produk tidak ditemukan.</div>';
+    } else box?.classList.add('hidden');
+  };
+  function moneySafe(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
+  window.triggerSearch=window.handleSearch;
+
+  function boot(){
+    // Remove all old hardcoded products before the first realtime snapshot.
+    document.getElementById('productGrid')?.replaceChildren();
+    if(!attachUserCatalog())window.addEventListener('crazyFirebaseReady',()=>attachUserCatalog(),{once:true});
+    // Keep flash-sale area hidden unless admin has published a flash-sale product.
+    const f=document.getElementById('flashSaleGrid');f?.closest('.bg-gradient-to-r')?.classList.add('hidden');
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,80),{once:true});else setTimeout(boot,80);
+  window.addEventListener('crazyFirebaseReady',()=>setTimeout(boot,80));
+})();
+</script>
 </body>
 </html>
