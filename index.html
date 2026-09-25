@@ -268,7 +268,66 @@
         .cl-chat-bubble{max-width:82%;padding:9px 11px;border-radius:16px;font-size:11px;line-height:1.45}.cl-chat-me{margin-left:auto;background:#fff0e7;border:1px solid #fed7aa}.cl-chat-them{margin-right:auto;background:#f3f4f6;border:1px solid #e5e7eb}.cl-notif-item{border:1px solid var(--cl-line);background:var(--cl-card);border-radius:15px;padding:12px}.cl-product-video{background:#0b1020;border-radius:18px;overflow:hidden}
         body.dark .cl-seller-stat,body.dark .cl-notif-item{background:#151517;border-color:#2b2b30}.body.dark .cl-chat-them{background:#242428;border-color:#33333a}
 
-    </style>
+    
+        .cl-download-card{margin-top:12px;border:1px solid #bfdbfe;background:linear-gradient(135deg,#eff6ff,#fff);border-radius:18px;padding:12px}
+        .cl-download-btn{display:inline-flex;align-items:center;gap:8px;background:#111827;color:#fff;border-radius:12px;padding:10px 14px;font-size:11px;font-weight:900;transition:.2s}
+        .cl-download-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(17,24,39,.18)}
+        body.dark .cl-download-card{background:linear-gradient(135deg,#0f172a,#151517);border-color:#1d4ed8}
+        body.dark .cl-download-btn{background:#f8fafc;color:#0f172a}
+        .cl-admin-link{display:inline-flex;align-items:center;gap:6px;color:#64748b;font-size:10px;font-weight:900}
+
+    
+/* ===== CRAZY LENS V13 — PREMIUM USER UX ===== */
+body{transition:background-color .25s ease,color .25s ease}
+.cl-v13-livebar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:4px 0 0}
+.cl-v13-livecard{position:relative;overflow:hidden;border:1px solid rgba(249,115,22,.18);background:linear-gradient(135deg,#fff,#fff7f0 62%,#fff);border-radius:20px;padding:13px 14px;box-shadow:0 8px 30px rgba(17,24,39,.06)}
+.cl-v13-livecard:after{content:"";position:absolute;right:-40px;top:-45px;width:120px;height:120px;border-radius:999px;background:rgba(249,115,22,.08);filter:blur(1px)}
+.cl-v13-livecard .v13-icon{width:36px;height:36px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:#fff0e7;color:#ea580c;box-shadow:inset 0 0 0 1px #fed7aa;flex:none}
+.cl-v13-livevalue{font-size:18px;font-weight:950;line-height:1;margin-top:7px}
+.cl-v13-livelabel{font-size:9px;color:#6b7280;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-top:4px}
+.cl-v13-explore{display:grid;grid-template-columns:1.3fr .7fr .7fr;gap:10px}
+.cl-v13-explore-card{position:relative;overflow:hidden;min-height:124px;border-radius:22px;border:1px solid rgba(229,231,235,.8);box-shadow:0 10px 34px rgba(15,23,42,.06);padding:16px;background:#fff;cursor:pointer}
+.cl-v13-explore-card.hero{background:linear-gradient(120deg,#111827,#2a1410 55%,#7c2d12);color:#fff;border-color:#3f261e;cursor:default}
+.cl-v13-explore-card .noise{position:absolute;inset:0;opacity:.18;background-image:radial-gradient(circle at 20% 25%,#fff 0 1px,transparent 1.6px),radial-gradient(circle at 70% 70%,#fff 0 1px,transparent 1.5px);background-size:18px 18px;mix-blend-mode:overlay}
+.cl-v13-section-head{display:flex;align-items:end;justify-content:space-between;gap:14px}
+.cl-v13-section-title{font-size:19px;font-weight:950;letter-spacing:-.02em}
+.cl-v13-section-sub{font-size:11px;color:#6b7280;margin-top:3px}
+.cl-v13-chip-row{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
+.cl-v13-chip{flex:none;border:1px solid #e5e7eb;background:#fff;border-radius:999px;padding:8px 12px;font-size:10px;font-weight:900;color:#374151;cursor:pointer;transition:.18s}
+.cl-v13-chip:hover{border-color:#fdba74;color:#ea580c;background:#fff7ed}
+.cl-v13-recent-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.cl-v13-recent-card{border:1px solid #f1f5f9;background:#fff;border-radius:18px;padding:8px;cursor:pointer;transition:.2s;box-shadow:0 8px 24px rgba(15,23,42,.05)}
+.cl-v13-recent-card:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(15,23,42,.1)}
+.cl-v13-recent-card img{width:100%;aspect-ratio:1/1;border-radius:13px;object-fit:cover}
+.cl-v13-recent-card .rname{font-size:10px;font-weight:900;line-height:1.25;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cl-v13-recent-card .rprice{font-size:10px;font-weight:950;color:#ea580c;margin-top:5px}
+.cl-v13-trust{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.cl-v13-trust-card{background:#fff;border:1px solid #eef2f7;border-radius:18px;padding:13px;display:flex;align-items:center;gap:10px}
+.cl-v13-trust-card i{width:35px;height:35px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#fff7ed;color:#ea580c}
+.cl-v13-trust-card b{font-size:10px;font-weight:950;display:block}.cl-v13-trust-card span{font-size:9px;color:#6b7280;display:block;margin-top:2px}
+.cl-v13-mobile-nav{display:none}
+.cl-v13-floating{position:fixed;right:18px;bottom:24px;z-index:70;display:flex;flex-direction:column;gap:9px}
+.cl-v13-fab{width:50px;height:50px;border-radius:17px;border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.88);backdrop-filter:blur(16px);box-shadow:0 14px 36px rgba(15,23,42,.13);display:flex;align-items:center;justify-content:center;color:#374151;transition:.2s}
+.cl-v13-fab:hover{transform:translateY(-2px);color:#ea580c}
+.cl-v13-fab.primary{background:linear-gradient(135deg,#fb923c,#ef4444);color:#fff;border-color:transparent}
+.cl-v13-online-pill{display:inline-flex;align-items:center;gap:6px;font-size:9px;font-weight:950;padding:7px 10px;border-radius:999px;background:rgba(16,185,129,.10);color:#047857;border:1px solid rgba(16,185,129,.2)}
+.cl-v13-ba{position:relative;overflow:hidden;border-radius:16px;aspect-ratio:1/1}
+.cl-v13-ba>img{display:block;width:100%;height:100%;object-fit:cover}
+.cl-v13-ba-before{position:absolute;inset:0 auto 0 0;width:50%;overflow:hidden;z-index:2;border-right:2px solid #fff}
+.cl-v13-ba-before img{width:100%;height:100%;object-fit:cover;filter:brightness(.63) saturate(.52) contrast(.92)}
+.cl-v13-ba-handle{position:absolute;top:0;bottom:0;left:50%;width:3px;background:#fff;z-index:4;box-shadow:0 0 16px rgba(0,0,0,.24)}
+.cl-v13-ba-knob{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:#f97316;color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.cl-v13-ba-label{position:absolute;top:8px;z-index:5;font-size:8px;font-weight:950;color:#fff;padding:4px 7px;border-radius:8px;background:rgba(17,24,39,.62);backdrop-filter:blur(7px)}
+.cl-v13-ba-label.before{left:8px}.cl-v13-ba-label.after{right:8px}
+.cl-v13-heart{position:absolute;right:8px;bottom:8px;z-index:6;width:34px;height:34px;border-radius:12px;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:#ec4899;box-shadow:0 5px 14px rgba(15,23,42,.15);border:1px solid rgba(255,255,255,.8)}
+body.dark .cl-v13-livecard,body.dark .cl-v13-explore-card:not(.hero),body.dark .cl-v13-recent-card,body.dark .cl-v13-trust-card{background:#151517;border-color:#2b2b30}
+body.dark .cl-v13-chip{background:#151517;border-color:#2b2b30;color:#e5e7eb}
+body.dark .cl-v13-fab{background:rgba(21,21,23,.9);color:#e5e7eb;border-color:#33333a}
+body.dark .cl-v13-livecard .v13-icon,body.dark .cl-v13-trust-card i{background:#241810;color:#fb923c;border-color:#633d20}
+@media(max-width:980px){.cl-v13-livebar{grid-template-columns:repeat(2,minmax(0,1fr))}.cl-v13-explore{grid-template-columns:1fr 1fr}.cl-v13-recent-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.cl-v13-trust{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){body{padding-bottom:74px}.cl-v13-livebar{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.cl-v13-livecard{padding:11px}.cl-v13-livevalue{font-size:16px}.cl-v13-explore{grid-template-columns:1fr}.cl-v13-recent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.cl-v13-trust{grid-template-columns:1fr 1fr}.cl-v13-floating{right:12px;bottom:88px}.cl-v13-fab{width:46px;height:46px;border-radius:15px}.cl-v13-mobile-nav{position:fixed;left:10px;right:10px;bottom:10px;height:60px;z-index:75;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:rgba(17,24,39,.92);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.10);border-radius:20px;padding:5px;box-shadow:0 20px 44px rgba(15,23,42,.28)}.cl-v13-mobile-nav button{background:transparent;color:#cbd5e1;border:0;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:900}.cl-v13-mobile-nav button.active{background:linear-gradient(135deg,#fb923c,#ef4444);color:#fff}.cl-v13-mobile-nav i{font-size:16px}.cl-v13-section-title{font-size:17px}}
+
+</style>
 
 <style id="crazy-v8-polish">
   :root{--cl-accent:#f97316;--cl-accent2:#ef4444;--cl-card:rgba(255,255,255,.92);--cl-border:rgba(15,23,42,.08)}
@@ -404,12 +463,7 @@
                     <button onclick="openSettings()" class="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 transition border border-white/20" title="Settings">
                         <i class="fa-solid fa-gear text-lg"></i>
                     </button>
-
-                    <button onclick="openSellerPanel()" class="hidden md:flex p-2.5 rounded-2xl bg-yellow-400 text-red-950 hover:bg-yellow-300 transition border border-yellow-300" title="Seller Center">
-                        <i class="fa-solid fa-store text-lg"></i>
-                    </button>
-
-                </div>
+</div>
             </div>
         </div>
     </header>
@@ -443,7 +497,40 @@
         </div>
     </div>
 
-    <main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-4 py-4 space-y-6">
+    
+<!-- ===== CRAZY LENS V13 PREMIUM USER UX ===== -->
+<div class="max-w-7xl w-full mx-auto px-3 sm:px-4 pt-1">
+  <div class="cl-v13-livebar" id="v13LiveBar">
+    <div class="cl-v13-livecard"><div class="flex items-center gap-2"><div class="v13-icon"><i class="fa-solid fa-bolt"></i></div><div><div class="cl-v13-livelabel">Realtime Catalog</div><div id="v13ProductCount" class="cl-v13-livevalue">—</div></div></div></div>
+    <div class="cl-v13-livecard"><div class="flex items-center gap-2"><div class="v13-icon"><i class="fa-solid fa-cart-shopping"></i></div><div><div class="cl-v13-livelabel">Pesanan Aktif</div><div id="v13ActiveOrders" class="cl-v13-livevalue">0</div></div></div></div>
+    <div class="cl-v13-livecard"><div class="flex items-center gap-2"><div class="v13-icon"><i class="fa-solid fa-wallet"></i></div><div><div class="cl-v13-livelabel">CrazyPay</div><div id="v13Wallet" class="cl-v13-livevalue">Rp 0</div></div></div></div>
+    <div class="cl-v13-livecard"><div class="flex items-center gap-2"><div class="v13-icon"><i class="fa-solid fa-signal"></i></div><div><div class="cl-v13-livelabel">Koneksi</div><div class="cl-v13-livevalue"><span id="v13FirebaseStatus" class="cl-v13-online-pill"><span class="cl-live-dot"></span> Firebase Live</span></div></div></div></div>
+  </div>
+</div>
+<div id="v13HomeEnhancements" class="max-w-7xl w-full mx-auto px-3 sm:px-4 space-y-5 pt-4">
+  <div class="cl-v13-explore">
+    <div class="cl-v13-explore-card hero"><div class="noise"></div><div class="relative z-10"><div class="flex items-center justify-between gap-3"><span class="bg-white/10 border border-white/15 rounded-full px-3 py-1.5 text-[9px] font-black tracking-wider">CRAZY LENS EDITION</span><span class="cl-v13-online-pill" style="background:rgba(255,255,255,.10);color:#bbf7d0;border-color:rgba(255,255,255,.14)"><span class="cl-live-dot"></span>STORE LIVE</span></div><h3 class="text-2xl sm:text-3xl font-black mt-5 leading-tight tracking-tight">Look baru.<br><span class="text-orange-300">Workflow lebih cepat.</span></h3><p class="text-[11px] text-white/70 mt-3 max-w-md">Preset & LUT premium dengan preview Before / After, checkout instan, dan status order yang mengikuti Firebase secara realtime.</p><button onclick="scrollToCatalog()" class="mt-4 bg-white text-gray-900 font-black text-[10px] px-4 py-2.5 rounded-xl shadow-lg hover:scale-[1.02] transition">Jelajahi Katalog <i class="fa-solid fa-arrow-right ml-1"></i></button></div></div>
+    <div class="cl-v13-explore-card" onclick="openWishlist()"><div class="text-[9px] text-pink-500 font-black uppercase tracking-[.12em]">Personal</div><div class="text-xl font-black mt-2">Favoritmu</div><div class="text-[10px] text-gray-500 mt-1">Simpan look yang ingin kamu beli nanti.</div><div class="mt-5 w-10 h-10 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center"><i class="fa-solid fa-heart"></i></div></div>
+    <div class="cl-v13-explore-card" onclick="openNotifications()"><div class="text-[9px] text-blue-500 font-black uppercase tracking-[.12em]">Realtime</div><div class="text-xl font-black mt-2">Pusat Aktivitas</div><div class="text-[10px] text-gray-500 mt-1">Order, promo, chat, dan update akun.</div><div class="mt-5 w-10 h-10 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center"><i class="fa-solid fa-bell"></i></div></div>
+  </div>
+  <div><div class="cl-v13-section-head mb-3"><div><div class="cl-v13-section-title">Explore by Mood</div><div class="cl-v13-section-sub">Pilih karakter warna tanpa perlu membuka filter manual.</div></div></div>
+    <div class="cl-v13-chip-row">
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='cinematic';handleSearch()">🎬 Cinematic</button>
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='wedding';handleSearch()">💍 Wedding</button>
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='film';handleSearch()">🎞 Film</button>
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='portrait';handleSearch()">✨ Portrait</button>
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='travel';handleSearch()">🌄 Travel</button>
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='night';handleSearch()">🌙 Night</button>
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='fashion';handleSearch()">🖤 Fashion</button>
+      <button class="cl-v13-chip" onclick="document.getElementById('searchInput').value='luts';handleSearch()">🎥 LUTs</button>
+    </div></div>
+  <div id="v13RecentlyViewed" class="hidden"><div class="cl-v13-section-head mb-3"><div><div class="cl-v13-section-title">Terakhir Dilihat</div><div class="cl-v13-section-sub">Lanjutkan produk yang tadi kamu buka.</div></div><button onclick="clearV13Recent()" class="text-[10px] font-black text-gray-400 hover:text-orange-500">Bersihkan</button></div><div id="v13RecentGrid" class="cl-v13-recent-grid"></div></div>
+  <div><div class="cl-v13-section-head mb-3"><div><div class="cl-v13-section-title">Belanja Lebih Tenang</div><div class="cl-v13-section-sub">Alur digital CRAZY LENS tetap terhubung dengan akun kamu.</div></div></div><div class="cl-v13-trust"><div class="cl-v13-trust-card"><i class="fa-solid fa-shield-halved"></i><div><b>Checkout Aman</b><span>QRIS & CrazyPay</span></div></div><div class="cl-v13-trust-card"><i class="fa-solid fa-bolt"></i><div><b>Auto Delivery</b><span>File setelah pembayaran</span></div></div><div class="cl-v13-trust-card"><i class="fa-solid fa-cloud-arrow-down"></i><div><b>Download Web</b><span>Link tersimpan di order</span></div></div><div class="cl-v13-trust-card"><i class="fa-solid fa-rotate"></i><div><b>Realtime</b><span>Status dari Firebase</span></div></div></div></div>
+</div>
+<div class="cl-v13-floating"><button class="cl-v13-fab" onclick="openNotifications()" title="Notifikasi"><i class="fa-solid fa-bell"></i></button><button class="cl-v13-fab" onclick="openProductChat((typeof currentProduct!=='undefined'&&currentProduct?.id)||'store')" title="Chat"><i class="fa-solid fa-headset"></i></button><button class="cl-v13-fab primary" onclick="toggleCartDrawer()" title="Keranjang"><i class="fa-solid fa-cart-shopping"></i></button></div>
+<div class="cl-v13-mobile-nav"><button id="v13NavHome" class="active" onclick="switchTab('home');v13ActivateNav(this)"><i class="fa-solid fa-house"></i><span>Home</span></button><button onclick="document.getElementById('searchInput')?.focus();window.scrollTo({top:0,behavior:'smooth'});v13ActivateNav(this)"><i class="fa-solid fa-magnifying-glass"></i><span>Cari</span></button><button onclick="openWishlist();v13ActivateNav(this)"><i class="fa-solid fa-heart"></i><span>Favorit</span></button><button onclick="switchTab('orders');v13ActivateNav(this)"><i class="fa-solid fa-box-open"></i><span>Pesanan</span></button><button onclick="handleLoginButton();v13ActivateNav(this)"><i class="fa-solid fa-user"></i><span>Akun</span></button></div>
+
+<main class="flex-grow max-w-7xl w-full mx-auto px-3 sm:px-4 py-4 space-y-6">
 
         <!-- SPA Tab: HOME SECTION -->
         <section id="tab-home" class="space-y-6">
@@ -1214,8 +1301,7 @@
             </div>
             <div class="p-5 space-y-5">
                 <label class="cl-upload-zone block">
-                    <input id="productFolderInput" type="file" webkitdirectory directory multiple class="hidden" onchange="handleProductFolder(this.files)">
-                    <div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl"><i class="fa-solid fa-folder-tree"></i></div>
+<div class="w-14 h-14 mx-auto rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center text-2xl"><i class="fa-solid fa-folder-tree"></i></div>
                     <div class="font-black mt-3">Pilih Folder Produk</div>
                     <div class="text-[11px] text-gray-500 mt-1">Isi folder bisa berupa cover.jpg + file preset/lut + product.json opsional.</div>
                 </label>
@@ -1245,12 +1331,8 @@
     <div id="notificationModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeNotifications()"><div class="cl-modal"><div class="p-5 border-b flex items-center justify-between"><div><h3 class="font-black text-xl">Pusat Notifikasi</h3><p class="text-xs text-gray-500">Status order, promo, chat dan aktivitas akun.</p></div><button onclick="closeNotifications()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button></div><div id="notificationList" class="p-5 space-y-2 max-h-[70vh] overflow-y-auto"></div></div></div>
 
     <div id="chatModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeProductChat()"><div class="cl-modal" style="width:min(100%,560px)"><div class="p-5 border-b flex items-center justify-between"><div><h3 id="chatTitle" class="font-black text-xl">Chat Penjual</h3><p class="text-xs text-gray-500">Pesan realtime melalui Firebase.</p></div><button onclick="closeProductChat()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button></div><div id="chatMessages" class="p-4 space-y-2 max-h-[55vh] overflow-y-auto"></div><div class="p-4 border-t flex gap-2"><input id="chatInput" class="cl-input" placeholder="Tulis pesan..." onkeydown="if(event.key==='Enter')sendChatMessage()"><button onclick="sendChatMessage()" class="bg-orange-500 text-white font-black px-4 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button></div></div></div>
-
-    <div id="sellerPanelModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeSellerPanel()"><div class="cl-modal" style="width:min(100%,1100px)"><div class="p-5 border-b flex items-center justify-between"><div><h3 class="font-black text-xl">CRAZY LENS Seller Center</h3><p class="text-xs text-gray-500">Analitik, produk, stok, order, promo, chat, review dan wallet realtime.</p></div><button onclick="closeSellerPanel()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button></div><div class="p-5 space-y-4"><div class="grid grid-cols-2 md:grid-cols-5 gap-2" id="sellerStats"></div><div class="grid grid-cols-2 md:grid-cols-7 gap-2 text-[10px]"><button class="seller-tab bg-orange-500 text-white font-black py-2 rounded-xl" onclick="sellerTab('dashboard',this)">Dashboard</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('products',this)">Produk</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('orders',this)">Pesanan</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('promo',this)">Promo</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('chat',this)">Chat</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('reviews',this)">Review</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('logistics',this)">Logistik</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('wallet',this)">Wallet</button><button class="seller-tab bg-gray-100 font-black py-2 rounded-xl" onclick="sellerTab('team',this)">Akses</button></div><div id="sellerContent" class="min-h-[280px]"></div></div></div></div>
-
-    <div id="productCrudModal" class="modal-backdrop hidden" onclick="if(event.target===this)closeProductCrud()"><div class="cl-modal" style="width:min(100%,760px)"><div class="p-5 border-b flex items-center justify-between"><div><h3 id="productCrudTitle" class="font-black text-xl">Tambah Produk</h3><p class="text-xs text-gray-500">CRUD produk, variasi dan stok.</p></div><button onclick="closeProductCrud()" class="w-9 h-9 rounded-xl bg-gray-100"><i class="fa-solid fa-xmark"></i></button></div><form id="productCrudForm" class="p-5 grid grid-cols-1 md:grid-cols-2 gap-3"><input id="crudId" type="hidden"><input id="crudName" required class="cl-input" placeholder="Nama produk"><input id="crudPrice" required type="number" class="cl-input" placeholder="Harga"><input id="crudOldPrice" type="number" class="cl-input" placeholder="Harga coret"><input id="crudStock" required type="number" class="cl-input" placeholder="Stok"><input id="crudWeight" type="number" class="cl-input" placeholder="Berat gram"><input id="crudLocation" class="cl-input" placeholder="Lokasi seller"><input id="crudCategory" class="cl-input" placeholder="Kategori: mobile,cinematic"><input id="crudFormat" class="cl-input" placeholder="Format .DNG / .XMP / .CUBE"><input id="crudSku" class="cl-input" placeholder="SKU"><input id="crudImage" class="cl-input" placeholder="URL after/cover image"><input id="crudBeforeImage" class="cl-input" placeholder="URL before image"><input id="crudGallery" class="cl-input md:col-span-2" placeholder="URL gallery dipisahkan koma"><textarea id="crudVariations" class="cl-input md:col-span-2" rows="3" placeholder='Variasi JSON, contoh: [{"name":"Basic","price":25000,"stock":10},{"name":"Pro","price":35000,"stock":5}]'></textarea><label class="md:col-span-2 flex items-center gap-2 text-xs font-bold"><input id="crudActive" type="checkbox" checked class="w-4 h-4 accent-orange-500"> Produk aktif / tampil di katalog</label><textarea id="crudDescription" class="cl-input md:col-span-2" rows="4" placeholder="Deskripsi"></textarea><div class="md:col-span-2 flex gap-2"><button type="submit" class="flex-1 bg-gradient-to-r from-orange-500 to-red-600 text-white font-black py-3 rounded-2xl">Simpan Produk</button><button type="button" onclick="closeProductCrud()" class="px-5 border border-gray-200 font-black rounded-2xl">Batal</button></div></form></div></div>
-
-    <div id="clToast" class="cl-toast"></div>
+</div>
+<div id="clToast" class="cl-toast"></div>
 
 
     <!-- UI Interactions + SINGLE HTML ENGINE -->
@@ -1271,7 +1353,7 @@
             buaqrisSecretToken: 'sk_live_7be5cc80b7ce4c9cc46d78e432e6f886d11940e1eabe2045db18bab58991d040',
             paymentEndpoint: 'https://api.buatqris.site',
             irestoreEndpoint: '',
-            autoDemoPaymentMs: 8000, autoDemoPackMs: 7000, autoDemoShipMs: 12000, autoDemoFinishMs: 18000,
+            autoDemoPaymentMs: 8000, autoDemoPackMs: 2500, autoDemoShipMs: 5000, autoDemoFinishMs: 18000,
             authContinueUrl: null,
             paymentMode: 'live'
         };
@@ -1325,6 +1407,8 @@
         }
 
         function getFirebaseServices(){ return window.firebaseServices || null; }
+        function normalizeProductRemote(p){if(!p)return p;return {...p,downloadUrl:p.downloadUrl||p.files?.download||''};}
+
         function saveLocalOrders(){ localStorage.setItem(LOCAL_ORDERS_KEY, JSON.stringify(realtimeOrders)); window.__crazyLensBroadcast?.('state'); }
         function saveLocalTopups(){ localStorage.setItem(LOCAL_TOPUPS_KEY, JSON.stringify(realtimeTopups)); window.__crazyLensBroadcast?.('state'); }
         function loadLocalState(){
@@ -1450,8 +1534,22 @@
 
         async function logoutCrazyLens(){try{if(getFirebaseServices()?.auth)await getFirebaseServices().signOut(getFirebaseServices().auth);showToast('Berhasil keluar');}catch{showToast('Gagal keluar');}}
         function requireLogin(action){const a=getFirebaseServices()?.auth;if(a?.currentUser)action();else{pendingAction=action;openAuthModal();}}
-        function updateAuthUI(user){
-            currentUser=user||null; const l=document.getElementById('loginButtonLabel'),s=document.getElementById('loginButtonSub');
+        
+        function syncCrazyUserDirectory(user){
+            if(!user || !user.uid) return;
+            try{
+                const svc=getFirebaseServices(); if(!svc?.db || !svc.set || !svc.ref) return;
+                const email=String(user.email||'').trim().toLowerCase();
+                if(!email)return;
+                const safeKey=btoa(unescape(encodeURIComponent(email))).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');
+                const payload={uid:user.uid,email,name:user.displayName||email.split('@')[0]||'Pengguna',photoURL:user.photoURL||'',updatedAt:nowIso()};
+                svc.set(svc.ref(svc.db,`userIndex/byEmail/${safeKey}`),payload).catch(()=>{});
+                svc.set(svc.ref(svc.db,`users/${user.uid}/profile`),payload).catch(()=>{});
+            }catch{}
+        }
+
+function updateAuthUI(user){
+            currentUser=user||null; syncCrazyUserDirectory(user); const l=document.getElementById('loginButtonLabel'),s=document.getElementById('loginButtonSub');
             if(user){if(l)l.textContent='Akun aktif';if(s)s.textContent=(user.displayName||user.email?.split('@')[0]||'Akun');const e=document.getElementById('orderEmail');if(e)e.value=user.email||'';}
             else{if(l)l.textContent='Akun';if(s)s.textContent='Masuk';}
             renderOrders();
@@ -1502,7 +1600,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3 text-[11px]"><div class="bg-gray-50 rounded-xl p-3"><span class="text-gray-400">Email delivery</span><div class="font-bold mt-1 break-all">${esc(o.email||currentUser.email||'-')}</div></div><div class="bg-gray-50 rounded-xl p-3"><span class="text-gray-400">Nomor Resi</span><div class="font-black mt-1 ${o.receipt&&o.receipt!=='-'?'text-orange-600':'text-gray-400'}">${esc(o.receipt||'-')}</div><div class="text-[9px] mt-1 text-gray-400">${esc(o.courier||'Resi otomatis')}</div></div></div>
                     <div class="mt-3 bg-blue-50 border border-blue-100 rounded-2xl p-3 text-[11px] text-blue-900"><div class="flex items-start gap-2"><i class="fa-solid fa-location-dot mt-0.5 text-blue-600"></i><div class="flex-1"><b>${esc(o.tracking?.label||'Menunggu proses pembayaran')}</b><div class="text-blue-700/70 mt-0.5">${esc(o.tracking?.place||'CRAZY LENS')}</div><div class="mt-1.5 flex items-center gap-2"><span class="cl-live-dot"></span><span class="text-[9px] font-black uppercase tracking-wider">Realtime</span></div></div></div></div>
                     <div class="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[10px]"><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Pembayaran</div><b class="${paid?'text-green-600':'text-orange-600'} mt-1 inline-block">${paid?'QRIS Berhasil':'Menunggu'}</b></div><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Delivery</div><b class="mt-1 inline-block">${o.delivery?.status==='sent'?'Terkirim':'Proses otomatis'}</b></div><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Dana</div><b class="${o.escrow==='released'?'text-green-600':'text-orange-600'} mt-1 inline-block">${o.escrow==='released'?'Diteruskan':'Demo ditahan'}</b></div><div class="bg-gray-50 rounded-xl p-3"><div class="text-gray-400">Transaksi</div><b class="text-gray-700 mt-1 inline-block break-all">${esc(o.qris?.transactionId||'-')}</b></div></div>
-                    <div class="mt-3 flex flex-wrap gap-2">${o.status==='dikirim'?`<button onclick="confirmReceived('${esc(o.id)}')" class="bg-green-600 text-white font-black text-xs px-3 py-2.5 rounded-xl"><i class="fa-solid fa-circle-check mr-1"></i> Pesanan Diterima</button>`:''}${['belum_bayar','dikemas'].includes(o.status)?`<button onclick="cancelOrder('${esc(o.id)}')" class="border border-red-200 text-red-600 font-black text-xs px-3 py-2.5 rounded-xl"><i class="fa-solid fa-ban mr-1"></i> Batalkan</button>`:''}</div></div>
+                    <div class="cl-download-card"><div class="flex items-start gap-2"><div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center"><i class="fa-solid fa-download"></i></div><div class="flex-1"><div class="font-black text-xs">Preset siap diunduh melalui CRAZY LENS</div><div class="text-[10px] text-gray-500 mt-1">Pesanan sudah dikirim. Gunakan tombol di bawah untuk membuka halaman download pesanan.</div>${o.delivery?.downloadUrl?`<a href="${esc(o.delivery.downloadUrl)}" target="_blank" rel="noopener" class="cl-download-btn mt-3"><i class="fa-solid fa-cloud-arrow-down"></i> Download Preset</a>`:''}</div></div></div><div class="mt-3 flex flex-wrap gap-2">${o.status==='dikirim'?`<button onclick="confirmReceived('${esc(o.id)}')" class="bg-green-600 text-white font-black text-xs px-3 py-2.5 rounded-xl"><i class="fa-solid fa-circle-check mr-1"></i> Pesanan Diterima</button>`:''}${['belum_bayar','dikemas'].includes(o.status)?`<button onclick="cancelOrder('${esc(o.id)}')" class="border border-red-200 text-red-600 font-black text-xs px-3 py-2.5 rounded-xl"><i class="fa-solid fa-ban mr-1"></i> Batalkan</button>`:''}</div></div>
                     <div class="border border-gray-100 rounded-2xl p-4 bg-gray-50/40"><div class="flex items-center justify-between mb-4"><div class="font-black text-sm"><i class="fa-solid fa-route text-orange-500 mr-1"></i> Tracking</div><span class="cl-pill-live"><span class="cl-live-dot"></span>LIVE</span></div>${renderStatusTimeline(o)}</div></div></div>`;
             }).join('');
         }
@@ -1544,13 +1642,14 @@
             e.preventDefault(); if(!currentUser)return requireLogin(()=>{}); if(!cart.length)return showToast('Keranjang kosong');
             setButtonLoading('createOrderButton',true,'Membuat transaksi...');
             try{
-                const order={id:uid('ORD'),userId:currentUser.uid,name:document.getElementById('orderName').value.trim(),email:document.getElementById('orderEmail').value.trim().toLowerCase(),phone:document.getElementById('orderPhone').value.trim(),note:document.getElementById('orderNote').value.trim(),items:cart.map(x=>({...x})),total:cartTotal(),createdAt:nowIso(),status:'belum_bayar',payment:{status:'pending',method:'QRIS'},receipt:'-',courier:'-',tracking:{label:'Menunggu pembayaran',place:'Payment Engine'},delivery:{status:'waiting'},escrow:'held',statusHistory:[{status:'belum_bayar',at:nowIso()}]};
+                const order={id:uid('ORD'),userId:currentUser.uid,name:document.getElementById('orderName').value.trim(),email:document.getElementById('orderEmail').value.trim().toLowerCase(),phone:document.getElementById('orderPhone').value.trim(),note:document.getElementById('orderNote').value.trim(),items:cart.map(x=>({...x,downloadUrl:x.downloadUrl||window.CRAZY_LENS_PRODUCTS?.[x.id]?.downloadUrl||''})),total:cartTotal(),createdAt:nowIso(),status:'belum_bayar',payment:{status:'pending',method:'QRIS'},receipt:'-',courier:'-',tracking:{label:'Menunggu pembayaran',place:'Payment Engine'},delivery:{status:'waiting'},escrow:'held',statusHistory:[{status:'belum_bayar',at:nowIso()}]};
                 let remote=null;
                 try{remote=await paymentApi('/orders/create',order);}catch(err){if(isRealPaymentMode())throw err;}
                 if(remote?.order)Object.assign(order,remote.order);
                 order.qris=remote?.qris||{transactionId:'DEMO-'+uid('QR'),expiredAt:new Date(Date.now()+15*60*1000).toISOString(),totalAmount:order.total};
                 upsertLocalOrder(order);
                 const path=`users/${currentUser.uid}/orders/${order.id}`;
+                await firebaseWrite(`store/orders/${order.id}`,order);
                 await firebaseWrite(path,order);
                 currentOrderPayment={orderId:order.id,expiresAt:order.qris.expiredAt||order.qris.expired_at};
                 document.getElementById('orderFormWrap').classList.add('hidden');document.getElementById('orderPaymentWrap').classList.remove('hidden');
@@ -1575,9 +1674,9 @@
             demoTimers.push(setTimeout(()=>autoFinishOrder(id),CRAZY_CONFIG.autoDemoPaymentMs+CRAZY_CONFIG.autoDemoPackMs+CRAZY_CONFIG.autoDemoShipMs+CRAZY_CONFIG.autoDemoFinishMs));
         }
         function getLocalOrder(id){return realtimeOrders.find(o=>o.id===id);}
-        async function writeOrder(o){o.updatedAt=nowIso();upsertLocalOrder(o);await firebaseWrite(`users/${currentUser?.uid}/orders/${o.id}`,o);}
+        async function writeOrder(o){o.updatedAt=nowIso();upsertLocalOrder(o);await firebaseWrite(`users/${currentUser?.uid}/orders/${o.id}`,o);await firebaseWrite(`store/orders/${o.id}`,o);}
         async function autoPayOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='belum_bayar')return;o.payment.status='paid';o.payment.paidAt=nowIso();o.status='dikemas';o.statusHistory.push({status:'dikemas',at:nowIso()});o.tracking={label:'Pembayaran terkonfirmasi • pesanan sedang dikemas',place:'CRAZY LENS Fulfillment'};await writeOrder(o);syncOpenOrderPayment();showToast('Pembayaran otomatis ✓');}
-        async function autoPackOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='dikemas')return;o.status='dikirim';o.receipt='CLX'+Math.floor(100000000+Math.random()*900000000);o.courier='CRAZY EXPRESS';o.statusHistory.push({status:'dikirim',at:nowIso()});o.tracking={label:'Paket diserahkan ke kurir',place:'Jakarta • Sortation Center'};await writeOrder(o);showToast('Resi dibuat otomatis ✓');}
+        async function autoPackOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='dikemas')return;o.status='dikirim';o.receipt='CLX'+Math.floor(100000000+Math.random()*900000000);o.courier='CRAZY EXPRESS';o.statusHistory.push({status:'dikirim',at:nowIso()});o.tracking={label:'Paket diserahkan ke kurir',place:'Jakarta • Sortation Center'};o.delivery={...(o.delivery||{}),status:'ready',preparedAt:nowIso(),downloadUrl:(window.location.origin||'')+(window.location.pathname||'/')+'?download='+encodeURIComponent(o.id)};await writeOrder(o);showToast('Resi dibuat otomatis ✓');}
         async function autoShipOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='dikirim')return;o.tracking={label:'Paket sedang menuju email penerima',place:o.email||'Digital Delivery'};o.delivery={status:'sent',sentAt:nowIso(),message:'Preset siap diunduh via email (demo)'};await writeOrder(o);showToast('Delivery email otomatis ✓');}
         async function autoFinishOrder(id){const o=getLocalOrder(id);if(!o||o.status!=='dikirim')return;o.status='selesai';o.escrow='released';o.statusHistory.push({status:'selesai',at:nowIso()});o.tracking={label:'Pesanan selesai',place:'Digital Delivery'};await writeOrder(o);showToast('Order selesai • dana demo diteruskan ✓');}
         function syncOpenOrderPayment(){if(!currentOrderPayment)return;const o=getLocalOrder(currentOrderPayment.orderId);if(!o)return;const status=document.getElementById('orderPaymentStatus');if(o.payment?.status==='paid'){if(status)status.innerHTML='<i class="fa-solid fa-circle-check mr-1"></i> Pembayaran terkonfirmasi • auto order berjalan.';if(document.getElementById('orderPaymentWrap')&&!document.getElementById('orderPaymentWrap').classList.contains('hidden')){document.getElementById('orderPaymentWrap').classList.add('hidden');document.getElementById('orderSuccessWrap').classList.remove('hidden');document.getElementById('orderSuccessText').innerHTML=`Order <b>${esc(o.id)}</b> sudah dibayar.<br><span class="text-orange-600 font-black">Auto Order aktif</span> — sistem lanjut otomatis.`;cart=[];saveCart();}clearPaymentCountdown();currentOrderPayment=null;}else if(o.status==='dibatalkan'){if(status)status.innerHTML='<i class="fa-solid fa-circle-xmark mr-1"></i> Order dibatalkan.';}}
@@ -1596,7 +1695,7 @@
                 const topup={id:uid('TOP'),userId:currentUser.uid,amount,createdAt:nowIso(),status:'pending',payment:{status:'pending',method:'QRIS'}};
                 let remote=null;try{remote=await paymentApi('/topups/create',topup);}catch(err){if(isRealPaymentMode())throw err;}
                 if(remote?.topup)Object.assign(topup,remote.topup);topup.qris=remote?.qris||{transactionId:'DEMO-'+uid('QR'),expiredAt:new Date(Date.now()+15*60*1000).toISOString(),totalAmount:amount};
-                upsertLocalTopup(topup);await firebaseWrite(`users/${currentUser.uid}/topups/${topup.id}`,topup);
+                upsertLocalTopup(topup);await firebaseWrite(`users/${currentUser.uid}/topups/${topup.id}`,topup);await firebaseWrite(`store/topups/${topup.id}`,topup);
                 currentTopupPayment={topupId:topup.id,expiresAt:topup.qris.expiredAt||topup.qris.expired_at};
                 document.getElementById('topupFormWrap').classList.add('hidden');document.getElementById('topupPaymentWrap').classList.remove('hidden');
                 document.getElementById('topupPaymentText').textContent=`Top up ${topup.id} • saldo akan bertambah otomatis setelah pembayaran sukses.`;
@@ -1610,7 +1709,7 @@
             }catch(err){showToast(err.message||'Gagal membuat top up');}
             finally{setButtonLoading('createTopupButton',false,'<i class="fa-solid fa-qrcode mr-1"></i> Buat QRIS Top Up');}
         }
-        async function autoCompleteTopup(id){const t=realtimeTopups.find(x=>x.id===id);if(!t||t.status==='success')return;t.status='success';t.payment.status='paid';t.payment.paidAt=nowIso();walletBalance+=Number(t.amount||0);updateWalletUI();upsertLocalTopup(t);await firebaseWrite(`users/${currentUser?.uid}/topups/${t.id}`,t);await firebaseWrite(`users/${currentUser?.uid}/wallet`,{balance:walletBalance,updatedAt:nowIso(),mode:'demo'});syncOpenTopupPayment();showToast('CrazyPay +'+money(t.amount)+' ✓');}
+        async function autoCompleteTopup(id){const t=realtimeTopups.find(x=>x.id===id);if(!t||t.status==='success')return;t.status='success';t.payment.status='paid';t.payment.paidAt=nowIso();walletBalance+=Number(t.amount||0);updateWalletUI();upsertLocalTopup(t);await firebaseWrite(`users/${currentUser?.uid}/topups/${t.id}`,t);await firebaseWrite(`store/topups/${t.id}`,t);await firebaseWrite(`users/${currentUser?.uid}/wallet`,{balance:walletBalance,updatedAt:nowIso(),mode:'demo'});syncOpenTopupPayment();showToast('CrazyPay +'+money(t.amount)+' ✓');}
         function syncOpenTopupPayment(){if(!currentTopupPayment)return;const t=realtimeTopups.find(x=>x.id===currentTopupPayment.topupId);if(!t)return;const s=document.getElementById('topupStatus');if(t.status==='success'){if(s)s.innerHTML='<i class="fa-solid fa-circle-check mr-1"></i> Top up berhasil • saldo CrazyPay diperbarui.';clearPaymentCountdown();currentTopupPayment=null;setTimeout(closeTopup,1000);}}
 
         // ===== GENERIC =====
@@ -1641,8 +1740,21 @@
             });
         }
 
-        function completePendingAction(){if(pendingAction){const a=pendingAction;pendingAction=null;setTimeout(a,150);}}
-        document.addEventListener('DOMContentLoaded',()=>{loadLocalState();updateCartUI();renderOrders();initSliders();setInterval(resumeAutoEngine,3000);resumeAutoEngine();if(window.firebaseServices)onFirebaseReady();else window.addEventListener('crazyFirebaseReady',onFirebaseReady,{once:true});});
+        
+        function handleDownloadRoute(){
+            try{
+                const q=new URLSearchParams(location.search); const id=q.get('download'); if(!id)return;
+                setTimeout(()=>{
+                    const o=getLocalOrder(id) || realtimeOrders.find(x=>x.id===id); if(!o)return;
+                    const wrap=document.createElement('div');wrap.className='modal-backdrop';wrap.id='crazyDownloadRoute';
+                    wrap.innerHTML=`<div class="cl-modal" style="width:min(100%,520px)"><div class="p-5 border-b flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center"><i class="fa-solid fa-cloud-arrow-down"></i></div><div><h3 class="font-black text-lg">Download Pesanan</h3><p class="text-xs text-gray-500">${esc(o.id)}</p></div></div><div class="p-5 space-y-3"><div class="bg-blue-50 border border-blue-100 rounded-2xl p-3 text-xs text-blue-900">Pesanan ${esc(o.id)} sudah dikirim dan file digital siap diakses.</div>${(o.items||[]).map(i=>`<div class="cl-mini-chip flex items-center gap-3"><img src="${esc(i.image||'')}" class="w-12 h-12 rounded-xl object-cover"><div class="flex-1 min-w-0"><b class="text-xs line-clamp-2">${esc(i.name)}</b><div class="text-[10px] text-gray-400">${esc(i.format||'Digital')}</div></div>${i.downloadUrl?`<a href="${esc(i.downloadUrl)}" target="_blank" rel="noopener" class="cl-download-btn"><i class="fa-solid fa-download"></i> Download</a>`:`<button class="cl-download-btn" onclick="showToast('Link file produk belum diatur admin.')"><i class="fa-solid fa-link"></i> Link belum ada</button>`}</div>`).join('')}</div><div class="p-5 border-t flex gap-2"><button onclick="document.getElementById('crazyDownloadRoute').remove();history.replaceState({},'',location.pathname)" class="flex-1 bg-gray-900 text-white font-black py-3 rounded-2xl text-xs">Tutup</button></div></div>`;
+                    document.body.appendChild(wrap);
+                },700);
+            }catch{}
+        }
+
+function completePendingAction(){if(pendingAction){const a=pendingAction;pendingAction=null;setTimeout(a,150);}}
+        document.addEventListener('DOMContentLoaded',()=>{loadLocalState();updateCartUI();renderOrders();initSliders();handleDownloadRoute();setInterval(resumeAutoEngine,3000);resumeAutoEngine();if(window.firebaseServices)onFirebaseReady();else window.addEventListener('crazyFirebaseReady',onFirebaseReady,{once:true});});
 
         try{
             const bc=new BroadcastChannel('crazy-lens-live');
@@ -2182,7 +2294,7 @@
 
       // ===== FOLDER PRODUCT → FIREBASE → iRestore =====
       function groupFilesV5(files){const g={};[...files].forEach(f=>{const parts=(f.webkitRelativePath||f.name).split('/');const root=parts.length>1?parts[0]:'Uploaded Products';(g[root]??=[]).push(f)});return g;}
-      window.handleProductFolder=async files=>{if(!files?.length)return;if(!currentUser)return requireLogin(()=>handleProductFolder(files));const svc=getSvc();if(!svc?.storage)return showToast('Firebase Storage belum siap');const groups=groupFilesV5(files);const progress=document.getElementById('productUploadProgress');progress?.classList.remove('hidden');let done=0,total=[...files].length;for(const [folder,arr] of Object.entries(groups)){let manifest=null;const mf=arr.find(f=>/^(product|manifest)\.json$/i.test(f.name));if(mf)try{manifest=JSON.parse(await mf.text())}catch{}const pid=(manifest?.id||folder.toLowerCase().replace(/[^a-z0-9]+/g,'-')).replace(/^-+|-+$/g,'')||uidV('PROD').toLowerCase();const imgFile=arr.find(f=>/cover|after|image/i.test(f.name)&&f.type.startsWith('image/'))||arr.find(f=>f.type.startsWith('image/'));const beforeFile=arr.find(f=>/^before\./i.test(f.name))||imgFile;let coverUrl=manifest?.image||'',beforeUrl=manifest?.beforeImage||'',videoUrl=manifest?.video||'',filesMap={};for(const file of arr){if(file.name.toLowerCase().endsWith('.json')){done++;continue}const clean=file.name.replace(/[^a-z0-9._-]/ig,'_');const sr=svc.storageRef(svc.storage,`products/${pid}/${clean}`);await svc.uploadBytes(sr,file,{contentType:file.type});const url=await svc.getDownloadURL(sr);filesMap[file.name]=url;if(file===imgFile)coverUrl=url;if(file===beforeFile)beforeUrl=url;if(file.type.startsWith('video/'))videoUrl=url;done++;if(document.getElementById('productUploadProgressFill'))document.getElementById('productUploadProgressFill').style.width=Math.round(done/total*100)+'%';if(document.getElementById('productUploadProgressText'))document.getElementById('productUploadProgressText').textContent=Math.round(done/total*100)+'%';}const gallery=Object.entries(filesMap).filter(([n])=>/\.(jpg|jpeg|png|webp|avif)$/i.test(n)).map(([,u])=>u).slice(0,8);const product={id:pid,name:manifest?.name||folder,price:Number(manifest?.price||25000),oldPrice:Number(manifest?.oldPrice||100000),stock:Number(manifest?.stock||50),weight:Number(manifest?.weight||0),sellerLocation:manifest?.sellerLocation||'Jakarta',category:manifest?.category||'digital',format:manifest?.format||'.DNG',sku:manifest?.sku||('CL-'+pid.slice(0,8).toUpperCase()),rating:Number(manifest?.rating||5),sold:manifest?.sold||'0',description:manifest?.description||`Produk ${folder}`,image:coverUrl,beforeImage:beforeUrl||coverUrl,gallery:gallery.length?gallery:[coverUrl],video:videoUrl,sellerId:currentUser.uid,variations:manifest?.variations||[{name:'Basic',price:Number(manifest?.price||25000),stock:Number(manifest?.stock||50)}],files:filesMap,publishedAt:nowV(),publishedBy:currentUser.uid};state.products[pid]=product;await firebaseWrite(`catalog/products/${pid}`,product);await publishOneProductToIRestoreV5(product);}
+      window.handleProductFolder=async files=>{if(!files?.length)return;if(!currentUser)return requireLogin(()=>handleProductFolder(files));const svc=getSvc();if(!svc?.storage)return showToast('Firebase Storage belum siap');const groups=groupFilesV5(files);const progress=document.getElementById('productUploadProgress');progress?.classList.remove('hidden');let done=0,total=[...files].length;for(const [folder,arr] of Object.entries(groups)){let manifest=null;const mf=arr.find(f=>/^(product|manifest)\.json$/i.test(f.name));if(mf)try{manifest=JSON.parse(await mf.text())}catch{}const pid=(manifest?.id||folder.toLowerCase().replace(/[^a-z0-9]+/g,'-')).replace(/^-+|-+$/g,'')||uidV('PROD').toLowerCase();const imgFile=arr.find(f=>/cover|after|image/i.test(f.name)&&f.type.startsWith('image/'))||arr.find(f=>f.type.startsWith('image/'));const beforeFile=arr.find(f=>/^before\./i.test(f.name))||imgFile;let coverUrl=manifest?.image||'',beforeUrl=manifest?.beforeImage||'',videoUrl=manifest?.video||'',filesMap={};for(const file of arr){if(file.name.toLowerCase().endsWith('.json')){done++;continue}const clean=file.name.replace(/[^a-z0-9._-]/ig,'_');const sr=svc.storageRef(svc.storage,`products/${pid}/${clean}`);await svc.uploadBytes(sr,file,{contentType:file.type});const url=await svc.getDownloadURL(sr);filesMap[file.name]=url;if(file===imgFile)coverUrl=url;if(file===beforeFile)beforeUrl=url;if(file.type.startsWith('video/'))videoUrl=url;done++;if(document.getElementById('productUploadProgressFill'))document.getElementById('productUploadProgressFill').style.width=Math.round(done/total*100)+'%';if(document.getElementById('productUploadProgressText'))document.getElementById('productUploadProgressText').textContent=Math.round(done/total*100)+'%';}const gallery=Object.entries(filesMap).filter(([n])=>/\.(jpg|jpeg|png|webp|avif)$/i.test(n)).map(([,u])=>u).slice(0,8);const product={id:pid,name:manifest?.name||folder,price:Number(manifest?.price||25000),oldPrice:Number(manifest?.oldPrice||100000),stock:Number(manifest?.stock||50),weight:Number(manifest?.weight||0),sellerLocation:manifest?.sellerLocation||'Jakarta',category:manifest?.category||'digital',format:manifest?.format||'.DNG',sku:manifest?.sku||('CL-'+pid.slice(0,8).toUpperCase()),rating:Number(manifest?.rating||5),sold:manifest?.sold||'0',description:manifest?.description||`Produk ${folder}`,image:coverUrl,beforeImage:beforeUrl||coverUrl,gallery:gallery.length?gallery:[coverUrl],video:videoUrl,sellerId:currentUser.uid,variations:manifest?.variations||[{name:'Basic',price:Number(manifest?.price||25000),stock:Number(manifest?.stock||50)}],files:filesMap,downloadUrl:manifest?.downloadUrl||'',publishedAt:nowV(),publishedBy:currentUser.uid};state.products[pid]=product;await firebaseWrite(`catalog/products/${pid}`,product);await publishOneProductToIRestoreV5(product);}
         progress?.classList.add('hidden');renderMoreCatalog();showToast(Object.keys(groups).length+' folder produk dipublish realtime ✓');};
       async function publishOneProductToIRestoreV5(p){const endpoint=V5.irestoreEndpoint||CRAZY_CONFIG.irestoreEndpoint||'';if(!endpoint){console.warn('iRestore endpoint belum diisi di V5.irestoreEndpoint');return;}try{const res=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'CRAZY LENS',action:'publish_product',product:p,files:p.files||{}})});if(!res.ok)throw new Error('HTTP '+res.status);showToast('Produk terkirim ke iRestore ✓')}catch(e){showToast('iRestore gagal: '+e.message)}}window.publishOneToIRestoreV5=async id=>{const p=state.products[id];if(p)await publishOneProductToIRestoreV5(p)};
 
@@ -2195,7 +2307,7 @@
       function runPostPaymentAutomationV5(id){const ms=[CRAZY_CONFIG.autoDemoPackMs,CRAZY_CONFIG.autoDemoShipMs,CRAZY_CONFIG.autoDemoFinishMs];setTimeout(async()=>{const o=getLocalOrder(id);if(!o||o.status!=='dikemas')return;o.status='dikirim';o.receipt=o.receipt&&o.receipt!=='-'?o.receipt:'CLX'+Math.floor(100000000+Math.random()*900000000);o.courier='CRAZY DIGITAL EXPRESS';o.statusHistory=(o.statusHistory||[]).concat({status:'dikirim',at:nowV()});o.tracking={label:'File dikirim otomatis ke email',place:o.email||'Digital Delivery'};o.delivery={status:'sent',sentAt:nowV()};upsertLocalOrder(o);await firebaseWrite(`users/${o.userId}/orders/${o.id}`,o);await firebaseWrite(`seller/orders/${o.id}`,o);createNotification('Order dikirim',`Resi ${o.receipt} • file dikirim ke email.`,'order')},ms[0]);setTimeout(async()=>{const o=getLocalOrder(id);if(!o||o.status!=='dikirim')return;o.status='selesai';o.escrow='released';o.statusHistory=(o.statusHistory||[]).concat({status:'selesai',at:nowV()});o.tracking={label:'Pesanan selesai',place:'Digital Delivery'};upsertLocalOrder(o);await firebaseWrite(`users/${o.userId}/orders/${o.id}`,o);await firebaseWrite(`seller/orders/${o.id}`,o);createNotification('Order selesai',`Order ${o.id} selesai dan ledger seller dirilis.`,'order')},ms[0]+ms[1]+ms[2]);}
 
       // ===== FIREBASE CATALOG REALTIME =====
-      function attachCatalogV5(){const svc=getSvc();if(!svc?.db||!svc.onValue)return;svc.onValue(svc.ref(svc.db,'catalog/products'),snap=>{const remote=snap.val()||{};Object.values(remote).forEach(p=>{state.products[p.id]=p});window.CRAZY_LENS_PRODUCTS=state.products;renderMoreCatalog();window.applyAdvancedFilters?.()})}
+      function attachCatalogV5(){const svc=getSvc();if(!svc?.db||!svc.onValue)return;svc.onValue(svc.ref(svc.db,'catalog/products'),snap=>{const remote=snap.val()||{};Object.values(remote).forEach(p=>{state.products[p.id]=normalizeProductRemote(p)});window.CRAZY_LENS_PRODUCTS=state.products;renderMoreCatalog();window.applyAdvancedFilters?.()})}
       function attachProfileRealtimeV5(){const svc=getSvc();if(!svc?.db||!svc.onValue||!currentUser)return;if(state.profileUnsub)try{state.profileUnsub()}catch{};state.profileUnsub=svc.onValue(svc.ref(svc.db,`users/${currentUser.uid}/profile`),snap=>{const p=snap.val();if(p?.photoURL){const img=document.getElementById('settingsProfilePreview');if(img)img.src=p.photoURL;currentUser.photoURL=p.photoURL;}});}
       const oldUpdateAuthUI=window.updateAuthUI;window.updateAuthUI=function(user){if(typeof oldUpdateAuthUI==='function')oldUpdateAuthUI(user);currentUser=user||null;if(user){attachNotificationRealtime();attachProfileRealtimeV5();}renderWishlist();updateWishlistIcons();};
 
@@ -3355,6 +3467,220 @@
     setTimeout(enforceTenProducts, 350);
     setTimeout(init, 700);
   });
+})();
+</script>
+
+
+<!-- CRAZY LENS USER REALTIME BRIDGE V12 -->
+<script>
+(() => {
+  'use strict';
+  const RT = {
+    listeners: [],
+    catalogOff: null,
+    voucherOff: null,
+    profileOff: null,
+    notifOff: null,
+    walletOff: null,
+    orderOff: null,
+    topupOff: null,
+    connected: false,
+    lastSync: null
+  };
+  window.CRAZY_USER_REALTIME = RT;
+
+  const liveBadge = () => {
+    let el = document.getElementById('crazyRealtimeBadge');
+    if (el) return el;
+    el = document.createElement('div');
+    el.id = 'crazyRealtimeBadge';
+    el.className = 'fixed left-1/2 -translate-x-1/2 bottom-3 z-[80] px-3 py-2 rounded-full bg-white/95 dark:bg-[#171719]/95 border border-gray-200 dark:border-white/10 shadow-xl text-[10px] font-black flex items-center gap-2 backdrop-blur';
+    document.body.appendChild(el);
+    return el;
+  };
+  function setLive(on, msg='Firebase Realtime') {
+    RT.connected = !!on;
+    RT.lastSync = new Date();
+    const el = liveBadge();
+    el.innerHTML = `<span style="display:inline-block;width:7px;height:7px;border-radius:999px;background:${on?'#22c55e':'#f59e0b'};box-shadow:0 0 0 4px ${on?'rgba(34,197,94,.12)':'rgba(245,158,11,.12)'}"></span><span class="${on?'text-green-700 dark:text-green-300':'text-amber-700 dark:text-amber-300'}">${msg}</span>`;
+    clearTimeout(window.__crazyRealtimeBadgeTimer);
+    window.__crazyRealtimeBadgeTimer = setTimeout(() => el.remove(), 2800);
+  }
+
+  function svc() {
+    return (typeof getFirebaseServices === 'function') ? getFirebaseServices() : window.firebaseServices;
+  }
+  function safeCall(fn) { try { return fn(); } catch (_) { return null; } }
+  function off(refFn) { if (typeof refFn === 'function') safeCall(refFn); }
+  function toArray(v) { return Object.values(v || {}); }
+
+  function detach() {
+    off(RT.catalogOff); off(RT.voucherOff); off(RT.profileOff); off(RT.notifOff); off(RT.walletOff); off(RT.orderOff); off(RT.topupOff);
+    RT.catalogOff = RT.voucherOff = RT.profileOff = RT.notifOff = RT.walletOff = RT.orderOff = RT.topupOff = null;
+    if (Array.isArray(RT.listeners)) { RT.listeners.forEach(x => off(x)); RT.listeners = []; }
+  }
+
+  function attachGlobalRealtime(user) {
+    const s = svc();
+    if (!s?.db || !s?.ref || !s?.onValue) {
+      setLive(false, 'Firebase belum siap');
+      return;
+    }
+    detach();
+
+    // Catalog: admin can add/edit/hide products; user updates automatically.
+    RT.catalogOff = s.onValue(s.ref(s.db, 'catalog/products'), snap => {
+      const remote = snap.val() || {};
+      window.__CRAZY_REMOTE_PRODUCTS = remote;
+      try {
+        if (typeof remoteProducts !== 'undefined') remoteProducts = remote;
+        if (typeof products !== 'undefined') Object.values(remote).forEach(p => {
+          if (p?.id) products[p.id] = p;
+        });
+      } catch (_) {}
+      safeCall(() => window.renderMoreCatalog?.());
+      safeCall(() => window.CRAZY_LENS_REALTIME_REFRESH?.());
+      safeCall(() => window.applyAdvancedFilters?.());
+      setLive(true, 'Katalog realtime • LIVE');
+    });
+
+    // Voucher: admin creates/activates/deactivates; checkout sees it instantly.
+    RT.voucherOff = s.onValue(s.ref(s.db, 'store/vouchers'), snap => {
+      const vouchers = snap.val() || {};
+      window.CRAZY_LENS_VOUCHERS = vouchers;
+      safeCall(() => window.renderVoucherCenter?.(vouchers));
+      safeCall(() => window.recalcCheckoutV5?.());
+    });
+
+    if (user?.uid) {
+      RT.walletOff = s.onValue(s.ref(s.db, `users/${user.uid}/wallet`), snap => {
+        const v = snap.val() || {};
+        if (typeof v.balance !== 'undefined') {
+          try { walletBalance = Number(v.balance || 0); } catch (_) {}
+          safeCall(() => window.updateWalletUI?.());
+        }
+      });
+
+      RT.orderOff = s.onValue(s.ref(s.db, `users/${user.uid}/orders`), snap => {
+        const arr = toArray(snap.val()).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+        try { realtimeOrders = arr; } catch (_) {}
+        safeCall(() => window.renderOrders?.());
+        safeCall(() => window.resumeAutoEngine?.());
+        safeCall(() => window.syncOpenOrderPayment?.());
+        setLive(true, `Order realtime • ${arr.length} data`);
+      });
+
+      RT.topupOff = s.onValue(s.ref(s.db, `users/${user.uid}/topups`), snap => {
+        const arr = toArray(snap.val()).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+        try { realtimeTopups = arr; } catch (_) {}
+        safeCall(() => window.syncOpenTopupPayment?.());
+        safeCall(() => window.updateWalletUI?.());
+      });
+
+      RT.profileOff = s.onValue(s.ref(s.db, `users/${user.uid}/profile`), snap => {
+        const p = snap.val() || {};
+        if (p.photoURL) {
+          try { if (currentUser) currentUser.photoURL = p.photoURL; } catch (_) {}
+          const preview = document.getElementById('settingsProfilePreview');
+          if (preview) preview.src = p.photoURL;
+        }
+      });
+
+      RT.notifOff = s.onValue(s.ref(s.db, `users/${user.uid}/notifications`), snap => {
+        const arr = toArray(snap.val()).sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+        safeCall(() => window.renderNotifications?.(arr));
+      });
+    }
+  }
+
+  // Expose a deterministic hook for product detail/card refresh.
+  window.CRAZY_LENS_REALTIME_REFRESH = () => {
+    safeCall(() => window.enhanceAllBAs?.());
+    safeCall(() => window.normalizeAllBeforeAfter?.());
+    safeCall(() => window.renderOrders?.());
+  };
+
+  // Shared chat listener. Call when user opens a product chat.
+  window.attachCrazyChatRealtime = (thread) => {
+    const s = svc();
+    if (!s?.db || !s?.ref || !s?.onValue || !thread) return;
+    off(window.__crazyChatOff);
+    window.__crazyChatOff = s.onValue(s.ref(s.db, `chats/${thread}/messages`), snap => {
+      const messages = toArray(snap.val()).sort((a,b)=>new Date(a.createdAt||0)-new Date(b.createdAt||0));
+      const box = document.getElementById('chatMessages');
+      if (box) {
+        box.innerHTML = messages.map(m => `<div class="cl-chat-bubble ${m.userId===currentUser?.uid?'cl-chat-me':'cl-chat-them'}"><div>${typeof escV==='function'?escV(m.text||''):String(m.text||'')}</div><div class="text-[8px] opacity-60 mt-1">${m.createdAt?new Date(m.createdAt).toLocaleTimeString('id-ID'):''}</div></div>`).join('') || '<div class="text-center text-xs text-gray-400 py-10">Belum ada pesan.</div>';
+        box.scrollTop = box.scrollHeight;
+      }
+      setLive(true, 'Live Chat • LIVE');
+    });
+  };
+
+  // Patch auth lifecycle so every signed-in user gets the same realtime bindings.
+  function boot() {
+    const s = svc();
+    if (!s?.auth || !s?.onAuthStateChanged) { setLive(false, 'Firebase Auth belum siap'); return; }
+    off(window.__crazyAuthRealtimeOff);
+    window.__crazyAuthRealtimeOff = s.onAuthStateChanged(s.auth, user => {
+      if (user) {
+        safeCall(() => typeof syncCrazyUserDirectory==='function' && syncCrazyUserDirectory(user));
+        attachGlobalRealtime(user);
+      } else {
+        attachGlobalRealtime(null);
+      }
+    });
+  }
+
+  function waitForFirebase() {
+    if (window.firebaseServices) boot();
+    else window.addEventListener('crazyFirebaseReady', boot, {once:true});
+  }
+
+  // Settings is intentionally limited to profile picture + theme.
+  window.openSettings = () => {
+    const m = document.getElementById('settingsModal');
+    if (!m) return;
+    const toggle = document.getElementById('darkModeToggle');
+    if (toggle) toggle.checked = document.body.classList.contains('dark');
+    const img = document.getElementById('settingsProfilePreview');
+    const u = (typeof currentUser!=='undefined') ? currentUser : null;
+    if (img && u?.photoURL) img.src = u.photoURL;
+    m.classList.remove('hidden');
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', waitForFirebase, {once:true});
+  else waitForFirebase();
+})();
+</script>
+
+<script>
+/* ===== CRAZY LENS V13 PREMIUM USER ENGINE ===== */
+(()=>{
+ 'use strict';
+ const RECENT_KEY='crazyLensRecentV13';
+ const svc=()=>window.firebaseServices||null;
+ const money=n=>'Rp '+Number(n||0).toLocaleString('id-ID');
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const products=()=>window.CRAZY_LENS_PRODUCTS||{};
+ const recent=()=>{try{return JSON.parse(localStorage.getItem(RECENT_KEY)||'[]')}catch{return[]}};
+ function renderRecent(){const ids=recent(),box=document.getElementById('v13RecentGrid'),wrap=document.getElementById('v13RecentlyViewed');if(!box||!wrap)return;if(!ids.length){wrap.classList.add('hidden');return}const items=ids.map(id=>products()[id]).filter(Boolean);if(!items.length){wrap.classList.add('hidden');return}wrap.classList.remove('hidden');box.innerHTML=items.map(p=>`<div class="cl-v13-recent-card" onclick="openProductByIdV('${esc(p.id)}')"><img src="${esc(p.image||'')}" alt="${esc(p.name)}"><div class="rname">${esc(p.name)}</div><div class="rprice">${money(p.price)}</div></div>`).join('')}
+ function saveRecent(id){if(!id)return;const a=recent().filter(x=>x!==id);a.unshift(id);localStorage.setItem(RECENT_KEY,JSON.stringify(a.slice(0,8)));renderRecent()}
+ window.clearV13Recent=()=>{localStorage.removeItem(RECENT_KEY);renderRecent()};
+ function enhanceBeforeAfter(){document.querySelectorAll('[data-product-card]').forEach(card=>{const id=card.dataset.productId;if(!id||card.dataset.v13Ba==='1')return;const p=products()[id]||{};const holder=card.querySelector('.cl-v6-ba,.ba-slider-container,.relative.h-40,.relative.h-36,.relative');const img=holder?.querySelector(':scope > img');if(!holder||!img)return;const after=img.src||p.image||'';const before=p.beforeImage||card.dataset.beforeImage||after;holder.classList.add('cl-v13-ba');const bw=document.createElement('div');bw.className='cl-v13-ba-before';bw.innerHTML=`<img src="${esc(before)}" alt="Before">`;const h=document.createElement('div');h.className='cl-v13-ba-handle';h.innerHTML='<div class="cl-v13-ba-knob"><i class="fa-solid fa-arrows-left-right text-[10px]"></i></div>';const lb=document.createElement('span');lb.className='cl-v13-ba-label before';lb.textContent='BEFORE';const la=document.createElement('span');la.className='cl-v13-ba-label after';la.textContent='AFTER';holder.append(bw,h,lb,la);let moving=false;const slide=x=>{const r=holder.getBoundingClientRect();const pct=Math.max(0,Math.min(100,((x-r.left)/r.width)*100));bw.style.width=pct+'%';h.style.left=pct+'%'};holder.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;moving=true;holder.setPointerCapture?.(e.pointerId);slide(e.clientX);e.stopPropagation();e.preventDefault()});holder.addEventListener('pointermove',e=>{if(moving){slide(e.clientX);e.stopPropagation()}});holder.addEventListener('pointerup',()=>moving=false);holder.addEventListener('pointercancel',()=>moving=false);card.dataset.v13Ba='1';});}
+ function injectCardHearts(){document.querySelectorAll('[data-product-card]').forEach(card=>{if(card.dataset.v13Heart==='1')return;const id=card.dataset.productId,holder=card.querySelector('.cl-v13-ba,.ba-slider-container,.relative.h-40,.relative.h-36');if(!id||!holder)return;const b=document.createElement('button');b.className='cl-v13-heart';b.type='button';b.title='Favorit';b.onclick=e=>{e.preventDefault();e.stopPropagation();window.toggleWishlist?.(id)};b.innerHTML='<i class="fa-regular fa-heart text-xs"></i>';holder.appendChild(b);card.dataset.v13Heart='1'})}
+ function patchProducts(){enhanceBeforeAfter();injectCardHearts();renderRecent();const count=Object.values(products()).filter(p=>p&&p.active!==false).length;const el=document.getElementById('v13ProductCount');if(el)el.textContent=String(count)}
+ function pulseUser(){const uid=typeof currentUser!=='undefined'?currentUser?.uid:null;const os=typeof realtimeOrders!=='undefined'?realtimeOrders:[];const active=os.filter(o=>o.userId===uid&&!['selesai','dibatalkan'].includes(o.status)).length;document.getElementById('v13ActiveOrders')?.replaceChildren(document.createTextNode(String(active)));const wb=typeof walletBalance!=='undefined'?walletBalance:0;const w=document.getElementById('v13Wallet');if(w)w.textContent=money(wb)}
+ function attachStorePulse(){const s=svc();if(!s?.db||!s.onValue||!s.ref)return;try{s.onValue(s.ref(s.db,'catalog/products'),snap=>{const data=snap.val()||{};window.CRAZY_LENS_PRODUCTS=window.CRAZY_LENS_PRODUCTS||{};Object.entries(data).forEach(([id,p])=>window.CRAZY_LENS_PRODUCTS[id]=p);const el=document.getElementById('v13ProductCount');if(el)el.textContent=String(Object.values(window.CRAZY_LENS_PRODUCTS).filter(p=>p?.active!==false).length);setTimeout(patchProducts,60)})}catch{}}
+ function attachStatus(){const b=document.getElementById('v13FirebaseStatus'),s=svc();if(!b||!s)return;if(!s.db||!s.onValue||!s.ref)return;b.innerHTML='<span class="cl-live-dot"></span> Firebase Live';try{s.onValue(s.ref(s.db,'.info/connected'),snap=>{const ok=!!snap.val();b.innerHTML=ok?'<span class="cl-live-dot"></span> Firebase Live':'<span style="width:9px;height:9px;border-radius:50%;background:#9ca3af"></span> Offline';b.style.color=ok?'#047857':'#6b7280'})}catch{}}
+ window.v13ActivateNav=btn=>{document.querySelectorAll('.cl-v13-mobile-nav button').forEach(x=>x.classList.remove('active'));btn?.classList.add('active')};
+ const oldOpen=window.openProductByIdV;window.openProductByIdV=function(id){saveRecent(id);return typeof oldOpen==='function'?oldOpen(id):undefined};
+ const oldApply=window.applyAdvancedFilters;window.applyAdvancedFilters=function(){const r=typeof oldApply==='function'?oldApply():undefined;setTimeout(patchProducts,30);return r};
+ const oldUpdate=window.updateAuthUI;window.updateAuthUI=function(u){if(typeof oldUpdate==='function')oldUpdate(u);pulseUser();renderRecent();attachStatus()};
+ const oldRender=window.renderOrders;window.renderOrders=function(){const r=typeof oldRender==='function'?oldRender():undefined;setTimeout(pulseUser,20);return r};
+ window.addEventListener('crazyFirebaseReady',()=>setTimeout(()=>{attachStorePulse();attachStatus();patchProducts();pulseUser()},120));
+ document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{attachStorePulse();attachStatus();patchProducts();pulseUser()},350));
+ setInterval(()=>{patchProducts();pulseUser()},3000);
+ window.openProductManager=()=>window.showUnavailable?.('Product Manager');
 })();
 </script>
 
